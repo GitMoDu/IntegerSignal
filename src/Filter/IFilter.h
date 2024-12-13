@@ -37,7 +37,7 @@ namespace IntegerSignal::Filter
 		/// Get the latest output value.
 		/// </summary>
 		/// <returns></returns>
-		virtual const value_t Get() const {}
+		virtual const value_t Get() const { return 0; }
 	};
 
 	template<typename value_t>
