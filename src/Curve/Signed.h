@@ -90,14 +90,12 @@ namespace IntegerSignal::Curve
 	/// </summary>
 	/// <typeparam name="CurveType">Unsigned value ICurve type.</typeparam>
 	template<typename CurveType>
-	template<typename CurveType>
 	using SignedI16 = Template::Signed<CurveType, uint16_t, int16_t>;
 
 	/// <summary>
 	/// Wraps an unsigned Curve with a signed input/output.
 	/// </summary>
 	/// <typeparam name="CurveType">Unsigned value ICurve type.</typeparam>
-	template<typename CurveType>
 	template<typename CurveType>
 	using SignedI32 = Template::Signed<CurveType, uint32_t, int32_t>;
 }
