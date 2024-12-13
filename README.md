@@ -1,11 +1,11 @@
 # IntegerSignal
-A header-only C++ library for efficient integer-only signal processing and response curves, defined using templates for fast and flexible mathematical operations.
+A header-only C++ library for efficient integer-only signal processing and response curves, defined using templates for speed and (compile-time) flexibility.
 
 ## Features
-- Integer-only Arithmetic: No floating point operations, ensuring efficiency and suitability for systems where floating-point math is not available.
+- Integer-only Arithmetic: No floating point operations, compatible and fast even on 8 bit MCUs.
 
-- Templates and Inheritance: Provides flexibility and ease of use, allowing for custom filter and response curve implementations.
+- Templates and Inheritance: Filters and Curves are compile time chainable, making it simple do define custom filter types.
 
-- Common Filters: Includes implementations of various filters like EMA (Exponential Moving Average) and DEMA (Double Exponential Moving Average).
+- Filters: Includes implementations of EMA (Exponential Moving Average) and DEMA (Double Exponential Moving Average).
 
-- Response Curves: Includes implementations for common mathematical curves like power and fast square root.
+- Curves: Includes implementations for power^2, power^2, root^2. Square root operations are hardware accelerated on ARM architectures (_CLZ_). 
