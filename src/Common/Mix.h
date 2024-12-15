@@ -69,6 +69,28 @@ namespace IntegerSignal::Mix
 	}
 
 	/// <summary>
+	/// Fast mix, fixed proportions.
+	/// </summary>
+	/// <param name="from"></param>
+	/// <param name="to"></param>
+	/// <returns>50/50 mix in power^2 space.</returns>
+	static constexpr uint16_t Power2U16(const uint16_t from, const uint16_t to)
+	{
+		return (((uint32_t)from * from) + ((uint32_t)to * to)) >> 16;
+	}
+
+	/// <summary>
+	/// Fast mix, fixed proportions.
+	/// </summary>
+	/// <param name="from"></param>
+	/// <param name="to"></param>
+	/// <returns>50/50 mix in power^2 space.</returns>
+	static constexpr uint32_t Power2U32(const uint32_t from, const uint32_t to)
+	{
+		return (((uint64_t)from * from) + ((uint64_t)to * to)) >> 32;
+	}
+
+	/// <summary>
 	/// 256 gradations of mix.
 	/// </summary>
 	/// <param name="from">0 scale value.</param>
