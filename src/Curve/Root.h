@@ -13,12 +13,10 @@ namespace IntegerSignal::Curves
 	/// Root^2 curves the input.
 	/// </summary>
 	/// <typeparam name="BaseCurve">Base curve for chaining.</typeparam>
-	template<typename BaseCurve = Curve::ICurve<uint8_t>>
-	struct Root2U8 : public BaseCurve
+	template<typename BaseCurve = Curves::Template::Curve<uint8_t>>
+	struct Root2U8
 	{
-		Root2U8() : BaseCurve() {}
-
-		virtual const uint8_t Get(const uint8_t input) const
+		static const uint8_t Get(const uint8_t input)
 		{
 			return IntegerSignal::Math::Root2U16(IntegerSignal::Scale::U8ToU16(BaseCurve::Get(input)));
 		}
@@ -28,12 +26,10 @@ namespace IntegerSignal::Curves
 	/// Root^2 curves the input.
 	/// </summary>
 	/// <typeparam name="BaseCurve">Base curve for chaining.</typeparam>
-	template<typename BaseCurve = Curve::ICurve<uint16_t>>
-	struct Root2U16 : public BaseCurve
+	template<typename BaseCurve = Curves::Template::Curve<uint16_t>>
+	struct Root2U16
 	{
-		Root2U16() : BaseCurve() {}
-
-		virtual const uint16_t Get(const uint16_t input) const
+		static const uint16_t Get(const uint16_t input)
 		{
 			return IntegerSignal::Math::Root2U32(IntegerSignal::Scale::U16ToU32(BaseCurve::Get(input)));
 		}
@@ -43,12 +39,10 @@ namespace IntegerSignal::Curves
 	/// Root^2 curves the input.
 	/// </summary>
 	/// <typeparam name="BaseCurve">Base curve for chaining.</typeparam>
-	template<typename BaseCurve = Curve::ICurve<uint32_t>>
-	struct Root2U32 : public BaseCurve
+	template<typename BaseCurve = Curves::Template::Curve<uint32_t>>
+	struct Root2U32
 	{
-		Root2U32() : BaseCurve() {}
-
-		virtual const uint32_t Get(const uint32_t input) const
+		static const uint32_t Get(const uint32_t input)
 		{
 			return IntegerSignal::Math::Root2U64(IntegerSignal::Scale::U32ToU64(BaseCurve::Get(input)));
 		}

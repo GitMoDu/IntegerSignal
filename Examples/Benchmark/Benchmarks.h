@@ -63,13 +63,9 @@ void BenchmarkFilters()
 	Serial.println();
 }
 
-template<typename Curve8, typename Curve16, typename Curve32, uint16_t TestSize = 2000>
-void BenchmarkCurves()
+template<uint16_t TestSize = 2000>
+void BenchmarkInterfaceCurves(IntegerSignal::Curves::ICurve<uint8_t>& curve8, IntegerSignal::Curves::ICurve<uint16_t>& curve16, IntegerSignal::Curves::ICurve<uint32_t>& curve32)
 {
-	Curve8 curve8{};
-	Curve16 curve16{};
-	Curve32 curve32{};
-
 	volatile uint8_t testU8 = UINT8_MAX;
 	volatile uint16_t testU16 = UINT16_MAX;
 	volatile uint32_t testU32 = UINT32_MAX;
@@ -104,6 +100,50 @@ void BenchmarkCurves()
 	for (uint16_t i = 0; i < TestSize; i++)
 	{
 		testU32 = curve32.Get(testU32);
+	}
+	DurationTotal = micros() - DurationTotal;
+	Serial.print((DurationTotal * 1000L) / TestSize);
+	Serial.println(F(" ns"));
+	Serial.println();
+}
+
+template<typename Curve8, typename Curve16, typename Curve32, uint16_t TestSize = 2000>
+void BenchmarkCurves()
+{
+	volatile uint8_t testU8 = UINT8_MAX;
+	volatile uint16_t testU16 = UINT16_MAX;
+	volatile uint32_t testU32 = UINT32_MAX;
+
+	uint32_t DurationTotal = 0;
+
+	Serial.print(F("\t(8 Bit)\t\t"));
+	testU8 = UINT8_MAX;
+	DurationTotal = micros();
+	for (uint16_t i = 0; i < TestSize; i++)
+	{
+		testU8 = Curve8::Get(testU8);
+	}
+	DurationTotal = micros() - DurationTotal;
+	Serial.print((DurationTotal * 1000L) / TestSize);
+	Serial.println(F(" ns"));
+
+	Serial.print(F("\t(16 Bit)\t"));
+	testU16 = UINT16_MAX;
+	DurationTotal = micros();
+	for (uint16_t i = 0; i < TestSize; i++)
+	{
+		testU16 = Curve16::Get(testU16);
+	}
+	DurationTotal = micros() - DurationTotal;
+	Serial.print((DurationTotal * 1000L) / TestSize);
+	Serial.println(F(" ns"));
+
+	Serial.print(F("\t(32 Bit)\t"));
+	testU32 = UINT32_MAX;
+	DurationTotal = micros();
+	for (uint16_t i = 0; i < TestSize; i++)
+	{
+		testU32 = Curve32::Get(testU32);
 	}
 	DurationTotal = micros() - DurationTotal;
 	Serial.print((DurationTotal * 1000L) / TestSize);

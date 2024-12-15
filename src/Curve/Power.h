@@ -17,13 +17,10 @@ namespace IntegerSignal::Curves
 		/// <typeparam name="BaseCurve">Base curve for chaining.</typeparam>
 		template<typename value_t,
 			typename intermediate_t,
-			typename BaseCurve = Curve::ICurve<value_t>>
-			struct Curve2 : public BaseCurve
+			typename BaseCurve = Curves::Template::Curve<value_t>>
+			struct Curve2
 		{
-		public:
-			Curve2() : BaseCurve() {}
-
-			virtual const value_t Get(const value_t input) const
+			static const value_t Get(const value_t input)
 			{
 				const value_t in = BaseCurve::Get(input);
 
@@ -39,13 +36,10 @@ namespace IntegerSignal::Curves
 		/// <typeparam name="BaseCurve">Base curve for chaining.</typeparam>
 		template<typename value_t,
 			typename intermediate_t,
-			typename BaseCurve = Curve::ICurve<value_t>>
-			struct Curve3 : public BaseCurve
+			typename BaseCurve = Curves::Template::Curve<value_t>>
+			struct Curve3
 		{
-		public:
-			Curve3() : BaseCurve() {}
-
-			virtual const value_t Get(const value_t input) const
+			static const value_t Get(const value_t input)
 			{
 				const value_t in = BaseCurve::Get(input);
 				const intermediate_t power = (intermediate_t)in * in >> (sizeof(value_t) * 8);
@@ -59,42 +53,42 @@ namespace IntegerSignal::Curves
 	/// Power^2 curves the input.
 	/// </summary>
 	/// <typeparam name="BaseCurve">Base curve for chaining.</typeparam>
-	template<typename BaseCurve = Curve::ICurve<uint8_t>>
+	template<typename BaseCurve = Curves::Template::Curve<uint8_t>>
 	using Power2U8 = Power::Template::Curve2<uint8_t, uint16_t, BaseCurve>;
 
 	/// <summary>
 	/// Power^2 curves the input.
 	/// </summary>
 	/// <typeparam name="BaseCurve">Base curve for chaining.</typeparam>
-	template<typename BaseCurve = Curve::ICurve<uint16_t>>
+	template<typename BaseCurve = Curves::Template::Curve<uint16_t>>
 	using Power2U16 = Power::Template::Curve2<uint16_t, uint32_t, BaseCurve>;
 
 	/// <summary>
 	/// Power^2 curves the input.
 	/// </summary>
 	/// <typeparam name="BaseCurve">Base curve for chaining.</typeparam>
-	template<typename BaseCurve = Curve::ICurve<uint32_t>>
+	template<typename BaseCurve = Curves::Template::Curve<uint32_t>>
 	using Power2U32 = Power::Template::Curve2<uint32_t, uint64_t, BaseCurve>;
 
 	/// <summary>
 	/// Power^3 curves the input.
 	/// </summary>
 	/// <typeparam name="BaseCurve">Base curve for chaining.</typeparam>
-	template<typename BaseCurve = Curve::ICurve<uint8_t>>
+	template<typename BaseCurve = Curves::Template::Curve<uint8_t>>
 	using Power3U8 = Power::Template::Curve3<uint8_t, uint16_t, BaseCurve>;
 
 	/// <summary>
 	/// Power^3 curves the input.
 	/// </summary>
 	/// <typeparam name="BaseCurve">Base curve for chaining.</typeparam>
-	template<typename BaseCurve = Curve::ICurve<uint16_t>>
+	template<typename BaseCurve = Curves::Template::Curve<uint16_t>>
 	using Power3U16 = Power::Template::Curve3<uint16_t, uint32_t, BaseCurve>;
 
 	/// <summary>
 	/// Power^3 curves the input.
 	/// </summary>
 	/// <typeparam name="BaseCurve">Base curve for chaining.</typeparam>
-	template<typename BaseCurve = Curve::ICurve<uint32_t>>
+	template<typename BaseCurve = Curves::Template::Curve<uint32_t>>
 	using Power3U32 = Power::Template::Curve3<uint32_t, uint64_t, BaseCurve>;
 }
 

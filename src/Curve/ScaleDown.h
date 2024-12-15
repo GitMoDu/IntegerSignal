@@ -19,13 +19,10 @@ namespace IntegerSignal::Curves
 		template<typename value_t,
 			typename intermediate_t,
 			uint8_t scale,
-			typename BaseCurve = IntegerSignal::Curve::ICurve<value_t>>
-			struct Curve : public BaseCurve
+			typename BaseCurve = Curves::Template::Curve<value_t>>
+			struct Curve
 		{
-		public:
-			Curve() : BaseCurve() {}
-
-			virtual const value_t Get(const value_t input) const
+			static const value_t Get(const value_t input)
 			{
 				return ((intermediate_t)BaseCurve::Get(input) * scale) / UINT8_MAX;
 			}
@@ -37,7 +34,7 @@ namespace IntegerSignal::Curves
 	/// </summary>
 	/// <typeparam name="scale">How much of the original signal is retained, abstract scale [0 ; UINT8_MAX].</typeparam>
 	/// <typeparam name="BaseCurve">Base curve for chaining.</typeparam>
-	template<uint8_t scale = UINT8_MAX, typename BaseCurve = Curve::ICurve<uint8_t>>
+	template<uint8_t scale = UINT8_MAX, typename BaseCurve = Curves::Template::Curve<uint8_t>>
 	using ScaleDownU8 = ScaleDown::Template::Curve<uint8_t, uint16_t, scale, BaseCurve>;
 
 	/// <summary>
@@ -45,7 +42,7 @@ namespace IntegerSignal::Curves
 	/// </summary>
 	/// <typeparam name="scale">How much of the original signal is retained, abstract scale [0 ; UINT8_MAX].</typeparam>
 	/// <typeparam name="BaseCurve">Base curve for chaining.</typeparam>
-	template<uint8_t scale = UINT8_MAX, typename BaseCurve = Curve::ICurve<uint16_t>>
+	template<uint8_t scale = UINT8_MAX, typename BaseCurve = Curves::Template::Curve<uint16_t>>
 	using ScaleDownU16 = ScaleDown::Template::Curve<uint16_t, uint32_t, scale, BaseCurve>;
 
 	/// <summary>
@@ -53,7 +50,7 @@ namespace IntegerSignal::Curves
 	/// </summary>
 	/// <typeparam name="scale">How much of the original signal is retained, abstract scale [0 ; UINT8_MAX].</typeparam>
 	/// <typeparam name="BaseCurve">Base curve for chaining.</typeparam>
-	template<uint8_t scale = UINT8_MAX, typename BaseCurve = Curve::ICurve<uint32_t>>
+	template<uint8_t scale = UINT8_MAX, typename BaseCurve = Curves::Template::Curve<uint32_t>>
 	using ScaleDownU32 = ScaleDown::Template::Curve<uint32_t, uint64_t, scale, BaseCurve>;
 }
 
