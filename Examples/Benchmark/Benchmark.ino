@@ -7,7 +7,7 @@
 
 using namespace IntegerSignal;
 
-static constexpr uint16_t TestSize = 2000;
+static constexpr uint16_t TestSize = 5000;
 
 
 void setup()
