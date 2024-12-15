@@ -57,6 +57,9 @@ void setup()
 	BenchmarkCurves<Curves::Power3U8<>, Curves::Power3U16<>, Curves::Power3U32<>, TestSize>();
 	Serial.println(F("\tRoot2"));
 	BenchmarkCurves<Curves::Root2U8<>, Curves::Root2U16<>, Curves::Root2U32<>, TestSize>();
+
+	Serial.println(F("\tPower2+Limit")); // Chained curves.
+	BenchmarkCurves<Curves::LimitU8<0, INT8_MAX, Curves::Power2U8<>>, Curves::LimitU16<0, INT16_MAX, Curves::Power2U16<>>, Curves::LimitU32<0, INT32_MAX, Curves::Power2U32<>>, TestSize>();
 	Serial.println();
 
 	Serial.println(F("Mix"));
