@@ -41,7 +41,9 @@ void setup()
 
 	Serial.println(F("Curves"));
 	Serial.println(F("\tVirtual Interface"));
-	BenchmarkCurves<IntegerSignal::Curve::ICurve<uint8_t>, IntegerSignal::Curve::ICurve<uint16_t>, IntegerSignal::Curve::ICurve<uint32_t>, TestSize>();
+	BenchmarkCurves<Curves::Template::Interface<Curves::Curve<uint8_t>, uint8_t>, Curves::Template::Interface<Curves::Curve<uint16_t>, uint16_t>, Curves::Template::Interface<Curves::Curve<uint32_t>, uint32_t>, TestSize>();
+	Serial.println(F("\tSigned"));
+	BenchmarkCurves<Curves::Template::SignedI8<Curves::Curve<uint8_t>>, Curves::Template::SignedI16<Curves::Curve<uint16_t>>, Curves::Template::SignedI32<Curves::Curve<uint32_t>>, TestSize>();
 	Serial.println(F("\tLimit"));
 	BenchmarkCurves<Curves::LimitU8<0, INT8_MAX>, Curves::LimitU16<0, INT16_MAX>, Curves::LimitU32<0, INT32_MAX>, TestSize>();
 	Serial.println(F("\tScaleDown"));
