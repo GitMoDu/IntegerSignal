@@ -66,6 +66,10 @@ void setup()
 	BenchmarkMix();
 	Serial.println();
 
+	Serial.println(F("Scale Up"));
+	BenchmarkScaleUp();
+	Serial.println();
+
 	Serial.println(F("Math"));
 	BenchmarkSquareRoot();
 	Serial.println();

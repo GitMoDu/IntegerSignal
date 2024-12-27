@@ -309,6 +309,87 @@ void BenchmarkSquareRoot()
 	Serial.println();
 }
 
+template<uint16_t TestSize = 2000>
+void BenchmarkScaleUp()
+{
+	volatile uint8_t testU8 = UINT8_MAX;
+	volatile uint16_t testU16 = UINT16_MAX;
+	volatile uint32_t testU32 = UINT32_MAX;
+	volatile uint32_t testU64 = UINT64_MAX;
+
+	uint32_t DurationTotal = 0;
+
+	Serial.println(F("\tuint8_t"));
+	Serial.print(F("\t(16 Bit)\t"));
+	testU8 = UINT8_MAX;
+	DurationTotal = micros();
+	for (uint16_t i = 0; i < TestSize; i++)
+	{
+		testU16 = IntegerSignal::Scale::U8ToU16(testU8);
+	}
+	DurationTotal = micros() - DurationTotal;
+	Serial.print((DurationTotal * 1000L) / TestSize);
+	Serial.println(F(" ns"));
+
+	Serial.print(F("\t(32 Bit)\t"));
+	testU8 = UINT8_MAX;
+	DurationTotal = micros();
+	for (uint16_t i = 0; i < TestSize; i++)
+	{
+		testU32 = IntegerSignal::Scale::U8ToU32(testU8);
+	}
+	DurationTotal = micros() - DurationTotal;
+	Serial.print((DurationTotal * 1000L) / TestSize);
+	Serial.println(F(" ns"));
+
+	Serial.print(F("\t(64 Bit)\t"));
+	testU8 = UINT8_MAX;
+	DurationTotal = micros();
+	for (uint16_t i = 0; i < TestSize; i++)
+	{
+		testU64 = IntegerSignal::Scale::U8ToU64(testU8);
+	}
+	DurationTotal = micros() - DurationTotal;
+	Serial.print((DurationTotal * 1000L) / TestSize);
+	Serial.println(F(" ns"));
+
+	Serial.println(F("\tuint16_t"));
+	Serial.print(F("\t(32 Bit)\t"));
+	testU16 = UINT16_MAX;
+	DurationTotal = micros();
+	for (uint16_t i = 0; i < TestSize; i++)
+	{
+		testU32 = IntegerSignal::Scale::U16ToU32(testU16);
+	}
+	DurationTotal = micros() - DurationTotal;
+	Serial.print((DurationTotal * 1000L) / TestSize);
+	Serial.println(F(" ns"));
+
+	Serial.print(F("\t(64 Bit)\t"));
+	testU16 = UINT16_MAX;
+	DurationTotal = micros();
+	for (uint16_t i = 0; i < TestSize; i++)
+	{
+		testU64 = IntegerSignal::Scale::U16ToU64(testU16);
+	}
+	DurationTotal = micros() - DurationTotal;
+	Serial.print((DurationTotal * 1000L) / TestSize);
+	Serial.println(F(" ns"));
+
+	Serial.println(F("\tuint32_t"));
+	Serial.print(F("\t(64 Bit)\t"));
+	testU32 = UINT32_MAX;
+	DurationTotal = micros();
+	for (uint16_t i = 0; i < TestSize; i++)
+	{
+		testU64 = IntegerSignal::Scale::U32ToU64(testU32);
+	}
+	DurationTotal = micros() - DurationTotal;
+	Serial.print((DurationTotal * 1000L) / TestSize);
+	Serial.println(F(" ns"));
+}
+
+
 
 
 #endif
