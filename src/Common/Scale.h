@@ -39,17 +39,17 @@ namespace IntegerSignal::Scale
 
 	static constexpr uint16_t U8ToU16(const uint8_t value)
 	{
-		return ((uint16_t)value << 8) + value;
+		return ((uint16_t)value << 8) | value;
 	}
 
 	static constexpr uint32_t U16ToU32(const uint16_t value)
 	{
-		return ((uint32_t)value << 16) + value;
+		return ((uint32_t)value << 16) | value;
 	}
 
 	static constexpr uint64_t U32ToU64(const uint32_t value)
 	{
-		return ((uint64_t)value << 32) + value;
+		return ((uint64_t)value << 32) | value;
 	}
 
 	static constexpr uint32_t U8ToU32(const uint8_t value)
