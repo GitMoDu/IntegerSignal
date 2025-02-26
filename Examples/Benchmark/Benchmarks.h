@@ -281,7 +281,7 @@ void BenchmarkSquareRoot()
 	DurationTotal = micros();
 	for (uint16_t i = 0; i < TestSize; i++)
 	{
-		testU16 = IntegerSignal::Math::Root2U16(testU16);
+		testU16 = IntegerSignal::Math::SquareRoot16(testU16);
 	}
 	DurationTotal = micros() - DurationTotal;
 	Serial.print((DurationTotal * 1000L) / TestSize);
@@ -291,7 +291,7 @@ void BenchmarkSquareRoot()
 	DurationTotal = micros();
 	for (uint16_t i = 0; i < TestSize; i++)
 	{
-		testU32 = IntegerSignal::Math::Root2U32(testU32);
+		testU32 = IntegerSignal::Math::SquareRoot32(testU32);
 	}
 	DurationTotal = micros() - DurationTotal;
 	Serial.print((DurationTotal * 1000L) / TestSize);
@@ -301,7 +301,7 @@ void BenchmarkSquareRoot()
 	DurationTotal = micros();
 	for (uint16_t i = 0; i < TestSize; i++)
 	{
-		testU64 = IntegerSignal::Math::Root2U64(testU64);
+		testU64 = IntegerSignal::Math::SquareRoot64(testU64);
 	}
 	DurationTotal = micros() - DurationTotal;
 	Serial.print((DurationTotal * 1000L) / TestSize);
