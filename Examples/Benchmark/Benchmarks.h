@@ -309,13 +309,14 @@ void BenchmarkSquareRoot()
 	Serial.println();
 }
 
+
 template<uint16_t TestSize = 2000>
 void BenchmarkScaleUp()
 {
 	volatile uint8_t testU8 = UINT8_MAX;
 	volatile uint16_t testU16 = UINT16_MAX;
 	volatile uint32_t testU32 = UINT32_MAX;
-	volatile uint32_t testU64 = UINT64_MAX;
+	volatile uint64_t testU64 = UINT64_MAX;
 
 	uint32_t DurationTotal = 0;
 
@@ -388,9 +389,6 @@ void BenchmarkScaleUp()
 	Serial.print((DurationTotal * 1000L) / TestSize);
 	Serial.println(F(" ns"));
 }
-
-
-
 
 #endif
 
