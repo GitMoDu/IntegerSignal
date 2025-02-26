@@ -325,7 +325,7 @@ void BenchmarkScaleUp()
 	DurationTotal = micros();
 	for (uint16_t i = 0; i < TestSize; i++)
 	{
-		testU16 = IntegerSignal::Scale::U8ToU16(testU8);
+		testU16 = IntegerSignal::BitScale::U8ToU16(testU8);
 	}
 	DurationTotal = micros() - DurationTotal;
 	Serial.print((DurationTotal * 1000L) / TestSize);
@@ -336,7 +336,7 @@ void BenchmarkScaleUp()
 	DurationTotal = micros();
 	for (uint16_t i = 0; i < TestSize; i++)
 	{
-		testU32 = IntegerSignal::Scale::U8ToU32(testU8);
+		testU32 = IntegerSignal::BitScale::U8ToU32(testU8);
 	}
 	DurationTotal = micros() - DurationTotal;
 	Serial.print((DurationTotal * 1000L) / TestSize);
@@ -347,7 +347,7 @@ void BenchmarkScaleUp()
 	DurationTotal = micros();
 	for (uint16_t i = 0; i < TestSize; i++)
 	{
-		testU64 = IntegerSignal::Scale::U8ToU64(testU8);
+		testU64 = IntegerSignal::BitScale::U8ToU64(testU8);
 	}
 	DurationTotal = micros() - DurationTotal;
 	Serial.print((DurationTotal * 1000L) / TestSize);
@@ -359,7 +359,7 @@ void BenchmarkScaleUp()
 	DurationTotal = micros();
 	for (uint16_t i = 0; i < TestSize; i++)
 	{
-		testU32 = IntegerSignal::Scale::U16ToU32(testU16);
+		testU32 = IntegerSignal::BitScale::U16ToU32(testU16);
 	}
 	DurationTotal = micros() - DurationTotal;
 	Serial.print((DurationTotal * 1000L) / TestSize);
@@ -370,7 +370,7 @@ void BenchmarkScaleUp()
 	DurationTotal = micros();
 	for (uint16_t i = 0; i < TestSize; i++)
 	{
-		testU64 = IntegerSignal::Scale::U16ToU64(testU16);
+		testU64 = IntegerSignal::BitScale::U16ToU64(testU16);
 	}
 	DurationTotal = micros() - DurationTotal;
 	Serial.print((DurationTotal * 1000L) / TestSize);
@@ -382,7 +382,7 @@ void BenchmarkScaleUp()
 	DurationTotal = micros();
 	for (uint16_t i = 0; i < TestSize; i++)
 	{
-		testU64 = IntegerSignal::Scale::U32ToU64(testU32);
+		testU64 = IntegerSignal::BitScale::U32ToU64(testU32);
 	}
 	DurationTotal = micros() - DurationTotal;
 	Serial.print((DurationTotal * 1000L) / TestSize);

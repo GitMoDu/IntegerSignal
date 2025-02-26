@@ -1,11 +1,11 @@
-// Scale.h
+// BitScale.h
 
-#ifndef _INTEGER_SIGNAL_SCALE_h
-#define _INTEGER_SIGNAL_SCALE_h
+#ifndef _INTEGER_SIGNAL_BIT_SCALE_h
+#define _INTEGER_SIGNAL_BIT_SCALE_h
 
 #include <stdint.h>
 
-namespace IntegerSignal::Scale
+namespace IntegerSignal::BitScale
 {
 	static constexpr uint32_t U64ToU32(const uint64_t value)
 	{

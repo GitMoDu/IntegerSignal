@@ -3,9 +3,9 @@
 #ifndef _INTEGER_SIGNAL_h
 #define _INTEGER_SIGNAL_h
 
+#include "Common/BitScale.h"
 #include "Common/Math.h"
 #include "Common/Mix.h"
-#include "Common/Scale.h"
 
 #include "Curve/ICurve.h"
 #include "Curve/Signed.h"
