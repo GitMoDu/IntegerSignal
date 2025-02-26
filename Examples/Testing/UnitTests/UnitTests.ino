@@ -8,6 +8,7 @@
 #include <IntegerSignal.h>
 
 #include "SquareRootTest.h"
+#include "BitScaleTest.h"
 
 
 
@@ -26,14 +27,48 @@ void setup()
 	Serial.println();
 	Serial.println();
 
-	IntegerSignal::Testing::SquareRoot::RunTests<1000000>();
+	bool pass = true;
+	pass &= IntegerSignal::BitScale::Test::RunTests<1000000>();
+	pass &= IntegerSignal::SquareRoot::Test::RunTests<1000000>();
 
-	Serial.println(F("Integer Signal Major tests complete."));
-	Serial.println();
-	Serial.println(F("Starting Long running exhaustive tests, don't wait up."));
-	Serial.println();
+	if (pass)
+	{
+		Serial.println();
+		Serial.println();
+		Serial.println(F("Integer Signal all major tests PASSED."));
+		Serial.println();
+		Serial.println();
+		Serial.println(F("Starting Long running exhaustive tests, don't wait up."));
+		Serial.println();
 
-	IntegerSignal::Testing::SquareRoot::RunExhaustive();
+		pass &= IntegerSignal::SquareRoot::Test::RunExhaustive();
+		//pass &= IntegerSignal::BitScale::Test::RunExhaustive();
+
+		if (pass)
+		{
+			Serial.println();
+			Serial.println();
+			Serial.println(F("Integer Signal all Long running exhaustive tests PASSED."));
+			Serial.println();
+			Serial.println();
+		}
+		else
+		{
+			Serial.println();
+			Serial.println();
+			Serial.println(F("Integer Signal long running tests FAILED."));
+			Serial.println();
+		}
+	}
+	else
+	{
+		Serial.println();
+		Serial.println();
+		Serial.println(F("Integer Signal major tests FAILED."));
+		Serial.println();
+		Serial.println();
+	}
+
 }
 
 void loop()

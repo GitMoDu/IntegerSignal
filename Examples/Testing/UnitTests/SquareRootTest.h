@@ -1,14 +1,14 @@
 // SquareRootTest.h
 
-#ifndef _SQUAREROOTTEST_h
-#define _SQUAREROOTTEST_h
+#ifndef _SQUARE_ROOT_TEST_h
+#define _SQUARE_ROOT_TEST_h
 
 #include <IntegerSignalTesting.h>
 
-namespace IntegerSignal::Testing::SquareRoot
+namespace IntegerSignal::SquareRoot::Test
 {
 	// Reference for 64-bit: returns floor(sqrt(value)) in the range 0..4294967295.
-	static uint32_t RefSqrt(uint64_t value) 
+	static uint32_t RefSqrt(uint64_t value)
 	{
 		uint32_t res = 0;
 		// Iterate from MSB (bit 31) down to LSB (bit 0)
@@ -23,7 +23,7 @@ namespace IntegerSignal::Testing::SquareRoot
 	}
 
 	// Exhaustive test for 16-bit inputs (0..65535)
-	static void TestSqrt16Exhaustive()
+	static bool TestSqrt16Exhaustive()
 	{
 		Serial.println(F("Starting exhaustive 16-bit sqrt tests..."));
 
@@ -58,9 +58,11 @@ namespace IntegerSignal::Testing::SquareRoot
 			Serial.print(F("16-bit tests FAILED. Errors: "));
 			Serial.println(errorCount);
 		}
+
+		return errorCount == 0;
 	}
 
-	static void TestSqrt32Exhaustive()
+	static bool TestSqrt32Exhaustive()
 	{
 		Serial.println(F("Starting Exhaustive 32-bit sqrt tests..."));
 
@@ -96,10 +98,12 @@ namespace IntegerSignal::Testing::SquareRoot
 			Serial.print(F("32-bit tests FAILED. Errors: "));
 			Serial.println(errorCount);
 		}
+
+		return errorCount > 0;
 	}
 
 	template<uint32_t MaxIterations>
-	static void TestSqrt32Sample() 
+	static bool TestSqrt32Sample()
 	{
 		Serial.println(F("Starting sampled 32-bit sqrt tests..."));
 
@@ -127,6 +131,7 @@ namespace IntegerSignal::Testing::SquareRoot
 				Serial.println(F(" samples tested..."));
 			}
 		}
+
 		if (errorCount == 0)
 		{
 			Serial.println(F("All 32-bit tests PASSED."));
@@ -136,11 +141,13 @@ namespace IntegerSignal::Testing::SquareRoot
 			Serial.print(F("32-bit tests FAILED. Errors: "));
 			Serial.println(errorCount);
 		}
+
+		return errorCount == 0;
 	}
 
 	// Sampled test for 64-bit inputs. Tests 50K values distributed over the 64-bit range.
 	template<uint32_t MaxIterations>
-	void TestSqrt64Sample()
+	static bool TestSqrt64Sample()
 	{
 		Serial.println(F("Starting sampled 64-bit sqrt tests..."));
 
@@ -156,7 +163,7 @@ namespace IntegerSignal::Testing::SquareRoot
 			if (result != refResult)
 			{
 				Serial.print(F("64-bit error: value="));
-				PrintUInt64(value);
+				IntegerSignal::Testing::PrintUInt64(value);
 				Serial.print(F(" result="));
 				Serial.print(result);
 				Serial.print(F(" ref="));
@@ -180,20 +187,35 @@ namespace IntegerSignal::Testing::SquareRoot
 			Serial.print(F("64-bit tests FAILED. Errors: "));
 			Serial.println(errorCount);
 		}
+
+		return errorCount == 0;
 	}
 
 	template<uint32_t MaxIterations = 50000>
-	static void RunTests()
+	static bool RunTests()
 	{
-		TestSqrt16Exhaustive();
-		TestSqrt32Sample<MaxIterations>();
-		TestSqrt64Sample<MaxIterations>();
+		bool pass = true;
+
+		pass &= TestSqrt16Exhaustive();
+		pass &= TestSqrt32Sample<MaxIterations>();
+		pass &= TestSqrt64Sample<MaxIterations>();
+
+		if (!pass)
+		{
+			Serial.println(F("SquareRoot tests FAILED."));
+		}
+
+		return pass;
 	}
 
-	static void RunExhaustive()
+	static bool RunExhaustive()
 	{
-		TestSqrt16Exhaustive();
-		TestSqrt32Exhaustive();
+		bool pass = true;
+
+		pass &= TestSqrt16Exhaustive();
+		pass &= TestSqrt32Exhaustive();
+
+		return pass;
 	}
 }
 
