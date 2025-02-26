@@ -18,7 +18,7 @@ namespace IntegerSignal::Curves
 	{
 		static const uint8_t Get(const uint8_t input)
 		{
-			return IntegerSignal::Math::Root2U16(IntegerSignal::BitScale::U8ToU16(BaseCurve::Get(input)));
+			return IntegerSignal::Math::SquareRoot16(IntegerSignal::BitScale::U8ToU16(BaseCurve::Get(input)));
 		}
 	};
 
@@ -31,7 +31,7 @@ namespace IntegerSignal::Curves
 	{
 		static const uint16_t Get(const uint16_t input)
 		{
-			return IntegerSignal::Math::Root2U32(IntegerSignal::BitScale::U16ToU32(BaseCurve::Get(input)));
+			return IntegerSignal::Math::SquareRoot32(IntegerSignal::BitScale::U16ToU32(BaseCurve::Get(input)));
 		}
 	};
 
@@ -44,7 +44,7 @@ namespace IntegerSignal::Curves
 	{
 		static const uint32_t Get(const uint32_t input)
 		{
-			return IntegerSignal::Math::Root2U64(IntegerSignal::BitScale::U32ToU64(BaseCurve::Get(input)));
+			return IntegerSignal::Math::SquareRoot64(IntegerSignal::BitScale::U32ToU64(BaseCurve::Get(input)));
 		}
 	};
 }
