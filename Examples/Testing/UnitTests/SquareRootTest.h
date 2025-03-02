@@ -30,7 +30,7 @@ namespace IntegerSignal::SquareRoot::Test
 		uint32_t errorCount = 0;
 		for (uint32_t v = 0; v <= UINT16_MAX; v++) {
 			const uint16_t value = (uint16_t)v;
-			const uint8_t result = IntegerSignal::Math::SquareRoot16(value);
+			const uint8_t result = SquareRoot16(value);
 			const uint8_t refResult = RefSqrt(value);
 			if (result != refResult)
 			{
@@ -69,7 +69,7 @@ namespace IntegerSignal::SquareRoot::Test
 		uint32_t errorCount = 0;
 		for (uint64_t value = 0; value <= UINT32_MAX; value++)
 		{
-			const uint16_t result = IntegerSignal::Math::SquareRoot32(value);
+			const uint16_t result = SquareRoot32(value);
 			const uint16_t refResult = RefSqrt(value);
 			if (result != refResult)
 			{
@@ -112,7 +112,7 @@ namespace IntegerSignal::SquareRoot::Test
 		{
 			// Map i from [0, iterations-1] to the full 32-bit range.
 			const uint32_t value = (uint32_t)(((uint64_t)i * 0xFFFFFFFFULL) / (MaxIterations - 1));
-			const uint16_t result = IntegerSignal::Math::SquareRoot32(value);
+			const uint16_t result = SquareRoot32(value);
 			const uint16_t refResult = RefSqrt(value);
 			if (result != refResult)
 			{
@@ -158,7 +158,7 @@ namespace IntegerSignal::SquareRoot::Test
 		{
 			const uint64_t value = (i == MaxIterations - 1) ? 0xFFFFFFFFFFFFFFFFULL : step * i;
 
-			const uint32_t result = IntegerSignal::Math::SquareRoot64(value);
+			const uint32_t result = SquareRoot64(value);
 			const uint32_t refResult = RefSqrt(value);
 			if (result != refResult)
 			{

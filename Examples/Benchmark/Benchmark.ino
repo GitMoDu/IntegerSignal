@@ -25,7 +25,23 @@ void setup()
 	Serial.println();
 	Serial.println();
 
-	Serial.println(F("Average Step Duration (ns)"));
+	Serial.println(F("Average Call Duration (ns)"));
+	Serial.println();
+
+	Serial.println(F("Sine"));
+	BenchmarkSine<(TestSize / 200) | 3>();
+	Serial.println();
+
+	Serial.println(F("Mix"));
+	BenchmarkMix();
+	Serial.println();
+
+	Serial.println(F("Scale Up"));
+	BenchmarkScaleUp();
+	Serial.println();
+
+	Serial.println(F("Square Root"));
+	BenchmarkSquareRoot();
 	Serial.println();
 
 	Serial.println(F("Filters"));
@@ -62,17 +78,6 @@ void setup()
 	BenchmarkCurves<Curves::LimitU8<0, INT8_MAX, Curves::Power2U8<>>, Curves::LimitU16<0, INT16_MAX, Curves::Power2U16<>>, Curves::LimitU32<0, INT32_MAX, Curves::Power2U32<>>, TestSize>();
 	Serial.println();
 
-	Serial.println(F("Mix"));
-	BenchmarkMix();
-	Serial.println();
-
-	Serial.println(F("Scale Up"));
-	BenchmarkScaleUp();
-	Serial.println();
-
-	Serial.println(F("Math"));
-	BenchmarkSquareRoot();
-	Serial.println();
 }
 
 void loop()

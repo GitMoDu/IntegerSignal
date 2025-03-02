@@ -92,7 +92,7 @@ namespace IntegerSignal::BitScale::Test
 			uint8_t input = (uint8_t)v;
 			// Test U8ToU16: expected duplicates the 8-bit value.
 			uint16_t expected_U8ToU16 = ((uint16_t)input << 8) | input;
-			uint16_t result_U8ToU16 = IntegerSignal::BitScale::U8ToU16(input);
+			uint16_t result_U8ToU16 = IntegerSignal::U8ToU16(input);
 			if (result_U8ToU16 != expected_U8ToU16)
 			{
 				Serial.print(F("Error: U8ToU16("));
@@ -104,8 +104,8 @@ namespace IntegerSignal::BitScale::Test
 				errorCount++;
 			}
 			// Test U8ToU32.
-			uint32_t expected_U8ToU32 = IntegerSignal::BitScale::U16ToU32(expected_U8ToU16);
-			uint32_t result_U8ToU32 = IntegerSignal::BitScale::U8ToU32(input);
+			uint32_t expected_U8ToU32 = IntegerSignal::U16ToU32(expected_U8ToU16);
+			uint32_t result_U8ToU32 = IntegerSignal::U8ToU32(input);
 			if (result_U8ToU32 != expected_U8ToU32)
 			{
 				Serial.print(F("Error: U8ToU32("));
@@ -117,8 +117,8 @@ namespace IntegerSignal::BitScale::Test
 				errorCount++;
 			}
 			// Test U8ToU64.
-			uint64_t expected_U8ToU64 = IntegerSignal::BitScale::U32ToU64(result_U8ToU32);
-			uint64_t result_U8ToU64 = IntegerSignal::BitScale::U8ToU64(input);
+			uint64_t expected_U8ToU64 = IntegerSignal::U32ToU64(result_U8ToU32);
+			uint64_t result_U8ToU64 = IntegerSignal::U8ToU64(input);
 			if (result_U8ToU64 != expected_U8ToU64)
 			{
 				Serial.print(F("Error: U8ToU64("));
@@ -152,7 +152,7 @@ namespace IntegerSignal::BitScale::Test
 			uint16_t input = (uint16_t)v;
 			// Test U16ToU8: should equal input >> 8.
 			uint8_t expected_U16ToU8 = (uint8_t)(input >> 8);
-			uint8_t result_U16ToU8 = IntegerSignal::BitScale::U16ToU8(input);
+			uint8_t result_U16ToU8 = IntegerSignal::U16ToU8(input);
 			if (result_U16ToU8 != expected_U16ToU8)
 			{
 				Serial.print(F("Error: U16ToU8("));
@@ -165,7 +165,7 @@ namespace IntegerSignal::BitScale::Test
 			}
 			// Test U16ToU32: expected duplicates the 16-bit value.
 			uint32_t expected_U16ToU32 = ((uint32_t)input << 16) | input;
-			uint32_t result_U16ToU32 = IntegerSignal::BitScale::U16ToU32(input);
+			uint32_t result_U16ToU32 = IntegerSignal::U16ToU32(input);
 			if (result_U16ToU32 != expected_U16ToU32)
 			{
 				Serial.print(F("Error: U16ToU32("));
@@ -177,8 +177,8 @@ namespace IntegerSignal::BitScale::Test
 				errorCount++;
 			}
 			// Test U16ToU64.
-			uint64_t expected_U16ToU64 = IntegerSignal::BitScale::U32ToU64(expected_U16ToU32);
-			uint64_t result_U16ToU64 = IntegerSignal::BitScale::U16ToU64(input);
+			uint64_t expected_U16ToU64 = IntegerSignal::U32ToU64(expected_U16ToU32);
+			uint64_t result_U16ToU64 = IntegerSignal::U16ToU64(input);
 			if (result_U16ToU64 != expected_U16ToU64)
 			{
 				Serial.print(F("Error: U16ToU64("));
@@ -223,7 +223,7 @@ namespace IntegerSignal::BitScale::Test
 		{
 			uint64_t v = testValues[i];
 			uint32_t expected = Ref_U64ToU32(v);
-			uint32_t result = IntegerSignal::BitScale::U64ToU32(v);
+			uint32_t result = IntegerSignal::U64ToU32(v);
 			if (result != expected)
 			{
 				errorCount++;
@@ -248,7 +248,7 @@ namespace IntegerSignal::BitScale::Test
 		{
 			uint32_t v = testValues[i];
 			uint16_t expected = Ref_U32ToU16(v);
-			uint16_t result = IntegerSignal::BitScale::U32ToU16(v);
+			uint16_t result = IntegerSignal::U32ToU16(v);
 			if (result != expected)
 			{
 				Serial.print(F("Error: U32ToU16("));
@@ -273,7 +273,7 @@ namespace IntegerSignal::BitScale::Test
 		{
 			uint16_t v = testValues[i];
 			uint8_t expected = Ref_U16ToU8(v);
-			uint8_t result = IntegerSignal::BitScale::U16ToU8(v);
+			uint8_t result = IntegerSignal::U16ToU8(v);
 			if (result != expected)
 			{
 				errorCount++;
@@ -305,7 +305,7 @@ namespace IntegerSignal::BitScale::Test
 		{
 			uint64_t v = testValues[i];
 			uint16_t expected = Ref_U64ToU16(v);
-			uint16_t result = IntegerSignal::BitScale::U64ToU16(v);
+			uint16_t result = IntegerSignal::U64ToU16(v);
 			if (result != expected)
 			{
 				errorCount++;
@@ -337,7 +337,7 @@ namespace IntegerSignal::BitScale::Test
 		{
 			uint64_t v = testValues[i];
 			uint8_t expected = Ref_U64ToU8(v);
-			uint8_t result = IntegerSignal::BitScale::U64ToU8(v);
+			uint8_t result = IntegerSignal::U64ToU8(v);
 			if (result != expected)
 			{
 				errorCount++;
@@ -362,7 +362,7 @@ namespace IntegerSignal::BitScale::Test
 		{
 			uint32_t v = testValues[i];
 			uint8_t expected = Ref_U32ToU8(v);
-			uint8_t result = IntegerSignal::BitScale::U32ToU8(v);
+			uint8_t result = IntegerSignal::U32ToU8(v);
 			if (result != expected)
 			{
 				errorCount++;
@@ -386,7 +386,7 @@ namespace IntegerSignal::BitScale::Test
 		{
 			uint8_t input = (uint8_t)v;
 			uint16_t expected = Ref_U8ToU16(input);  // i.e., input * 257
-			uint16_t result = IntegerSignal::BitScale::U8ToU16(input);
+			uint16_t result = IntegerSignal::U8ToU16(input);
 			if (result != expected)
 			{
 				errorCount++;
@@ -410,7 +410,7 @@ namespace IntegerSignal::BitScale::Test
 		{
 			uint16_t input = (uint16_t)v;
 			uint32_t expected = Ref_U16ToU32(input);  // i.e., input * 65537
-			uint32_t result = IntegerSignal::BitScale::U16ToU32(input);
+			uint32_t result = IntegerSignal::U16ToU32(input);
 			if (result != expected)
 			{
 				errorCount++;
@@ -444,7 +444,7 @@ namespace IntegerSignal::BitScale::Test
 		{
 			uint32_t value = (i == MaxIterations - 1) ? 0xFFFFFFFFUL : (uint32_t)(step * i);
 			uint64_t expected = Ref_U32ToU64(value);
-			uint64_t result = IntegerSignal::BitScale::U32ToU64(value);
+			uint64_t result = IntegerSignal::U32ToU64(value);
 			if (result != expected)
 			{
 				Serial.print(F("U32ToU64 error: value="));
@@ -488,7 +488,7 @@ namespace IntegerSignal::BitScale::Test
 		{
 			uint16_t value = (i == MaxIterations - 1) ? 0xFFFF : (uint16_t)(step * i);
 			uint64_t expected = Ref_U16ToU64(value);
-			uint64_t result = IntegerSignal::BitScale::U16ToU64(value);
+			uint64_t result = IntegerSignal::U16ToU64(value);
 			if (result != expected)
 			{
 				Serial.print(F("U16ToU64 error: value="));
@@ -548,7 +548,7 @@ namespace IntegerSignal::BitScale::Test
 		return pass;
 	}
 
-	// Optionally, run only exhaustive tests.
+	// Run only exhaustive tests.
 	static bool RunExhaustive()
 	{
 		bool pass = true;

@@ -1,16 +1,21 @@
 
 #define SERIAL_BAUD_RATE 115200
 
-
+//#define INTEGER_TRIGONOMETRY_LUT INTEGER_TRIGONOMETRY_LUT_TINY
 #define INTEGER_SIGNAL_DISABLE_ACCELERATION
 
 #include <Arduino.h>
 #include <IntegerSignal.h>
+#include <IntegerTrigonometry16.h>
+#include <IntegerTrigonometry.h>
 
 #include "SquareRootTest.h"
 #include "BitScaleTest.h"
+#include "ResizeTest.h"
+#include "SineTest.h"
+#include "FractionScaleTest.h"
 
-
+inline void PrintPlaform();
 
 void setup()
 {
@@ -27,9 +32,21 @@ void setup()
 	Serial.println();
 	Serial.println();
 
+
+	static constexpr uint32_t MaxIterations = 1000;
+
 	bool pass = true;
-	pass &= IntegerSignal::BitScale::Test::RunTests<1000000>();
-	pass &= IntegerSignal::SquareRoot::Test::RunTests<1000000>();
+
+
+	Serial.flush();
+	//pass &= IntegerSignal::Trigonometry::Sine::Test::RunTests<MaxIterations>();
+	//delay(5000000);
+
+	pass &= IntegerSignal::Trigonometry::Sine::Test::RunTests<MaxIterations>();
+	pass &= IntegerSignal::Fraction::Test::RunTests<MaxIterations>();
+	pass &= IntegerSignal::BitScale::Test::RunTests<MaxIterations>();
+	pass &= IntegerSignal::Resize::Test::RunTests<MaxIterations>();
+	pass &= IntegerSignal::SquareRoot::Test::RunTests<MaxIterations>();
 
 	if (pass)
 	{
@@ -38,11 +55,16 @@ void setup()
 		Serial.println(F("Integer Signal all major tests PASSED."));
 		Serial.println();
 		Serial.println();
+
+		Serial.flush();
+		delay(5000);
+
 		Serial.println(F("Starting Long running exhaustive tests, don't wait up."));
 		Serial.println();
 
+		pass &= IntegerSignal::BitScale::Test::RunExhaustive();
 		pass &= IntegerSignal::SquareRoot::Test::RunExhaustive();
-		//pass &= IntegerSignal::BitScale::Test::RunExhaustive();
+		pass &= IntegerSignal::Fraction::Test::RunExhaustive();
 
 		if (pass)
 		{
