@@ -1,5 +1,3 @@
-// Mix.h
-
 #ifndef _INTEGER_SIGNAL_MIX_h
 #define _INTEGER_SIGNAL_MIX_h
 

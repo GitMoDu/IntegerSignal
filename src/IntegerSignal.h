@@ -1,11 +1,16 @@
 // IntegerSignal.h
 
-#ifndef _INTEGER_SIGNAL_h
-#define _INTEGER_SIGNAL_h
+#ifndef _INTEGER_SIGNAL_INCLUDE_h
+#define _INTEGER_SIGNAL_INCLUDE_h
 
-#include "Common/BitScale.h"
-#include "Common/Math.h"
-#include "Common/Mix.h"
+#include "Base/IntegerSignal.h"
+
+#include "Base/Convert.h"
+#include "Base/Mix.h"
+#include "Base/SquareRoot.h"
+
+#include "Scale/Fraction.h"
+#include "Scale/Resize.h"
 
 #include "Curve/ICurve.h"
 #include "Curve/Signed.h"

@@ -4,8 +4,8 @@
 #define _INTEGER_SIGNAL_ROOT_CURVE_h
 
 #include "ICurve.h"
-#include "../Common/Math.h"
-#include "../Common/BitScale.h"
+#include "../Base/SquareRoot.h"
+#include "../Base/Convert.h"
 
 namespace IntegerSignal::Curves
 {
@@ -18,7 +18,7 @@ namespace IntegerSignal::Curves
 	{
 		static const uint8_t Get(const uint8_t input)
 		{
-			return IntegerSignal::Math::SquareRoot16(IntegerSignal::BitScale::U8ToU16(BaseCurve::Get(input)));
+			return SquareRoot16(U8ToU16(BaseCurve::Get(input)));
 		}
 	};
 
@@ -31,7 +31,7 @@ namespace IntegerSignal::Curves
 	{
 		static const uint16_t Get(const uint16_t input)
 		{
-			return IntegerSignal::Math::SquareRoot32(IntegerSignal::BitScale::U16ToU32(BaseCurve::Get(input)));
+			return SquareRoot32(U16ToU32(BaseCurve::Get(input)));
 		}
 	};
 
@@ -44,7 +44,7 @@ namespace IntegerSignal::Curves
 	{
 		static const uint32_t Get(const uint32_t input)
 		{
-			return IntegerSignal::Math::SquareRoot64(IntegerSignal::BitScale::U32ToU64(BaseCurve::Get(input)));
+			return SquareRoot64(U32ToU64(BaseCurve::Get(input)));
 		}
 	};
 }

@@ -4,7 +4,6 @@
 #define _I_FILTER_h
 
 #include <stdint.h>
-#include "../Common/Mix.h"
 
 namespace IntegerSignal::Filter
 {

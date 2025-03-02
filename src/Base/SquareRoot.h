@@ -1,11 +1,9 @@
-// Math.h
-
-#ifndef _INTEGER_SIGNAL_MATH_h
-#define _INTEGER_SIGNAL_MATH_h
+#ifndef _INTEGER_SIGNAL_SQUARE_ROOT_h
+#define _INTEGER_SIGNAL_SQUARE_ROOT_h
 
 #include <stdint.h>
 
-namespace IntegerSignal::Math
+namespace IntegerSignal
 {
 #if defined(__arm__) && !defined(INTEGER_SIGNAL_DISABLE_ACCELERATION)
 	/// <summary>
@@ -169,7 +167,6 @@ namespace IntegerSignal::Math
 		while (bit > op)
 			bit >>= 2;
 
-
 		// The algorithm below is akin to a "long division" for square roots.
 		// In each iteration, we compare (result + bit) with the remaining op.
 		// If op is large enough, we subtract (result + bit) from it and add bit to result.
@@ -227,5 +224,4 @@ namespace IntegerSignal::Math
 	}
 #endif
 }
-
 #endif

@@ -6,4 +6,6 @@
 #include "IntegerSignal.h"
 #include "Testing/Testing.h"
 
+#include "Trigonometry/Lut/Generator.h"
+
 #endif

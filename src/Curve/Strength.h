@@ -4,7 +4,7 @@
 #define _INTEGER_SIGNAL_STRENGTH_CURVE_h
 
 #include "ICurve.h"
-#include "../Common/Mix.h"
+#include "../Base/Mix.h"
 
 namespace IntegerSignal::Curve
 {
