@@ -10,7 +10,7 @@ namespace IntegerSignal::Trigonometry
 	/// <summary>
 	/// Get scale fraction from Sine(angle) .
 	/// </summary>
-	/// <param name="angle">Angle (0;360) degrees [0; ANGLE_MAX].</param>
+	/// <param name="angle">Angle (0;360) degrees [0; ANGLE_RANGE].</param>
 	/// <returns>Scale fraction [-FRACTION8_1X; +FRACTION8_1X].</returns>
 	static const fraction8_t Sine8(const angle_t angle)
 	{
@@ -22,7 +22,7 @@ namespace IntegerSignal::Trigonometry
 		else if (angle < 0)
 		{
 			// Sine function is symmetrical.
-			return Sine8(-angle);
+			return Sine8(ANGLE_RANGE - angle);
 		}
 		else if (angle >= ANGLE_180)
 		{
@@ -44,7 +44,7 @@ namespace IntegerSignal::Trigonometry
 	/// <summary>
 	/// Get scale fraction from Cosine(angle) .
 	/// </summary>
-	/// <param name="angle">Angle (0;360) degrees [0; ANGLE_MAX].</param>
+	/// <param name="angle">Angle (0;360) degrees [0; ANGLE_RANGE].</param>
 	/// <returns>Scale fraction [-FRACTION8_1X; +FRACTION8_1X].</returns>
 	static const fraction8_t Cosine8(const angle_t angle)
 	{

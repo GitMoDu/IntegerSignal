@@ -28,7 +28,7 @@ namespace IntegerSignal::Trigonometry
 	/// </summary>
 	typedef uint16_t angle_t;
 
-	static constexpr angle_t ANGLE_MAX = UINT16_MAX;
+	static constexpr angle_t ANGLE_RANGE = UINT16_MAX;
 
 	/// <summary>
 	/// Converts degrees to the abstract angle representation.
@@ -37,12 +37,13 @@ namespace IntegerSignal::Trigonometry
 	/// <returns>Abstract angle in the range [0; UINT16_MAX]</returns>
 	static constexpr angle_t GetAngle(const int16_t degrees)
 	{
-		return ((int32_t)degrees * ((int32_t)ANGLE_MAX + 1)) / 360;
+		return ((int32_t)degrees * ((int32_t)ANGLE_RANGE + 1)) / 360;
 	}
 
 	static constexpr angle_t ANGLE_90 = GetAngle(90);
 	static constexpr angle_t ANGLE_45 = GetAngle(45);
 	static constexpr angle_t ANGLE_180 = GetAngle(180);
+	static constexpr angle_t ANGLE_270 = GetAngle(270);
 }
 
 #endif

@@ -11,7 +11,7 @@ namespace IntegerSignal::Trigonometry::Lut::Sine8
 {
 	/// <summary>
 	/// [0 ; 90] degrees Sine function table.
-	/// [0 ; UINT8_MAX] fraction.
+	/// [0 ; UINT8_MAX] scale.
 	/// </summary>
 	static constexpr uint8_t Table[] PROGMEM
 	{

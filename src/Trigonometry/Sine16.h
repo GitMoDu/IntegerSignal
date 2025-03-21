@@ -10,7 +10,7 @@ namespace IntegerSignal::Trigonometry
 	/// <summary>
 	/// Get scale fraction from Sine(angle) .
 	/// </summary>
-	/// <param name="angle">Angle (0;360) degrees [0; ANGLE_MAX].</param>
+	/// <param name="angle">Angle (0;360) degrees [0; ANGLE_RANGE].</param>
 	/// <returns>Scale fraction [-FRACTION16_1X; +FRACTION16_1X].</returns>
 	static const fraction16_t Sine16(const angle_t angle)
 	{
@@ -39,7 +39,7 @@ namespace IntegerSignal::Trigonometry
 	/// <summary>
 	/// Get scale fraction from Cosine(angle) .
 	/// </summary>
-	/// <param name="angle">Angle (0;360) degrees [0; ANGLE_MAX].</param>
+	/// <param name="angle">Angle (0;360) degrees [0; ANGLE_RANGE].</param>
 	/// <returns>Scale fraction [-FRACTION16_1X; +FRACTION16_1X].</returns>
 	static const fraction16_t Cosine16(const angle_t angle)
 	{
