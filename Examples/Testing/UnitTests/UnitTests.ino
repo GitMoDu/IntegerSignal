@@ -40,8 +40,6 @@ void setup()
 
 
 	Serial.flush();
-	//pass &= IntegerSignal::Trigonometry::Sine::Test::RunTests<MaxIterations>();
-	//delay(5000000);
 
 	pass &= IntegerSignal::Trigonometry::Tangent::Test::RunTests<MaxIterations>();
 	pass &= IntegerSignal::Trigonometry::Sine::Test::RunTests<MaxIterations>();

@@ -32,6 +32,22 @@ void setup()
 	BenchmarkSine<(TestSize / 200) | 3>();
 	Serial.println();
 
+	Serial.println(F("Tangent"));
+	BenchmarkTangent<(TestSize / 200) | 3>();
+	Serial.println();
+
+	Serial.println(F("Resize"));
+	BenchmarkResize<(TestSize / 200) | 3>();
+	Serial.println();
+
+	Serial.println(F("UFraction"));
+	BenchmarkUFraction<(TestSize / 200) | 3>();
+	Serial.println();
+
+	Serial.println(F("Fraction"));
+	BenchmarkUFraction<(TestSize / 200) | 3>();
+	Serial.println();
+
 	Serial.println(F("Mix"));
 	BenchmarkMix();
 	Serial.println();
