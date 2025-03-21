@@ -12,8 +12,9 @@
 #include "SquareRootTest.h"
 #include "BitScaleTest.h"
 #include "ResizeTest.h"
-#include "SineTest.h"
 #include "FractionScaleTest.h"
+#include "SineTest.h"
+#include "TangentTest.h"
 
 inline void PrintPlaform();
 
@@ -42,6 +43,7 @@ void setup()
 	//pass &= IntegerSignal::Trigonometry::Sine::Test::RunTests<MaxIterations>();
 	//delay(5000000);
 
+	pass &= IntegerSignal::Trigonometry::Tangent::Test::RunTests<MaxIterations>();
 	pass &= IntegerSignal::Trigonometry::Sine::Test::RunTests<MaxIterations>();
 	pass &= IntegerSignal::Fraction::Test::RunTests<MaxIterations>();
 	pass &= IntegerSignal::BitScale::Test::RunTests<MaxIterations>();

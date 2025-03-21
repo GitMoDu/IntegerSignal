@@ -5,5 +5,6 @@
 
 #include "Trigonometry/Trigonometry.h"
 #include "Trigonometry/Sine8.h"
+#include "Trigonometry/Tangent8.h"
 
 #endif
