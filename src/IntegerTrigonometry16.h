@@ -6,4 +6,6 @@
 #include "Trigonometry/Trigonometry.h"
 #include "Trigonometry/Sine16.h"
 
+#include "Trigonometry/Sine32.h"
+
 #endif
