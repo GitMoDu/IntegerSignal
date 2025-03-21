@@ -12,7 +12,7 @@
 #include "SquareRootTest.h"
 #include "BitScaleTest.h"
 #include "ResizeTest.h"
-#include "FractionScaleTest.h"
+#include "FractionTest.h"
 #include "SineTest.h"
 #include "TangentTest.h"
 

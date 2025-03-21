@@ -58,7 +58,7 @@ namespace IntegerSignal::Resize::Test
 	// Exhaustive test for resize8_t
 	static bool TestResize8Exhaustive8()
 	{
-		Serial.println(F("Starting exhaustive resize8_t tests..."));
+		Serial.println(F("Starting exhaustive Resize (8 bit) tests..."));
 
 		uint32_t errorCount = 0;
 		for (uint16_t v = 0; v <= UINT8_MAX; v++) 
@@ -71,7 +71,7 @@ namespace IntegerSignal::Resize::Test
 				const uint8_t refResult = RefResize8(value, resize);
 				if (result != refResult)
 				{
-					Serial.print(F("resize8_t error: value="));
+					Serial.print(F("Resize (8 bit) error: value="));
 					Serial.print(value);
 					Serial.print(F(" resize="));
 					Serial.print(resize);
@@ -84,18 +84,18 @@ namespace IntegerSignal::Resize::Test
 			}
 			if ((v % 16) == 0)
 			{
-				Serial.print(F("resize8_t progress: "));
+				Serial.print(F("Resize (8 bit) progress: "));
 				Serial.print(v);
 				Serial.println(F(" values tested..."));
 			}
 		}
 		if (errorCount == 0)
 		{
-			Serial.println(F("All resize8_t tests PASSED."));
+			Serial.println(F("All Resize (8 bit) tests PASSED."));
 		}
 		else
 		{
-			Serial.print(F("resize8_t tests FAILED. Errors: "));
+			Serial.print(F("Resize (8 bit) tests FAILED. Errors: "));
 			Serial.println(errorCount);
 		}
 
@@ -104,7 +104,7 @@ namespace IntegerSignal::Resize::Test
 
 	static bool TestResize16Exhaustive8()
 	{
-		Serial.println(F("Starting exhaustive resize16_t tests..."));
+		Serial.println(F("Starting exhaustive Resize (16 bit) tests..."));
 
 		uint32_t errorCount = 0;
 		for (uint16_t v = 0; v <= UINT8_MAX; v++)
@@ -117,7 +117,7 @@ namespace IntegerSignal::Resize::Test
 				const uint8_t refResult = RefResize16(value, resize);
 				if (result != refResult)
 				{
-					Serial.print(F("resize16_t error: value="));
+					Serial.print(F("Resize (16 bit) error: value="));
 					Serial.print(value);
 					Serial.print(F(" resize="));
 					Serial.print(resize);
@@ -130,18 +130,18 @@ namespace IntegerSignal::Resize::Test
 			}
 			if ((v % 16) == 0)
 			{
-				Serial.print(F("resize16_t progress: "));
+				Serial.print(F("Resize (16 bit) progress: "));
 				Serial.print(v);
 				Serial.println(F(" values tested..."));
 			}
 		}
 		if (errorCount == 0)
 		{
-			Serial.println(F("All resize16_t tests PASSED."));
+			Serial.println(F("All Resize (16 bit) tests PASSED."));
 		}
 		else
 		{
-			Serial.print(F("resize16_t tests FAILED. Errors: "));
+			Serial.print(F("Resize (16 bit) tests FAILED. Errors: "));
 			Serial.println(errorCount);
 		}
 
@@ -154,7 +154,7 @@ namespace IntegerSignal::Resize::Test
 	{
 		const uint32_t iterations = min(MaxIterations, (uint32_t)UINT16_MAX);
 
-		Serial.println(F("Starting sampled resize8_t tests..."));
+		Serial.println(F("Starting sampled Resize (8 bit) tests..."));
 
 		uint32_t errorCount = 0;
 
@@ -182,7 +182,7 @@ namespace IntegerSignal::Resize::Test
 					|| result32 != refResult32
 					)
 				{
-					Serial.print(F("resize8_t error: resize="));
+					Serial.print(F("Resize (8 bit) error: resize="));
 					Serial.print(resize8);
 					Serial.print(F(" value="));
 					if (result8 != refResult8)
@@ -212,7 +212,7 @@ namespace IntegerSignal::Resize::Test
 
 			if ((r % 16) == 0)
 			{
-				Serial.print(F("resize8_t progress: "));
+				Serial.print(F("Resize (8 bit) progress: "));
 				Serial.print(r);
 				Serial.println(F(" values tested..."));
 			}
@@ -220,17 +220,16 @@ namespace IntegerSignal::Resize::Test
 
 		if (errorCount == 0)
 		{
-			Serial.println(F("All resize8_t tests PASSED."));
+			Serial.println(F("All Resize (8 bit) tests PASSED."));
 		}
 		else
 		{
-			Serial.print(F("resize8_t tests FAILED. Errors: "));
+			Serial.print(F("Resize (8 bit) tests FAILED. Errors: "));
 			Serial.println(errorCount);
 		}
 
 		return errorCount == 0;
 	}
-
 
 
 	// Sampled test for resize16_t for uint8_t, uint16_t, and uint32_t
@@ -239,7 +238,7 @@ namespace IntegerSignal::Resize::Test
 	{
 		const uint32_t iterations = min(MaxIterations, (uint32_t)UINT16_MAX);
 
-		Serial.println(F("Starting sampled resize16_t tests..."));
+		Serial.println(F("Starting sampled (16 bit) tests..."));
 
 		uint32_t errorCount = 0;
 
@@ -264,7 +263,7 @@ namespace IntegerSignal::Resize::Test
 
 				if (result8 != refResult8 || result16 != refResult16 || result32 != refResult32)
 				{
-					Serial.print(F("resize16_t error: resize="));
+					Serial.print(F("Resize (16 bit) error: resize="));
 					Serial.print(resize16);
 					Serial.print(F(" value="));
 					if (result8 != refResult8)
@@ -294,7 +293,7 @@ namespace IntegerSignal::Resize::Test
 
 			if ((r % 256) == 0)
 			{
-				Serial.print(F("resize16_t progress: "));
+				Serial.print(F("Resize (16 bit) progress: "));
 				Serial.print(r);
 				Serial.println(F(" resizes tested..."));
 			}
@@ -302,11 +301,11 @@ namespace IntegerSignal::Resize::Test
 
 		if (errorCount == 0)
 		{
-			Serial.println(F("All resize16_t tests PASSED."));
+			Serial.println(F("All Resize (16 bit) tests PASSED."));
 		}
 		else
 		{
-			Serial.print(F("resize16_t tests FAILED. Errors: "));
+			Serial.print(F("Resize (16 bit) tests FAILED. Errors: "));
 			Serial.println(errorCount);
 		}
 
@@ -317,7 +316,7 @@ namespace IntegerSignal::Resize::Test
 	// Exhaustive test for GetResizeN for all 255*255 combinations of numerator/denominator.
 	static bool TestGetResizeExhaustive8()
 	{
-		Serial.println(F("Starting exhaustive GetResize8 tests..."));
+		Serial.println(F("Starting exhaustive GetResize (8 bit) tests..."));
 
 		uint32_t errorCount = 0;
 		for (uint16_t n = 1; n <= UINT8_MAX; n++)
@@ -340,7 +339,7 @@ namespace IntegerSignal::Resize::Test
 					|| result32 != refResult32
 					)
 				{
-					Serial.print(F("GetResize8 error: numerator="));
+					Serial.print(F("GetResize (8 bit) error: numerator="));
 					Serial.print(numerator);
 					Serial.print(F(" denominator="));
 					Serial.print(denominator);
@@ -370,18 +369,18 @@ namespace IntegerSignal::Resize::Test
 			}
 			if ((n % 16) == 0)
 			{
-				Serial.print(F("GetResize8 progress: "));
+				Serial.print(F("GetResize (8 bit) progress: "));
 				Serial.print(n);
 				Serial.println(F(" numerators tested..."));
 			}
 		}
 		if (errorCount == 0)
 		{
-			Serial.println(F("All GetResize8 tests PASSED."));
+			Serial.println(F("All GetResize (8 bit) tests PASSED."));
 		}
 		else
 		{
-			Serial.print(F("GetResize8 tests FAILED. Errors: "));
+			Serial.print(F("GetResize (8 bit) tests FAILED. Errors: "));
 			Serial.println(errorCount);
 		}
 
