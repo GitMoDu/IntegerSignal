@@ -257,7 +257,6 @@ namespace IntegerSignal::Fraction
 		return ((uint64_t)value * fraction) >> GetBitShifts(UFRACTION32_1X);
 	}
 
-
 	static constexpr int8_t Scale(const fraction8_t fraction, const int8_t value)
 	{
 		return SignedRightShift((int16_t)fraction * value, GetBitShifts(FRACTION8_1X));
@@ -301,6 +300,42 @@ namespace IntegerSignal::Fraction
 	static constexpr int32_t Scale(const fraction32_t fraction, const int32_t value)
 	{
 		return SignedRightShift((int64_t)fraction * value, GetBitShifts(FRACTION32_1X));
+	}
+
+	template<typename T>
+	static constexpr T Interpolate(const ufraction8_t fraction, const T from, const T to)
+	{
+		return Fraction::Scale(fraction, to) + Fraction::Scale(ufraction8_t(UFRACTION8_1X - fraction), from);
+	}
+
+	template<typename T>
+	static constexpr T Interpolate(const ufraction16_t fraction, const T from, const T to)
+	{
+		return Fraction::Scale(fraction, to) + Fraction::Scale(ufraction16_t(UFRACTION16_1X - fraction), from);
+	}
+
+	template<typename T>
+	static constexpr T Interpolate(const ufraction32_t fraction, const T from, const T to)
+	{
+		return Fraction::Scale(fraction, to) + Fraction::Scale(ufraction32_t(UFRACTION32_1X - fraction), from);
+	}
+
+	template<typename T>
+	static constexpr T Interpolate(const fraction8_t fraction, const T from, const T to)
+	{
+		return Fraction::Scale(fraction, to) + Fraction::Scale(fraction8_t(FRACTION8_1X - fraction), from);
+	}
+
+	template<typename T>
+	static constexpr T Interpolate(const fraction16_t fraction, const T from, const T to)
+	{
+		return Fraction::Scale(fraction, to) + Fraction::Scale(fraction16_t(FRACTION16_1X - fraction), from);
+	}
+
+	template<typename T>
+	static constexpr T Interpolate(const fraction32_t fraction, const T from, const T to)
+	{
+		return Fraction::Scale(fraction, to) + Fraction::Scale(fraction32_t(FRACTION32_1X - fraction), from);
 	}
 }
 
