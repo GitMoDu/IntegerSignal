@@ -70,10 +70,34 @@ namespace IntegerSignal::Fraction
 				(uint8_t)(((uint16_t)value << GetBitShifts(UFRACTION8_1X)) / reference));
 		}
 
+		static constexpr ufraction8_t GetUFraction8(const uint16_t value, const uint16_t reference)
+		{
+			return MinValue(UFRACTION8_1X,
+				(uint8_t)(((uint32_t)value << GetBitShifts(UFRACTION8_1X)) / reference));
+		}
+
+		static constexpr ufraction8_t GetUFraction8(const uint32_t value, const uint32_t reference)
+		{
+			return MinValue(UFRACTION8_1X,
+				(uint8_t)(((uint64_t)value << GetBitShifts(UFRACTION8_1X)) / reference));
+		}
+
 		static constexpr ufraction16_t GetUFraction16(const uint8_t value, const uint8_t reference)
 		{
 			return MinValue(UFRACTION16_1X,
 				(uint16_t)(((uint32_t)value << GetBitShifts(UFRACTION16_1X)) / reference));
+		}
+
+		static constexpr ufraction16_t GetUFraction16(const uint16_t value, const uint16_t reference)
+		{
+			return MinValue(UFRACTION16_1X,
+				(uint16_t)(((uint32_t)value << GetBitShifts(UFRACTION16_1X)) / reference));
+		}
+
+		static constexpr ufraction16_t GetUFraction16(const uint32_t value, const uint32_t reference)
+		{
+			return MinValue(UFRACTION16_1X,
+				(uint16_t)(((uint64_t)value << GetBitShifts(UFRACTION16_1X)) / reference));
 		}
 
 		static constexpr ufraction32_t GetUFraction32(const uint8_t value, const uint8_t reference)
@@ -81,6 +105,19 @@ namespace IntegerSignal::Fraction
 			return MinValue(UFRACTION32_1X,
 				(uint32_t)(((uint64_t)value << GetBitShifts(UFRACTION32_1X)) / reference));
 		}
+
+		static constexpr ufraction32_t GetUFraction32(const uint16_t value, const uint16_t reference)
+		{
+			return MinValue(UFRACTION32_1X,
+				(uint32_t)(((uint64_t)value << GetBitShifts(UFRACTION32_1X)) / reference));
+		}
+
+		static constexpr ufraction32_t GetUFraction32(const uint32_t value, const uint32_t reference)
+		{
+			return MinValue(UFRACTION32_1X,
+				(uint32_t)(((uint64_t)value << GetBitShifts(UFRACTION32_1X)) / reference));
+		}
+
 
 		static constexpr fraction8_t GetFraction8(const uint8_t value, const uint8_t reference)
 		{
