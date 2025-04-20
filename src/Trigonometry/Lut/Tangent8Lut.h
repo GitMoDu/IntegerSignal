@@ -3,10 +3,6 @@
 
 #include "../Trigonometry.h"
 
-#if !defined(PROGMEM)
-#define PROGMEM
-#endif
-
 #if defined(ARDUINO_ARCH_AVR)
 #include <avr/pgmspace.h>
 #endif
