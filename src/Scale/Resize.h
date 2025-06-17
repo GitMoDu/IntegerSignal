@@ -64,7 +64,7 @@ namespace IntegerSignal
 
 			static constexpr resize8_t GetResize8(const uint32_t numerator, const uint32_t denominator = 1)
 			{
-				return ((uint64_t)numerator * RESIZE8_1X) / denominator;
+				return resize8_t(((uint64_t)numerator * RESIZE8_1X) / denominator);
 			}
 
 			static constexpr resize16_t GetResize16(const uint16_t numerator, const uint16_t denominator = 1)
@@ -79,7 +79,7 @@ namespace IntegerSignal
 
 			static constexpr resize16_t GetResize16(const uint32_t numerator, const uint32_t denominator = 1)
 			{
-				return ((uint64_t)numerator * RESIZE16_1X) / denominator;
+				return resize16_t(((uint64_t)numerator * RESIZE16_1X) / denominator);
 			}
 
 			static constexpr resize32_t GetResize32(const uint32_t numerator, const uint32_t denominator = 1)
@@ -102,92 +102,92 @@ namespace IntegerSignal
 
 		static constexpr uint8_t Scale(const resize8_t resize, const uint8_t value)
 		{
-			return MinValue((uint16_t)UINT8_MAX, (uint16_t)(((uint16_t)value * resize) / RESIZE8_1X));
+			return uint8_t(MinValue((uint16_t)UINT8_MAX, (uint16_t)(((uint16_t)value * resize) / RESIZE8_1X)));
 		}
 
 		static constexpr int8_t Scale(const resize8_t resize, const int8_t value)
 		{
-			return MaxValue((int16_t)INT8_MIN, MinValue((int16_t)INT8_MAX, (int16_t)(((int16_t)value * resize) / RESIZE8_1X)));
+			return int8_t(MaxValue((int16_t)INT8_MIN, MinValue((int16_t)INT8_MAX, (int16_t)(((int16_t)value * resize) / RESIZE8_1X))));
 		}
 
 		static constexpr uint16_t Scale(const resize8_t resize, const uint16_t value)
 		{
-			return MinValue((uint32_t)UINT16_MAX, ((uint32_t)value * resize) / RESIZE8_1X);
+			return uint16_t(MinValue((uint32_t)UINT16_MAX, ((uint32_t)value * resize) / RESIZE8_1X));
 		}
 
 		static constexpr int16_t Scale(const resize8_t resize, const int16_t value)
 		{
-			return MaxValue((int32_t)INT16_MIN, MinValue((int32_t)INT16_MAX, (int32_t)(((int32_t)value * resize) / RESIZE8_1X)));
+			return int16_t(MaxValue((int32_t)INT16_MIN, MinValue((int32_t)INT16_MAX, (int32_t)(((int32_t)value * resize) / RESIZE8_1X))));
 		}
 
 		static constexpr uint32_t Scale(const resize8_t resize, const uint32_t value)
 		{
-			return MinValue((uint64_t)UINT32_MAX, (uint64_t)(((uint64_t)value * resize) / RESIZE8_1X));
+			return uint32_t(MinValue((uint64_t)UINT32_MAX, (uint64_t)(((uint64_t)value * resize) / RESIZE8_1X)));
 		}
 
 		static constexpr int32_t Scale(const resize8_t resize, const int32_t value)
 		{
-			return MaxValue((int64_t)INT32_MIN, MinValue((int64_t)INT32_MAX, ((int64_t)value * resize) / RESIZE8_1X));
+			return int32_t(MaxValue((int64_t)INT32_MIN, MinValue((int64_t)INT32_MAX, ((int64_t)value * resize) / RESIZE8_1X)));
 		}
 
 		static constexpr uint8_t Scale(const resize16_t resize, const uint8_t value)
 		{
-			return MinValue((uint16_t)UINT8_MAX, (uint16_t)(((uint16_t)value * resize) / RESIZE16_1X));
+			return uint8_t(MinValue((uint16_t)UINT8_MAX, (uint16_t)(((uint16_t)value * resize) / RESIZE16_1X)));
 		}
 
 		static constexpr int8_t Scale(const resize16_t resize, const int8_t value)
 		{
-			return MaxValue((int16_t)INT8_MIN, MinValue((int16_t)INT8_MAX, (int16_t)(((int32_t)value * resize) / RESIZE16_1X)));
+			return int8_t(MaxValue((int16_t)INT8_MIN, MinValue((int16_t)INT8_MAX, (int16_t)(((int32_t)value * resize) / RESIZE16_1X))));
 		}
 
 		static constexpr uint16_t Scale(const resize16_t resize, const uint16_t value)
 		{
-			return MinValue((uint32_t)UINT16_MAX, (uint32_t)(((uint32_t)value * resize) / RESIZE16_1X));
+			return uint16_t(MinValue((uint32_t)UINT16_MAX, (uint32_t)(((uint32_t)value * resize) / RESIZE16_1X)));
 		}
 
 		static constexpr int16_t Scale(const resize16_t resize, const int16_t value)
 		{
-			return MaxValue((int32_t)INT16_MIN, MinValue((int32_t)INT16_MAX, (int32_t)(((int32_t)value * resize) / RESIZE16_1X)));
+			return int16_t(MaxValue((int32_t)INT16_MIN, MinValue((int32_t)INT16_MAX, (int32_t)(((int32_t)value * resize) / RESIZE16_1X))));
 		}
 
 		static constexpr uint32_t Scale(const resize16_t resize, const uint32_t value)
 		{
-			return MinValue((uint64_t)UINT32_MAX, (uint64_t)(((uint64_t)value * resize) / RESIZE16_1X));
+			return uint32_t(MinValue((uint64_t)UINT32_MAX, (uint64_t)(((uint64_t)value * resize) / RESIZE16_1X)));
 		}
 
 		static constexpr int32_t Scale(const resize16_t resize, const int32_t value)
 		{
-			return MaxValue((int64_t)INT32_MIN, MinValue((int64_t)INT32_MAX, (int64_t)(((int64_t)value * resize) / RESIZE16_1X)));
+			return int32_t(MaxValue((int64_t)INT32_MIN, MinValue((int64_t)INT32_MAX, (int64_t)(((int64_t)value * resize) / RESIZE16_1X))));
 		}
 
 		static constexpr uint8_t Scale(const resize32_t resize, const uint8_t value)
 		{
-			return MinValue((uint16_t)UINT8_MAX, (uint16_t)(((uint32_t)value * resize) / RESIZE32_1X));
+			return uint8_t(MinValue((uint16_t)UINT8_MAX, (uint16_t)(((uint32_t)value * resize) / RESIZE32_1X)));
 		}
 
 		static constexpr int8_t Scale(const resize32_t resize, const int8_t value)
 		{
-			return MaxValue((int16_t)INT8_MIN, MinValue((int16_t)INT8_MAX, (int16_t)(((int32_t)value * resize) / RESIZE32_1X)));
+			return int8_t(MaxValue((int16_t)INT8_MIN, MinValue((int16_t)INT8_MAX, (int16_t)(((int32_t)value * resize) / RESIZE32_1X))));
 		}
 
 		static constexpr uint16_t Scale(const resize32_t resize, const uint16_t value)
 		{
-			return MinValue((uint32_t)UINT16_MAX, (uint32_t)(((uint32_t)value * resize) / RESIZE32_1X));
+			return uint16_t(MinValue((uint32_t)UINT16_MAX, (uint32_t)(((uint32_t)value * resize) / RESIZE32_1X)));
 		}
 
 		static constexpr int16_t Scale(const resize32_t resize, const int16_t value)
 		{
-			return MaxValue((int32_t)INT16_MIN, MinValue((int32_t)INT16_MAX, (int32_t)(((int32_t)value * resize) / RESIZE32_1X)));
+			return int16_t(MaxValue((int32_t)INT16_MIN, MinValue((int32_t)INT16_MAX, (int32_t)(((int32_t)value * resize) / RESIZE32_1X))));
 		}
 
 		static constexpr uint32_t Scale(const resize32_t resize, const uint32_t value)
 		{
-			return MinValue((uint64_t)UINT32_MAX, (uint64_t)(((uint64_t)value * resize) / RESIZE32_1X));
+			return uint32_t(MinValue((uint64_t)UINT32_MAX, (uint64_t)(((uint64_t)value * resize) / RESIZE32_1X)));
 		}
 
 		static constexpr int32_t Scale(const resize32_t resize, const int32_t value)
 		{
-			return MaxValue((int64_t)INT32_MIN, MinValue((int64_t)INT32_MAX, (int64_t)(((int64_t)value * resize) / RESIZE32_1X)));
+			return int32_t(MaxValue((int64_t)INT32_MIN, MinValue((int64_t)INT32_MAX, (int64_t)(((int64_t)value * resize) / RESIZE32_1X))));
 		}
 	}
 }

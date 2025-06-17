@@ -128,7 +128,7 @@ namespace IntegerSignal
 
 			static constexpr fraction8_t GetFraction8(const int8_t value, const int8_t reference)
 			{
-				return MaxValue((int16_t)FRACTION8_NEGATIVE_1X, (int16_t)(((int16_t)value * FRACTION8_1X) / reference));
+				return fraction8_t(MaxValue((int16_t)FRACTION8_NEGATIVE_1X, (int16_t)(((int16_t)value * FRACTION8_1X) / reference)));
 			}
 
 			static constexpr fraction8_t GetFraction8(const uint16_t value, const uint16_t reference)
@@ -143,12 +143,12 @@ namespace IntegerSignal
 
 			static constexpr fraction8_t GetFraction8(const uint32_t value, const uint32_t reference)
 			{
-				return ((int64_t)value * FRACTION8_1X) / reference;
+				return fraction8_t(((int64_t)value * FRACTION8_1X) / reference);
 			}
 
 			static constexpr fraction8_t GetFraction8(const int32_t value, const int32_t reference)
 			{
-				return MaxValue((int64_t)FRACTION8_NEGATIVE_1X, (int64_t)(((int64_t)value * FRACTION8_1X) / reference));
+				return fraction8_t(MaxValue((int64_t)FRACTION8_NEGATIVE_1X, (int64_t)(((int64_t)value * FRACTION8_1X) / reference)));
 			}
 
 			static constexpr fraction16_t GetFraction16(const uint8_t value, const uint8_t reference)
@@ -173,12 +173,12 @@ namespace IntegerSignal
 
 			static constexpr fraction16_t GetFraction16(const uint32_t value, const uint32_t reference)
 			{
-				return ((uint64_t)value * FRACTION16_1X) / reference;
+				return fraction16_t(((uint64_t)value * FRACTION16_1X) / reference);
 			}
 
 			static constexpr fraction16_t GetFraction16(const int32_t value, const int32_t reference)
 			{
-				return MaxValue((int64_t)FRACTION16_NEGATIVE_1X, (int64_t)(((int64_t)value * FRACTION16_1X) / reference));
+				return fraction16_t(MaxValue((int64_t)FRACTION16_NEGATIVE_1X, (int64_t)(((int64_t)value * FRACTION16_1X) / reference)));
 			}
 
 			static constexpr fraction32_t GetFraction32(const uint8_t value, const uint8_t reference)
@@ -188,7 +188,7 @@ namespace IntegerSignal
 
 			static constexpr fraction32_t GetFraction32(const int8_t value, const int8_t reference)
 			{
-				return MaxValue((int64_t)FRACTION32_NEGATIVE_1X, (int64_t)(((int64_t)value * FRACTION32_1X) / reference));
+				return fraction32_t(MaxValue((int64_t)FRACTION32_NEGATIVE_1X, (int64_t)(((int64_t)value * FRACTION32_1X) / reference)));
 			}
 
 			static constexpr fraction32_t GetFraction32(const uint16_t value, const uint16_t reference)
@@ -198,7 +198,7 @@ namespace IntegerSignal
 
 			static constexpr fraction32_t GetFraction32(const int16_t value, const int16_t reference)
 			{
-				return MaxValue((int64_t)FRACTION32_NEGATIVE_1X, (int64_t)(((int64_t)value * FRACTION32_1X) / reference));
+				return fraction32_t(MaxValue((int64_t)FRACTION32_NEGATIVE_1X, (int64_t)(((int64_t)value * FRACTION32_1X) / reference)));
 			}
 
 			static constexpr fraction32_t GetFraction32(const uint32_t value, const uint32_t reference)
@@ -208,7 +208,7 @@ namespace IntegerSignal
 
 			static constexpr fraction32_t GetFraction32(const int32_t value, const int32_t reference)
 			{
-				return MaxValue((int64_t)FRACTION32_NEGATIVE_1X, (int64_t)(((int64_t)value * FRACTION32_1X) / reference));
+				return fraction32_t(MaxValue((int64_t)FRACTION32_NEGATIVE_1X, (int64_t)(((int64_t)value * FRACTION32_1X) / reference)));
 			}
 		}
 
@@ -246,12 +246,12 @@ namespace IntegerSignal
 
 		static constexpr uint8_t Scale(const ufraction32_t fraction, const uint8_t value)
 		{
-			return ((uint64_t)value * fraction) >> GetBitShifts(UFRACTION32_1X);
+			return uint8_t(((uint64_t)value * fraction) >> GetBitShifts(UFRACTION32_1X));
 		}
 
 		static constexpr uint16_t Scale(const ufraction32_t fraction, const uint16_t value)
 		{
-			return ((uint64_t)value * fraction) >> GetBitShifts(UFRACTION32_1X);
+			return uint16_t(((uint64_t)value * fraction) >> GetBitShifts(UFRACTION32_1X));
 		}
 
 		static constexpr uint32_t Scale(const ufraction32_t fraction, const uint32_t value)
@@ -271,37 +271,37 @@ namespace IntegerSignal
 
 		static constexpr int32_t Scale(const fraction8_t fraction, const int32_t value)
 		{
-			return SignedRightShift((int64_t)fraction * value, GetBitShifts(FRACTION8_1X));
+			return int32_t(SignedRightShift((int64_t)fraction * value, GetBitShifts(FRACTION8_1X)));
 		}
 
 		static constexpr int8_t Scale(const fraction16_t fraction, const int8_t value)
 		{
-			return SignedRightShift((int32_t)fraction * value, GetBitShifts(FRACTION16_1X));
+			return int8_t(SignedRightShift((int32_t)fraction * value, GetBitShifts(FRACTION16_1X)));
 		}
 
 		static constexpr int16_t Scale(const fraction16_t fraction, const int16_t value)
 		{
-			return SignedRightShift((int32_t)fraction * value, GetBitShifts(FRACTION16_1X));
+			return int16_t(SignedRightShift((int32_t)fraction * value, GetBitShifts(FRACTION16_1X)));
 		}
 
 		static constexpr int32_t Scale(const fraction16_t fraction, const int32_t value)
 		{
-			return SignedRightShift((int64_t)fraction * value, GetBitShifts(FRACTION16_1X));
+			return int32_t(SignedRightShift((int64_t)fraction * value, GetBitShifts(FRACTION16_1X)));
 		}
 
 		static constexpr int8_t Scale(const fraction32_t fraction, const int8_t value)
 		{
-			return SignedRightShift((int64_t)fraction * value, GetBitShifts(FRACTION32_1X));
+			return int8_t(SignedRightShift((int64_t)fraction * value, GetBitShifts(FRACTION32_1X)));
 		}
 
 		static constexpr int16_t Scale(const fraction32_t fraction, const int16_t value)
 		{
-			return SignedRightShift((int64_t)fraction * value, GetBitShifts(FRACTION32_1X));
+			return int16_t(SignedRightShift((int64_t)fraction * value, GetBitShifts(FRACTION32_1X)));
 		}
 
 		static constexpr int32_t Scale(const fraction32_t fraction, const int32_t value)
 		{
-			return SignedRightShift((int64_t)fraction * value, GetBitShifts(FRACTION32_1X));
+			return int32_t(SignedRightShift((int64_t)fraction * value, GetBitShifts(FRACTION32_1X)));
 		}
 
 		template<typename T>
