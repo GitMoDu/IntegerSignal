@@ -9,37 +9,37 @@ namespace IntegerSignal
 	{
 		/// <summary>
 		/// [0; UINT8_MAX].
-		/// Corresponds to [0.0 ; +1.0] signed fraction scale.
+		/// Corresponds to [0.0 ; +1.0] unsigned fraction scale.
 		/// </summary>
 		typedef uint8_t ufraction8_t;
 
 		/// <summary>
 		/// [0 ; UINT16_MAX].
-		/// Corresponds to [0.0 ; +1.0] signed fraction scale.
+		/// Corresponds to [0.0 ; +1.0] unsigned fraction scale.
 		/// </summary>
 		typedef uint16_t ufraction16_t;
 
 		/// <summary>
 		/// [0; UINT32_MAX].
-		/// Corresponds to [0.0 ; +1.0] signed fraction scale.
+		/// Corresponds to [0.0 ; +1.0] unsigned fraction scale.
 		/// </summary>
 		typedef uint32_t ufraction32_t;
 
 		/// <summary>
 		/// [-INT8_MAX ; INT8_MAX].
-		/// Corresponds to [-1.0 ; +1.0] unsigned fraction scale.
+		/// Corresponds to [-1.0 ; +1.0] signed fraction scale.
 		/// </summary>
 		typedef int8_t fraction8_t;
 
 		/// <summary>
 		/// [-INT16_MAX ; INT16_MAX].
-		/// Corresponds to [-1.0 ; +1.0] unsigned fraction scale.
+		/// Corresponds to [-1.0 ; +1.0] signed fraction scale.
 		/// </summary>
 		typedef int16_t fraction16_t;
 
 		/// <summary>
 		/// [-INT32_MAX ; INT32_MAX].
-		/// Corresponds to [-1.0 ; +1.0] unsigned fraction scale.
+		/// Corresponds to [-1.0 ; +1.0] signed fraction scale.
 		/// </summary>
 		typedef int32_t fraction32_t;
 
