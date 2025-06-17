@@ -33,6 +33,12 @@ namespace IntegerSignal
 		return (a > b) ? a : b;
 	}
 
+	template<typename T>
+	constexpr T LimitValue(const T value, const T low, const T high)
+	{
+		return MaxValue(low, MinValue(value, high));
+	}
+
 	/// <summary>
 	/// Replacement for std::abs() and Arduino abs().
 	/// Returns the absolute value of the given number.
