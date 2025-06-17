@@ -53,7 +53,7 @@ namespace IntegerSignal
 	/// <param name="value">The value to calculate the bit shifts for.</param>
 	/// <returns>The number of bit shifts required.</returns>
 	template <typename T>
-	constexpr T GetBitShifts(const T value)
+	constexpr uint8_t GetBitShifts(const T value)
 	{
 		return (value <= 1) ? 0 : 1 + GetBitShifts(value >> 1);
 	}
