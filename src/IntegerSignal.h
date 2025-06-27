@@ -2,6 +2,7 @@
 #define _INTEGER_SIGNAL_INCLUDE_h
 
 #include "Base/Operation.h"
+#include "Base/Size.h"
 #include "Base/Convert.h"
 #include "Base/Mix.h"
 #include "Base/SquareRoot.h"
