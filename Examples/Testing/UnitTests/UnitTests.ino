@@ -15,6 +15,7 @@
 #include "FractionTest.h"
 #include "SineTest.h"
 #include "TangentTest.h"
+#include "UIntSizeTest.h"
 
 inline void PrintPlaform();
 
@@ -41,6 +42,7 @@ void setup()
 
 	Serial.flush();
 
+	pass &= IntegerSignal::UIntSize::Test::RunTests();
 	pass &= IntegerSignal::Trigonometry::Tangent::Test::RunTests<MaxIterations>();
 	pass &= IntegerSignal::Trigonometry::Sine::Test::RunTests<MaxIterations>();
 	pass &= IntegerSignal::Fraction::Test::RunTests<MaxIterations>();
