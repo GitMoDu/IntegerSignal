@@ -123,6 +123,7 @@ namespace IntegerSignal
 		/// Selects the smallest unsigned integer type that can store values up to N.
 		/// </summary>
 		/// <typeparam name="N">Maximum value to store.</typeparam>
+		template<uint64_t N>
 		struct uint_type : BitSize::byte_type<BitSize::byte_count<N>::value> {};
 	}
 
@@ -136,6 +137,7 @@ namespace IntegerSignal
 		/// Selects the smallest uint_least type that can store values up to N.
 		/// </summary>
 		/// <typeparam name="N">Maximum value to store.</typeparam>
+		template<uint64_t N>
 		struct uint_least_type : BitSize::byte_least_type<BitSize::byte_count<N>::value> {};
 	}
 
@@ -149,6 +151,7 @@ namespace IntegerSignal
 		/// Selects the fastest uint_fast type that can store values up to N.
 		/// </summary>
 		/// <typeparam name="N">Maximum value to store.</typeparam>
+		template<uint64_t N>
 		struct uint_fast_type : BitSize::byte_fast_type<BitSize::byte_count<N>::value> {};
 	}
 
