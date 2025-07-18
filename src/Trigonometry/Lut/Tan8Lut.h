@@ -27,7 +27,7 @@ namespace IntegerSignal::Trigonometry::Lut::Tangent8
 
 	static constexpr uint8_t LutSize = sizeof(Table) / sizeof(Table[0]);
 
-	static const uint8_t GetInterpolated(const angle_t angle)
+	static uint8_t GetInterpolated(const angle_t angle)
 	{
 		// Use ANGLE_45 because our LUT is built for 0–45°.
 		static constexpr auto StepError = (ANGLE_45 / LutSize);

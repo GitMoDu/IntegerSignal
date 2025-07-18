@@ -14,7 +14,7 @@ namespace IntegerSignal
 		/// </summary>
 		/// <param name="angle">Angle (0;360) degrees [0; ANGLE_MAX].</param>
 		/// <returns>Scale fraction [-FRACTION16_1X; +FRACTION16_1X].</returns>
-		static const fraction16_t Tangent16(const angle_t angle)
+		static fraction16_t Tangent16(const angle_t angle)
 		{
 			if (angle == 0)
 			{
@@ -69,7 +69,7 @@ namespace IntegerSignal
 		/// </summary>
 		/// <param name="angle">Angle (0;360) degrees [0; ANGLE_RANGE].</param>
 		/// <returns>Scale fraction [-FRACTION8_1X; +FRACTION8_1X].</returns>
-		static const fraction16_t Cotangent16(const angle_t angle)
+		static fraction16_t Cotangent16(const angle_t angle)
 		{
 			fraction16_t tanValue = Tangent16(angle);
 			if (tanValue == 0)

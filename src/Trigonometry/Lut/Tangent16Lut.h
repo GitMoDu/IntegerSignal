@@ -57,7 +57,7 @@ namespace IntegerSignal
 
 				static constexpr uint16_t LutSize = sizeof(Table) / sizeof(Table[0]);
 
-				static const uint16_t GetInterpolated(const angle_t angle)
+				static uint16_t GetInterpolated(const angle_t angle)
 				{
 					// Use ANGLE_45 because our LUT is built for 0–45°.
 					static constexpr auto StepError = (ANGLE_45 / LutSize);

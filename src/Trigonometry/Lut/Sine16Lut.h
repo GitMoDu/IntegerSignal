@@ -84,7 +84,7 @@ namespace IntegerSignal
 				/// </summary>
 				/// <param name="angle">[0 ; ANGLE_90]</param>
 				/// <returns>Sine scale [0 ; UINT16_MAX].</returns>
-				static const uint16_t GetInterpolated(const angle_t angle)
+				static uint16_t GetInterpolated(const angle_t angle)
 				{
 					static constexpr auto StepError = (ANGLE_90 / LutSize);
 
