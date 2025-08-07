@@ -44,7 +44,7 @@ namespace IntegerSignal
 			root--; // adjust downward
 		}
 
-		return root;
+		return (uint16_t)root;
 	}
 
 	/// <summary>
@@ -74,7 +74,7 @@ namespace IntegerSignal
 			root--;
 		}
 
-		return root;
+		return (uint8_t)root;
 	}
 
 	/// <summary>
@@ -112,7 +112,7 @@ namespace IntegerSignal
 			else if (root > (value / root))
 				root--;
 
-			return root;
+			return (uint32_t)root;
 		}
 	}
 #else
