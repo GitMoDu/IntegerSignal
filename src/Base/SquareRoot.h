@@ -115,6 +115,100 @@ namespace IntegerSignal
 			return (uint32_t)root;
 		}
 	}
+#elif (defined(__i386__) || defined(__x86_64__) || defined(_M_IX86) || defined(_M_X64)) && !defined(INTEGER_SIGNAL_DISABLE_ACCELERATION)
+	/// <summary>
+	/// Square root of uint32_t value (x86 optimized).
+	/// </summary>
+	static uint16_t SquareRoot32(const uint32_t value)
+	{
+		if (value == 0)
+			return 0;
+
+#if defined(_MSC_VER)
+		unsigned long index;
+		_BitScanReverse(&index, value);
+		uint32_t root = (uint32_t)1 << ((index + 1) >> 1);
+#else
+		uint32_t root = (uint32_t)1 << ((32 - __builtin_clz(value)) >> 1);
+#endif
+
+		root = (root + (value / root)) >> 1;
+		root = (root + (value / root)) >> 1;
+		root = (root + (value / root)) >> 1;
+
+		// Upward correction
+		if (((uint64_t)(root + 1) * (root + 1)) <= value)
+			root++;
+		// Downward correction
+		else if (((uint64_t)root * root) > value)
+			root--;
+
+		return (uint16_t)root;
+	}
+
+	/// <summary>
+	/// Square root of uint16_t value (x86 optimized).
+	/// </summary>
+	static uint8_t SquareRoot16(const uint16_t value)
+	{
+		if (value == 0)
+			return 0;
+
+#if defined(_MSC_VER)
+		unsigned long index;
+		_BitScanReverse(&index, value);
+		uint16_t root = (uint16_t)1 << ((index + 1) >> 1);
+#else
+		uint16_t root = (uint16_t)1 << ((32 - __builtin_clz((uint32_t)value)) >> 1);
+#endif
+
+		root = (root + (value / root)) >> 1;
+		root = (root + (value / root)) >> 1;
+
+		// Upward correction
+		if (((uint32_t)(root + 1) * (root + 1)) <= value)
+			root++;
+		// Downward correction
+		else if (((uint32_t)root * root) > value)
+			root--;
+
+		return (uint8_t)root;
+	}
+
+	/// <summary>
+	/// Square root of uint64_t value (x86 optimized).
+	/// </summary>
+	static uint32_t SquareRoot64(const uint64_t value)
+	{
+		if (value == 0)
+			return 0;
+		else if (value <= UINT32_MAX)
+			return SquareRoot32((uint32_t)value);
+		else
+		{
+#if defined(_MSC_VER)
+			unsigned long index;
+			_BitScanReverse64(&index, value);
+			uint64_t root = (uint64_t)1 << ((index + 1) >> 1);
+#else
+			uint64_t root = (uint64_t)1 << ((64 - __builtin_clzll(value)) >> 1);
+#endif
+
+			root = (root + (value / root)) >> 1;
+			root = (root + (value / root)) >> 1;
+			root = (root + (value / root)) >> 1;
+			root = (root + (value / root)) >> 1;
+
+			// Upward correction
+			if ((root + 1) <= (value / (root + 1)))
+				root++;
+			// Downward correction
+			else if (root > (value / root))
+				root--;
+
+			return (uint32_t)root;
+		}
+	}
 #else
 	/// <summary>
 	/// Square root of uint16_t value.
