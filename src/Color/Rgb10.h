@@ -89,22 +89,22 @@ namespace IntegerSignal
 			return Color8(UINT8_MAX, red, green, blue);
 		}
 
-		static constexpr void SetAlpha(color_t& color, const alpha_t alpha)
+		static void SetAlpha(color_t& color, const alpha_t alpha)
 		{
 			color = (color & ~(uint32_t(ALPHA_MAX) << 30)) | ((uint32_t(alpha & ALPHA_MAX)) << 30);
 		}
 
-		static constexpr void SetRed(color_t& color, const component_t red)
+		static void SetRed(color_t& color, const component_t red)
 		{
 			color = (color & ~COMPONENT_MAX) | red;
 		}
 
-		static constexpr void SetGreen(color_t& color, const component_t green)
+		static void SetGreen(color_t& color, const component_t green)
 		{
 			color = (color & ~(uint32_t(COMPONENT_MAX) << 10)) | (uint32_t(green) << 10);
 		}
 
-		static constexpr void SetBlue(color_t& color, const component_t blue)
+		static void SetBlue(color_t& color, const component_t blue)
 		{
 			color = (color & ~(uint32_t(COMPONENT_MAX) << 20)) | (uint32_t(blue) << 20);
 		}
@@ -129,7 +129,7 @@ namespace IntegerSignal
 			return (color >> 20) & COMPONENT_MAX;
 		}
 
-		static constexpr void SetAlpha8(color_t& color, const component_t alpha)
+		static void SetAlpha8(color_t& color, const component_t alpha)
 		{
 			color = (color & ~(uint32_t(ALPHA_MAX) << 30)) | ((uint32_t(alpha >> 6)) << 30);
 		}

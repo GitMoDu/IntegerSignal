@@ -71,17 +71,17 @@ namespace IntegerSignal
 				uint8_t(rgb));
 		}
 
-		static constexpr void SetRed(color_t& color, const component_t red)
+		static void SetRed(color_t& color, const component_t red)
 		{
 			color.red = red;
 		}
 
-		static constexpr void SetGreen(color_t& color, const component_t green)
+		static void SetGreen(color_t& color, const component_t green)
 		{
 			color.green = green;
 		}
 
-		static constexpr void SetBlue(color_t& color, const component_t blue)
+		static void SetBlue(color_t& color, const component_t blue)
 		{
 			color.blue = blue;
 		}

@@ -56,22 +56,22 @@ namespace IntegerSignal
 				| (blue);
 		}
 
-		static constexpr void SetAlpha(color_t& color, const component_t alpha)
+		static void SetAlpha(color_t& color, const component_t alpha)
 		{
 			color = (color & ~(uint32_t(COMPONENT_MAX) << 24)) | (uint32_t(alpha) << 24);
 		}
 
-		static constexpr void SetRed(color_t& color, const component_t red)
+		static void SetRed(color_t& color, const component_t red)
 		{
 			color = (color & ~(uint32_t(COMPONENT_MAX) << 16)) | (uint32_t(red) << 16);
 		}
 
-		static constexpr void SetGreen(color_t& color, const component_t green)
+		static void SetGreen(color_t& color, const component_t green)
 		{
 			color = (color & ~(uint32_t(COMPONENT_MAX) << 8)) | (uint32_t(green) << 8);
 		}
 
-		static constexpr void SetBlue(color_t& color, const component_t blue)
+		static void SetBlue(color_t& color, const component_t blue)
 		{
 			color = (color & ~COMPONENT_MAX) | blue;
 		}
