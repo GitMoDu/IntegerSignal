@@ -11,6 +11,10 @@
 #include "Scale/Fraction.h"
 #include "Scale/Resize.h"
 
+#include "Color/Rgb8.h"
+#include "Color/Rgb10.h"
+#include "Color/RgbFraction16.h"
+
 #include "Curve/ICurve.h"
 #include "Curve/Signed.h"
 #include "Curve/Strength.h"
