@@ -109,9 +109,9 @@ namespace IntegerSignal
 		static constexpr uint32_t Rgb8(const color_t color)
 		{
 			return (uint32_t(UINT8_MAX) << 24) |
-				(uint32_t(Fraction::Scale(color.red, UINT8_MAX)) << 16) |
-				(uint16_t(Fraction::Scale(color.green, UINT8_MAX)) << 8) |
-				uint8_t(Fraction::Scale(color.blue, UINT8_MAX));
+				(uint32_t(Fraction::Scale(color.red, uint8_t(UINT8_MAX))) << 16) |
+				(uint16_t(Fraction::Scale(color.green, uint8_t(UINT8_MAX))) << 8) |
+				uint8_t(Fraction::Scale(color.blue, uint8_t(UINT8_MAX)));
 		}
 
 		/// <summary>
