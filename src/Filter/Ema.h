@@ -1,5 +1,3 @@
-// Ema.h
-
 #ifndef _INTEGER_SIGNAL_EMA_FILTER_h
 #define _INTEGER_SIGNAL_EMA_FILTER_h
 
@@ -40,6 +38,14 @@ namespace IntegerSignal
 
 				public:
 					Filter() : Base() {}
+
+					virtual void Clear(const unsigned_t value = 0)
+					{
+						Base::Clear(value);
+						HighValue = value;
+						Output = (HighValue + Half) >> factor;
+						HighValue -= Output;
+					}
 
 					virtual void Step()
 					{

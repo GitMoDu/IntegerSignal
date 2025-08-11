@@ -1,5 +1,3 @@
-// LowPass.h
-
 #ifndef _INTEGER_SIGNAL_LOW_PASS_FILTER_h
 #define _INTEGER_SIGNAL_LOW_PASS_FILTER_h
 
@@ -39,10 +37,10 @@ namespace IntegerSignal
 				public:
 					Filter() : Base() {}
 
-					virtual void Clear()
+					virtual void Clear(const unsigned_t value = 0)
 					{
-						Base::Clear();
-						HighValue = 0;
+						Base::Clear(value);
+						HighValue = intermediate_t(value) << factor;
 					}
 
 					virtual void Step()

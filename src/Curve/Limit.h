@@ -1,5 +1,3 @@
-// Limit.h
-
 #ifndef _INTEGER_SIGNAL_LIMIT_CURVE_h
 #define _INTEGER_SIGNAL_LIMIT_CURVE_h
 

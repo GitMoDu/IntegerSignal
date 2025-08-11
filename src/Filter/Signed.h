@@ -38,7 +38,7 @@ namespace IntegerSignal
 
 				virtual void Clear()
 				{
-					Signal.Clear();
+					Signal.Clear(Middle());
 				}
 
 				virtual void Set(const signed_t value)
@@ -53,7 +53,7 @@ namespace IntegerSignal
 
 				virtual const signed_t Get() const
 				{
-					return (signed_t)(Signal.Get() - Middle());
+					return (signed_t)(Signal.Get()) - Middle();
 				}
 			};
 		}

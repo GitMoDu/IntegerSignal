@@ -1,5 +1,3 @@
-// Dema.h
-
 #ifndef _INTEGER_SIGNAL_DEMA_FILTER_h
 #define _INTEGER_SIGNAL_DEMA_FILTER_h
 
@@ -42,6 +40,18 @@ namespace IntegerSignal
 
 				public:
 					Filter() : Base() {}
+
+					virtual void Clear(const unsigned_t value = 0)
+					{
+						Base::Clear(value);
+
+						// Set both stages of the filter to produce 'value' as output
+						Output = value;
+
+						// In a DEMA filter, we need both HighValue1 and HighValue2 to be in a steady state.
+						HighValue2 = value << factor;
+						HighValue1 = value << factor;
+					}
 
 					virtual void Step()
 					{
