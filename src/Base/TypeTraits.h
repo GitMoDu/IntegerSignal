@@ -58,14 +58,37 @@ namespace IntegerSignal
 			template<> struct next_int_type<int32_t> { using type = int64_t; };
 		}
 
+		/// <summary>
+		/// Tag type for true/false value in type traits.
+		/// Used for tag dispatch in template metaprogramming.
+		/// </summary>
 		namespace TypeDispatch
 		{
-			/// <summary>
-			/// Tag type for true/false value in type traits.
-			/// Used for tag dispatch in template metaprogramming.
-			/// </summary>
 			struct TrueType {};
 			struct FalseType {};
+		}
+
+		/// <summary>
+		/// Provides type traits for a conditional type selector.
+		/// </summary>
+		namespace TypeConditional
+		{
+			template<typename T1, typename T2, bool use_first>
+			struct conditional_type { using type = T1; };
+			template<typename T1, typename T2>
+			struct conditional_type<T1, T2, false> { using type = T2; };
+
+			template<typename T1, typename T2>
+			struct larger_type {
+				enum { value = (sizeof(T1) >= sizeof(T2)) };
+				using type = typename conditional_type<T1, T2, value>::type;
+			};
+
+			template<typename T1, typename T2>
+			struct smaller_type {
+				enum { value = (sizeof(T1) < sizeof(T2)) };
+				using type = typename conditional_type<T1, T2, value>::type;
+			};
 		}
 
 		namespace TypeSign
