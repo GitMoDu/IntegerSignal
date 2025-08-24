@@ -10,6 +10,8 @@
 #include <IntegerTrigonometry.h>
 
 #include "SquareRootTest.h"
+#include "OperationTest.h"
+#include "TypeTraitsTest.h"
 #include "BitScaleTest.h"
 #include "ResizeTest.h"
 #include "FractionTest.h"
@@ -42,11 +44,13 @@ void setup()
 
 	Serial.flush();
 
+	pass &= IntegerSignal::Operation::Test::RunTests();
 	pass &= IntegerSignal::UIntSize::Test::RunTests();
+	pass &= IntegerSignal::BitScale::Test::RunTests<MaxIterations>();
+	pass &= IntegerSignal::TypeTraits::Test::RunTests();
 	pass &= IntegerSignal::Trigonometry::Tangent::Test::RunTests<MaxIterations>();
 	pass &= IntegerSignal::Trigonometry::Sine::Test::RunTests<MaxIterations>();
 	pass &= IntegerSignal::Fraction::Test::RunTests<MaxIterations>();
-	pass &= IntegerSignal::BitScale::Test::RunTests<MaxIterations>();
 	pass &= IntegerSignal::Resize::Test::RunTests<MaxIterations>();
 	pass &= IntegerSignal::SquareRoot::Test::RunTests<MaxIterations>();
 

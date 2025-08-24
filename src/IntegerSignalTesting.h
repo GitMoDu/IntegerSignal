@@ -1,5 +1,3 @@
-// IntegerSignalTesting.h
-
 #ifndef _INTEGER_SIGNAL_TESTING_INCLUDE_h
 #define _INTEGER_SIGNAL_TESTING_INCLUDE_h
 
