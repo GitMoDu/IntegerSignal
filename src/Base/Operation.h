@@ -33,10 +33,33 @@ namespace IntegerSignal
 		return (a > b) ? a : b;
 	}
 
+	/// <summary>
+	/// Constrains a value to lie within the specified lower and upper bounds.
+	/// </summary>
+	/// <typeparam name="T">The type of the value and bounds.</typeparam>
+	/// <param name="value">The value to be limited.</param>
+	/// <param name="low">The lower bound.</param>
+	/// <param name="high">The upper bound.</param>
+	/// <returns>The value constrained to the range [low, high].</returns>
 	template<typename T>
 	constexpr T LimitValue(const T value, const T low, const T high)
 	{
-		return MaxValue(low, MinValue(value, high));
+		return (value < low) ? low : (value > high) ? high : value;
+	}
+
+	/// <summary>
+	/// Constrains a value to lie within the specified lower and upper bounds.
+	/// </summary>
+	/// <typeparam name="T">The type of the value and bounds.</typeparam>
+	/// <typeparam name="low">Templated lower bound for the value.</typeparam>
+	/// <typeparam name="high">Templated upper bound for the value.</typeparam>
+	/// <param name="value">The value to be limited.</param>
+	/// <returns>The value limited to the range [low, high].</returns>
+	template<typename T,
+		T low, T high>
+	constexpr T LimitValue(const T value)
+	{
+		return (value < low) ? low : (value > high) ? high : value;
 	}
 
 	/// <summary>
@@ -75,6 +98,20 @@ namespace IntegerSignal
 	/// <returns>The result of the signed right shift.</returns>
 	template<typename T>
 	constexpr T SignedRightShift(const T value, const uint8_t shifts)
+	{
+		return (value < 0) ? -(-value >> shifts) : (value >> shifts);
+	}
+
+	/// <summary>
+	/// Performs a signed right shift on a value, preserving its sign.
+	/// </summary>
+	/// <typeparam name="T">The type of the value to shift.</typeparam>
+	/// <typeparam name="shifts">Templated number of bits to shift to the right.</typeparam>
+	/// <param name="value">The value to be right-shifted.</param>
+	/// <returns>The result of right-shifting the value by the specified number of bits, with sign preserved.</returns>
+	template<typename T,
+		const uint8_t shifts>
+	constexpr T SignedRightShift(const T value)
 	{
 		return (value < 0) ? -(-value >> shifts) : (value >> shifts);
 	}
