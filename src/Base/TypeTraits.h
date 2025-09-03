@@ -44,6 +44,9 @@ namespace IntegerSignal
 			template<> struct next_uint_type<uint8_t> { using type = uint16_t; };
 			template<> struct next_uint_type<uint16_t> { using type = uint32_t; };
 			template<> struct next_uint_type<uint32_t> { using type = uint64_t; };
+			template<> struct next_uint_type<int8_t> { using type = uint16_t; };
+			template<> struct next_uint_type<int16_t> { using type = uint32_t; };
+			template<> struct next_uint_type<int32_t> { using type = uint64_t; };
 
 			/// <summary>
 			/// Promotes an integer type to the next larger signed type.
