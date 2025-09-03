@@ -15,11 +15,12 @@ namespace IntegerSignal
 		{
 			namespace Tangent16
 			{
+#if (INTEGER_TRIGONOMETRY_LUT == INTEGER_TRIGONOMETRY_LUT_DEFAULT)
 				/// <summary>
 				/// [0 ; 45] degrees Tan function table.
 				/// [0 ; UINT16_MAX] scale.
 				/// </summary>
-				static constexpr uint16_t Table[] //PROGMEM
+				static constexpr uint16_t Table[] PROGMEM
 				{
 					0, 201, 402, 603, 804, 1005, 1206, 1407,
 					1608, 1809, 2011, 2212, 2413, 2615, 2816, 3018,
@@ -55,6 +56,25 @@ namespace IntegerSignal
 					62394, 62778, 63165, 63554, 63945, 64339, 64735, 65134
 				};
 
+#elif (INTEGER_TRIGONOMETRY_LUT == INTEGER_TRIGONOMETRY_LUT_TINY)
+				/// <summary>
+				/// [0 ; 45] degrees Tan function table.
+				/// [0 ; UINT16_MAX] scale.
+				/// </summary>
+				static constexpr uint16_t Table[] PROGMEM
+				{
+					0,     1024,   2049,   3076,   4107,   5143,   6184,   7231,
+					8285,   9346,  10417,  11497,  12588,  13690,  14804,  15931,
+					17072,  18227,  19398,  20586,  21791,  23015,  24259,  25524,
+					26811,  28121,  29456,  30818,  32208,  33627,  35078,  36564,
+					38086,  39647,  41249,  42894,  44586,  46328,  48124,  49977,
+					51891,  53871,  55922,  58049,  60258,  62554,  64935,  65320,
+					65340,  65360,  65380,  65400,  65420,  65440,  65460,  65480,
+					65490,  65500,  65510,  65520,  65525,  65530,  65532,  65534
+				};
+#else
+#error Integer Tangent has no LUT size defined.
+#endif
 				static constexpr uint16_t LutSize = sizeof(Table) / sizeof(Table[0]);
 
 				static uint16_t GetInterpolated(const angle_t angle)
