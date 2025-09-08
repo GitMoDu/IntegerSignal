@@ -38,7 +38,6 @@ namespace IntegerSignal::Resize::Test
 		return min((uint64_t)UINT32_MAX, (uint64_t)(((uint64_t)value * resize) / RESIZE16_1X));
 	}
 
-
 	// Reference function for GetResize8
 	static resize8_t RefGetResize8(uint8_t numerator, uint8_t denominator)
 	{

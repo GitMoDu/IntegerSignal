@@ -1,23 +1,32 @@
 
+
 #define SERIAL_BAUD_RATE 115200
 
 //#define INTEGER_TRIGONOMETRY_LUT INTEGER_TRIGONOMETRY_LUT_TINY
 #define INTEGER_SIGNAL_DISABLE_ACCELERATION
+#define EXTENDED_UNIT_TESTS
 
 #include <Arduino.h>
 #include <IntegerSignal.h>
 #include <IntegerTrigonometry16.h>
 #include <IntegerTrigonometry.h>
 
-#include "SquareRootTest.h"
 #include "OperationTest.h"
 #include "TypeTraitsTest.h"
 #include "BitScaleTest.h"
+#include "UIntSizeTest.h"
+
+#include "SquareRootTest.h"
+
 #include "ResizeTest.h"
 #include "FractionTest.h"
+
 #include "SineTest.h"
 #include "TangentTest.h"
-#include "UIntSizeTest.h"
+
+
+#include "FixedPointScaleTest.h"
+#include "FixedPointFractionTest.h"
 
 inline void PrintPlaform();
 
@@ -65,6 +74,7 @@ void setup()
 		Serial.flush();
 		delay(5000);
 
+#if defined(EXTENDED_UNIT_TESTS)
 		Serial.println(F("Starting Long running exhaustive tests, don't wait up."));
 		Serial.println();
 
@@ -95,8 +105,8 @@ void setup()
 		Serial.println(F("Integer Signal major tests FAILED."));
 		Serial.println();
 		Serial.println();
+#endif
 	}
-
 }
 
 void loop()

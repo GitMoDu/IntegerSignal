@@ -9,6 +9,9 @@
 #include "Base/Mix.h"
 #include "Base/SquareRoot.h"
 
+#include "FixedPoint/Fraction.h"
+#include "FixedPoint/Scale.h"
+
 #include "Scale/Fraction.h"
 #include "Scale/Resize.h"
 

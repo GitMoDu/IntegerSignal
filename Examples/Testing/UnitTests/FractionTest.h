@@ -1,7 +1,5 @@
-// FractionScaleTest.h
-
-#ifndef _FRACTIONSCALETEST_h
-#define _FRACTIONSCALETEST_h
+#ifndef _FRACTION_SCALE_TEST_h
+#define _FRACTION_SCALE_TEST_h
 
 #include <IntegerSignalTesting.h>
 
