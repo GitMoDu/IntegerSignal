@@ -82,24 +82,6 @@ namespace IntegerSignal
 				static constexpr auto FRACTION_1X_NEGATIVE = Base::SCALAR_UNIT_NEGATIVE;
 			};
 		}
-
-		// Backwards compatibility static definitions.
-		namespace Fraction
-		{
-			static constexpr auto UFRACTION8_1X = UFraction8::FRACTION_1X;
-			static constexpr auto UFRACTION16_1X = UFraction16::FRACTION_1X;
-			static constexpr auto UFRACTION32_1X = UFraction32::FRACTION_1X;
-
-
-			static constexpr auto FRACTION8_1X = Fraction8::FRACTION_1X;
-			static constexpr auto FRACTION8_NEGATIVE_1X = Fraction8::FRACTION_1X_NEGATIVE;
-
-			static constexpr auto FRACTION16_1X = Fraction16::FRACTION_1X;
-			static constexpr auto FRACTION16_NEGATIVE_1X = Fraction16::FRACTION_1X_NEGATIVE;
-
-			static constexpr auto FRACTION32_1X = Fraction32::FRACTION_1X;
-			static constexpr auto FRACTION32_NEGATIVE_1X = Fraction32::FRACTION_1X_NEGATIVE;
-		}
 	}
 }
 

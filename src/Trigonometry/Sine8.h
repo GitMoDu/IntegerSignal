@@ -7,14 +7,18 @@ namespace IntegerSignal
 {
 	namespace Trigonometry
 	{
-		using namespace Fraction;
+		using namespace FixedPoint::Fraction;
 
 		/// <summary>
-		/// Get scale fraction from Sine(angle) .
+		/// Sine using fixed-point Q-format (8-bit signed fraction, Q0.6).
+		/// - Input: angle_t is a modular full-rotation fixed-point type in [0; ANGLE_RANGE].
+		/// - Output: Fraction8::scalar_t in [-Fraction8::FRACTION_1X; +Fraction8::FRACTION_1X].
+		/// Implementation uses a quarter-wave LUT and symmetry; the LUT amplitude is aligned
+		/// to Fraction8::FRACTION_1X (power-of-two) via a final right-shift.
 		/// </summary>
-		/// <param name="angle">Angle (0;360) degrees [0; ANGLE_RANGE].</param>
-		/// <returns>Scale fraction [-FRACTION8_1X; +FRACTION8_1X].</returns>
-		static fraction8_t Sine8(const angle_t angle)
+		/// <param name="angle">Modular angle_t in [0; ANGLE_RANGE] (wrap-around at ANGLE_RANGE+1).</param>
+		/// <returns>Signed Q-format fraction in [-Fraction8::FRACTION_1X; +Fraction8::FRACTION_1X].</returns>
+		static Fraction8::scalar_t Sine8(const angle_t angle)
 		{
 			if (angle == 0)
 			{
@@ -23,32 +27,34 @@ namespace IntegerSignal
 			}
 			else if (angle < 0)
 			{
-				// Sine function is symmetrical.
+				// Dead path for unsigned angle_t; kept for symmetry with other targets.
 				return Sine8(ANGLE_RANGE - angle);
 			}
 			else if (angle >= ANGLE_180)
 			{
-				// Sine funcionts loops inverted after 180º.
+				// sin(x) = -sin(x - 180 deg)
 				return -Sine8(angle - ANGLE_180);
 			}
 			else if (angle > ANGLE_90)
 			{
-				// Sine function repeats reversed after 90º.
+				// sin(x) = sin(180 deg - x)
 				return Sine8(ANGLE_90 - (angle - ANGLE_90));
 			}
 			else
 			{
-				// Scale Sine8 to positive Fraction.
+				// Scale quarter-wave LUT to Q-format fraction (power-of-two unit).
 				return Lut::Sine8::GetInterpolated(angle) >> 2;
 			}
 		}
 
 		/// <summary>
-		/// Get scale fraction from Cosine(angle) .
+		/// Cosine via phase shift: cos(x) = sin(x + 90 deg).
+		/// - Input: angle_t (modular full-rotation fixed-point).
+		/// - Output: Fraction8::scalar_t in [-Fraction8::FRACTION_1X; +Fraction8::FRACTION_1X].
 		/// </summary>
-		/// <param name="angle">Angle (0;360) degrees [0; ANGLE_RANGE].</param>
-		/// <returns>Scale fraction [-FRACTION8_1X; +FRACTION8_1X].</returns>
-		static fraction8_t Cosine8(const angle_t angle)
+		/// <param name="angle">Modular angle_t in [0; ANGLE_RANGE].</param>
+		/// <returns>Signed Q-format fraction in [-Fraction8::FRACTION_1X; +Fraction8::FRACTION_1X].</returns>
+		static Fraction8::scalar_t Cosine8(const angle_t angle)
 		{
 			return Sine8(angle + ANGLE_90);
 		}
