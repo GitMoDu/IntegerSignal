@@ -3,58 +3,65 @@
 
 #include <IntegerSignalTesting.h>
 
-namespace IntegerSignal::Fraction::Test
+namespace IntegerSignal::FixedPoint::Fraction::Test
 {
-	// Reference function for fraction8_t
+	// Reference function for Fraction8::scalar_t (signed)
 	template<typename T>
-	static T RefFraction8(const T value, const fraction8_t fraction) {
-		return (static_cast<int64_t>(value) * fraction) / FRACTION8_1X;
+	static T RefFraction8(const T value, const Fraction8::scalar_t fraction) {
+		return (static_cast<int64_t>(value) * fraction) / Fraction8::FRACTION_1X;
 	}
 
 	template<typename T>
-	static T RefFraction16(const T value, const fraction16_t fraction) {
-		return (static_cast<int64_t>(value) * fraction) / FRACTION16_1X;
+	static T RefFraction16(const T value, const Fraction16::scalar_t fraction) {
+		return (static_cast<int64_t>(value) * fraction) / Fraction16::FRACTION_1X;
 	}
 
 	template<typename T>
-	static T RefFraction32(const T value, const fraction32_t fraction) {
-		return (static_cast<int64_t>(value) * fraction) / FRACTION32_1X;
+	static T RefFraction32(const T value, const Fraction32::scalar_t fraction) {
+		return (static_cast<int64_t>(value) * fraction) / Fraction32::FRACTION_1X;
+	}
+
+	// Reference function for UFractionX::scalar_t (unsigned)
+	template<typename T>
+	static T RefFraction8(const T value, const UFraction8::scalar_t fraction) {
+		return (static_cast<uint64_t>(value) * fraction) / UFraction8::FRACTION_1X;
 	}
 
 	template<typename T>
-	static T RefFraction8(const T value, const ufraction8_t fraction) {
-		return ((uint64_t)value * fraction) / UFRACTION8_1X;
+	static T RefFraction16(const T value, const UFraction16::scalar_t fraction) {
+		return (static_cast<uint64_t>(value) * fraction) / UFraction16::FRACTION_1X;
 	}
 
 	template<typename T>
-	static T RefFraction16(const T value, const ufraction16_t fraction) {
-		return ((uint64_t)value * fraction) / UFRACTION16_1X;
+	static T RefFraction32(const T value, const UFraction32::scalar_t fraction) {
+		return (static_cast<uint64_t>(value) * fraction) / UFraction32::FRACTION_1X;
 	}
 
-	template<typename T>
-	static T RefFraction32(const T value, const ufraction32_t fraction) {
-		return ((uint64_t)value * fraction) / UFRACTION32_1X;
-	}
-
-	// Reference function for GetFraction8
-	static fraction8_t RefGetFraction8(uint8_t numerator, uint8_t denominator)
+	// Reference function for GetScalar (signed Fraction8)
+	static Fraction8::scalar_t RefGetFraction8(uint8_t numerator, uint8_t denominator)
 	{
-		return (denominator == 0) ? 0 : min((int16_t)FRACTION8_1X, max((int16_t)FRACTION8_NEGATIVE_1X, (int16_t)(((int16_t)numerator * FRACTION8_1X) / denominator)));
+		const int16_t scaled = (denominator == 0) ? 0 : (int16_t)(((int16_t)numerator * Fraction8::FRACTION_1X) / denominator);
+		return (Fraction8::scalar_t)min<int16_t>(Fraction8::FRACTION_1X,
+			max<int16_t>(Fraction8::FRACTION_1X_NEGATIVE, scaled));
 	}
 
-	// Reference function for GetFraction16
-	static fraction16_t RefGetFraction16(uint8_t numerator, uint8_t denominator)
+	// Reference function for GetScalar (signed Fraction16)
+	static Fraction16::scalar_t RefGetFraction16(uint8_t numerator, uint8_t denominator)
 	{
-		return (denominator == 0) ? 0 : min((int32_t)FRACTION16_1X, max((int32_t)FRACTION16_NEGATIVE_1X, (int32_t)(((int32_t)numerator * FRACTION16_1X) / denominator)));
+		const int32_t scaled = (denominator == 0) ? 0 : (int32_t)(((int32_t)numerator * Fraction16::FRACTION_1X) / denominator);
+		return (Fraction16::scalar_t)min<int32_t>(Fraction16::FRACTION_1X,
+			max<int32_t>(Fraction16::FRACTION_1X_NEGATIVE, scaled));
 	}
 
-	// Reference function for GetFraction32
-	static fraction32_t RefGetFraction32(uint8_t numerator, uint8_t denominator)
+	// Reference function for GetScalar (signed Fraction32)
+	static Fraction32::scalar_t RefGetFraction32(uint8_t numerator, uint8_t denominator)
 	{
-		return (denominator == 0) ? 0 : min((int64_t)FRACTION32_1X, max((int64_t)FRACTION32_NEGATIVE_1X, (int64_t)(((int64_t)numerator * FRACTION32_1X) / denominator)));
+		const int64_t scaled = (denominator == 0) ? 0 : (int64_t)(((int64_t)numerator * Fraction32::FRACTION_1X) / denominator);
+		return (Fraction32::scalar_t)min<int64_t>(Fraction32::FRACTION_1X,
+			max<int64_t>(Fraction32::FRACTION_1X_NEGATIVE, scaled));
 	}
 
-	// Exhaustive test for fraction8_t
+	// Exhaustive test for Fraction8::scalar_t
 	static bool TestFraction8Exhaustive()
 	{
 		Serial.println(F("Starting exhaustive fraction8_t tests..."));
@@ -65,8 +72,8 @@ namespace IntegerSignal::Fraction::Test
 			for (uint16_t f = 1; f <= UINT8_MAX; f++)
 			{
 				const int8_t value = (uint8_t)v;
-				const fraction8_t fraction8 = (fraction8_t)max((int8_t)FRACTION8_NEGATIVE_1X, (int8_t)min((int8_t)FRACTION8_1X, (int8_t)f));
-				const int8_t result = Scale(fraction8, value);
+				const Fraction8::scalar_t fraction8 = (Fraction8::scalar_t)max<int8_t>(Fraction8::FRACTION_1X_NEGATIVE, min<int8_t>(Fraction8::FRACTION_1X, (int8_t)f));
+				const int8_t result = Fraction8::Fraction(fraction8, value);
 				const int8_t refResult = RefFraction8(value, fraction8);
 				if (result != refResult)
 				{
@@ -101,7 +108,7 @@ namespace IntegerSignal::Fraction::Test
 		return errorCount == 0;
 	}
 
-	// Exhaustive test for fraction16_t
+	// Exhaustive test for Fraction16::scalar_t
 	static bool TestFraction16Exhaustive()
 	{
 		Serial.println(F("Starting exhaustive fraction16_t tests..."));
@@ -112,8 +119,8 @@ namespace IntegerSignal::Fraction::Test
 			for (uint32_t f = 1; f <= UINT16_MAX; f++)
 			{
 				const int16_t value = (uint16_t)v;
-				const fraction16_t fraction16 = (fraction16_t)max((int32_t)FRACTION16_NEGATIVE_1X, (int32_t)min((int32_t)FRACTION16_1X, (int32_t)f));
-				const int16_t result = Scale(fraction16, value);
+				const Fraction16::scalar_t fraction16 = (Fraction16::scalar_t)max<int32_t>(Fraction16::FRACTION_1X_NEGATIVE, min<int32_t>(Fraction16::FRACTION_1X, (int32_t)f));
+				const int16_t result = Fraction16::Fraction(fraction16, value);
 				const int16_t refResult = RefFraction16(value, fraction16);
 				if (result != refResult)
 				{
@@ -148,7 +155,7 @@ namespace IntegerSignal::Fraction::Test
 		return errorCount == 0;
 	}
 
-	// Sampled test for fraction16_t for uint8_t, uint16_t, and uint32_t.
+	// Sampled test for Fraction16 for uint8_t, uint16_t, and uint32_t.
 	template<uint32_t MaxIterations = 50000>
 	static bool TestFraction16Sample()
 	{
@@ -161,7 +168,7 @@ namespace IntegerSignal::Fraction::Test
 		for (uint32_t f = 0; f < UINT16_MAX; f++)
 		{
 			const uint32_t fractionIterate = (uint32_t)(((uint64_t)f * UINT16_MAX) / (iterations - 1));
-			const fraction16_t fraction16 = (fraction16_t)max((int32_t)FRACTION16_NEGATIVE_1X, (int32_t)min((int32_t)FRACTION16_1X, (int32_t)fractionIterate));
+			const Fraction16::scalar_t fraction16 = (Fraction16::scalar_t)max<int32_t>(Fraction16::FRACTION_1X_NEGATIVE, min<int32_t>(Fraction16::FRACTION_1X, (int32_t)fractionIterate));
 
 			for (uint32_t i = 0; i <= iterations; i++)
 			{
@@ -169,13 +176,13 @@ namespace IntegerSignal::Fraction::Test
 				const int16_t value16 = value32 / INT16_MAX;
 				const int8_t value8 = value16 / INT8_MAX;
 
-				const int8_t result8 = Scale(fraction16, value8);
+				const int8_t result8 = Fraction16::Fraction(fraction16, value8);
 				const int8_t refResult8 = RefFraction16(value8, fraction16);
 
-				const int16_t result16 = Scale(fraction16, value16);
+				const int16_t result16 = Fraction16::Fraction(fraction16, value16);
 				const int16_t refResult16 = RefFraction16(value16, fraction16);
 
-				const int32_t result32 = Scale(fraction16, value32);
+				const int32_t result32 = Fraction16::Fraction(fraction16, value32);
 				const int32_t refResult32 = RefFraction16(value32, fraction16);
 
 				if (result8 != refResult8
@@ -232,7 +239,7 @@ namespace IntegerSignal::Fraction::Test
 		return errorCount == 0;
 	}
 
-	// Sampled test for fraction16_t for uint8_t, uint16_t, and uint32_t.
+	// Sampled test for UFraction16 for uint8_t, uint16_t, and uint32_t.
 	template<uint32_t MaxIterations = 50000>
 	static bool TestUFraction16Sample()
 	{
@@ -245,7 +252,7 @@ namespace IntegerSignal::Fraction::Test
 		for (uint32_t f = 0; f < UINT16_MAX; f++)
 		{
 			const uint32_t fractionIterate = (uint32_t)(((uint64_t)f * UINT16_MAX) / (iterations - 1));
-			const ufraction16_t fraction16 = (ufraction16_t)min((int32_t)FRACTION16_1X, (int32_t)fractionIterate);
+			const UFraction16::scalar_t fraction16 = (UFraction16::scalar_t)min<int32_t>(UFraction16::FRACTION_1X, (int32_t)fractionIterate);
 
 			for (uint32_t i = 0; i <= iterations; i++)
 			{
@@ -253,13 +260,13 @@ namespace IntegerSignal::Fraction::Test
 				const uint16_t value16 = value32 / INT16_MAX;
 				const uint8_t value8 = value16 / INT8_MAX;
 
-				const uint8_t result8 = Scale(fraction16, value8);
+				const uint8_t result8 = UFraction16::Fraction(fraction16, value8);
 				const uint8_t refResult8 = RefFraction16(value8, fraction16);
 
-				const uint16_t result16 = Scale(fraction16, value16);
+				const uint16_t result16 = UFraction16::Fraction(fraction16, value16);
 				const uint16_t refResult16 = RefFraction16(value16, fraction16);
 
-				const uint32_t result32 = Scale(fraction16, value32);
+				const uint32_t result32 = UFraction16::Fraction(fraction16, value32);
 				const uint32_t refResult32 = RefFraction16(value32, fraction16);
 
 				if (result8 != refResult8
@@ -316,7 +323,7 @@ namespace IntegerSignal::Fraction::Test
 		return errorCount == 0;
 	}
 
-	// Sampled test for fraction32_t for uint8_t, uint16_t, and uint32_t.
+	// Sampled test for Fraction32 for uint8_t, uint16_t, and uint32_t.
 	template<uint32_t MaxIterations = 50000>
 	static bool TestFraction32Sample()
 	{
@@ -329,7 +336,7 @@ namespace IntegerSignal::Fraction::Test
 		for (uint32_t f = 0; f < UINT16_MAX; f++)
 		{
 			const uint32_t fractionIterate = (uint32_t)(((uint64_t)f * UINT32_MAX) / (iterations - 1));
-			const fraction32_t fraction32 = (fraction32_t)max((int64_t)FRACTION32_NEGATIVE_1X, (int64_t)min((int64_t)FRACTION32_1X, (int64_t)fractionIterate));
+			const Fraction32::scalar_t fraction32 = (Fraction32::scalar_t)max<int64_t>(Fraction32::FRACTION_1X_NEGATIVE, min<int64_t>(Fraction32::FRACTION_1X, (int64_t)fractionIterate));
 
 			for (uint64_t i = 0; i <= iterations; i++)
 			{
@@ -337,13 +344,13 @@ namespace IntegerSignal::Fraction::Test
 				const int16_t value16 = value32 / INT16_MAX;
 				const int8_t value8 = value16 / INT8_MAX;
 
-				const int8_t result8 = Scale(fraction32, value8);
+				const int8_t result8 = Fraction32::Fraction(fraction32, value8);
 				const int8_t refResult8 = RefFraction32(value8, fraction32);
 
-				const int16_t result16 = Scale(fraction32, value16);
+				const int16_t result16 = Fraction32::Fraction(fraction32, value16);
 				const int16_t refResult16 = RefFraction32(value16, fraction32);
 
-				const int32_t result32 = Scale(fraction32, value32);
+				const int32_t result32 = Fraction32::Fraction(fraction32, value32);
 				const int32_t refResult32 = RefFraction32(value32, fraction32);
 
 				if (result8 != refResult8
@@ -397,7 +404,7 @@ namespace IntegerSignal::Fraction::Test
 		return errorCount == 0;
 	}
 
-	// Sampled test for fraction8_t for uint8_t, uint16_t, and uint32_t.
+	// Sampled test for Fraction8 for uint8_t, uint16_t, and uint32_t.
 	template<uint32_t MaxIterations = 50000>
 	static bool TestFraction8Sample()
 	{
@@ -409,7 +416,7 @@ namespace IntegerSignal::Fraction::Test
 
 		for (uint16_t f = 1; f <= UINT8_MAX; f++)
 		{
-			const fraction8_t fraction8 = (fraction8_t)max((int8_t)FRACTION8_NEGATIVE_1X, (int8_t)min((int8_t)FRACTION8_1X, (int8_t)f));
+			const Fraction8::scalar_t fraction8 = (Fraction8::scalar_t)max<int8_t>(Fraction8::FRACTION_1X_NEGATIVE, min<int8_t>(Fraction8::FRACTION_1X, (int8_t)f));
 
 			for (uint32_t i = 0; i <= iterations; i++)
 			{
@@ -417,13 +424,13 @@ namespace IntegerSignal::Fraction::Test
 				const int16_t value16 = value32 / INT16_MAX;
 				const int8_t value8 = value16 / INT8_MAX;
 
-				const int8_t result8 = Scale(fraction8, value8);
+				const int8_t result8 = Fraction8::Fraction(fraction8, value8);
 				const int8_t refResult8 = RefFraction8(value8, fraction8);
 
-				const int16_t result16 = Scale(fraction8, value16);
+				const int16_t result16 = Fraction8::Fraction(fraction8, value16);
 				const int16_t refResult16 = RefFraction8(value16, fraction8);
 
-				const int32_t result32 = Scale(fraction8, value32);
+				const int32_t result32 = Fraction8::Fraction(fraction8, value32);
 				const int32_t refResult32 = RefFraction8(value32, fraction8);
 
 				if (result8 != refResult8
@@ -482,7 +489,7 @@ namespace IntegerSignal::Fraction::Test
 		return errorCount == 0;
 	}
 
-	// Sampled test for ufraction8_t for uint8_t, uint16_t, and uint32_t.
+	// Sampled test for UFraction8 for uint8_t, uint16_t, and uint32_t.
 	template<uint32_t MaxIterations = 50000>
 	static bool TestUFraction8Sample()
 	{
@@ -494,7 +501,7 @@ namespace IntegerSignal::Fraction::Test
 
 		for (uint16_t f = 1; f <= UINT8_MAX; f++)
 		{
-			const ufraction8_t fraction8 = (ufraction8_t)min((uint8_t)UFRACTION8_1X, (uint8_t)f);
+			const UFraction8::scalar_t fraction8 = (UFraction8::scalar_t)min<uint8_t>(UFraction8::FRACTION_1X, (uint8_t)f);
 
 			for (uint32_t i = 0; i <= iterations; i++)
 			{
@@ -502,13 +509,13 @@ namespace IntegerSignal::Fraction::Test
 				const uint16_t value16 = value32 / UINT16_MAX;
 				const uint8_t value8 = value16 / UINT8_MAX;
 
-				const uint8_t result8 = Scale(fraction8, value8);
+				const uint8_t result8 = UFraction8::Fraction(fraction8, value8);
 				const uint8_t refResult8 = RefFraction8(value8, fraction8);
 
-				const uint16_t result16 = Scale(fraction8, value16);
+				const uint16_t result16 = UFraction8::Fraction(fraction8, value16);
 				const uint16_t refResult16 = RefFraction8(value16, fraction8);
 
-				const uint32_t result32 = Scale(fraction8, value32);
+				const uint32_t result32 = UFraction8::Fraction(fraction8, value32);
 				const uint32_t refResult32 = RefFraction8(value32, fraction8);
 
 				if (result8 != refResult8
@@ -565,7 +572,7 @@ namespace IntegerSignal::Fraction::Test
 		return errorCount == 0;
 	}
 
-	// Exhaustive test for ufraction8_t
+	// Exhaustive test for UFraction8::scalar_t
 	static bool TestUFraction8Exhaustive()
 	{
 		Serial.println(F("Starting exhaustive ufraction8_t tests..."));
@@ -576,8 +583,8 @@ namespace IntegerSignal::Fraction::Test
 			for (uint16_t f = v; f <= UINT8_MAX; f++)
 			{
 				const uint8_t value = (uint8_t)v;
-				const ufraction8_t fraction8 = (ufraction8_t)min((uint8_t)UFRACTION8_1X, (uint8_t)f);
-				const uint8_t result = Scale(fraction8, value);
+				const UFraction8::scalar_t fraction8 = (UFraction8::scalar_t)min<uint8_t>(UFraction8::FRACTION_1X, (uint8_t)f);
+				const uint8_t result = UFraction8::Fraction(fraction8, value);
 				const uint8_t refResult = RefFraction8(value, fraction8);
 				if (result != refResult)
 				{
@@ -612,7 +619,7 @@ namespace IntegerSignal::Fraction::Test
 		return errorCount == 0;
 	}
 
-	// Exhaustive test for ufraction16_t
+	// Exhaustive test for UFraction16::scalar_t
 	static bool TestUFraction16Exhaustive()
 	{
 		Serial.println(F("Starting exhaustive ufraction16_t tests..."));
@@ -623,8 +630,8 @@ namespace IntegerSignal::Fraction::Test
 			for (uint32_t f = 1; f <= UINT16_MAX; f++)
 			{
 				const uint16_t value = (uint16_t)v;
-				const ufraction16_t fraction16 = (ufraction16_t)min((uint16_t)FRACTION16_1X, (uint16_t)f);
-				const uint16_t result = Scale(fraction16, value);
+				const UFraction16::scalar_t fraction16 = (UFraction16::scalar_t)min<uint16_t>(UFraction16::FRACTION_1X, (uint16_t)f);
+				const uint16_t result = UFraction16::Fraction(fraction16, value);
 				const uint16_t refResult = RefFraction16(value, fraction16);
 				if (result != refResult)
 				{
@@ -659,7 +666,7 @@ namespace IntegerSignal::Fraction::Test
 		return errorCount == 0;
 	}
 
-	// Exhaustive test for GetFraction8 for all 255*255 combinations of numerator/denominator.
+	// Exhaustive test for GetScalar (signed Fraction8/16/32) for all 255*255 combinations of numerator/denominator.
 	static bool TestGetFraction8Exhaustive()
 	{
 		Serial.println(F("Starting exhaustive GetFraction8 tests..."));
@@ -671,14 +678,15 @@ namespace IntegerSignal::Fraction::Test
 			{
 				const uint8_t numerator = (uint8_t)n;
 				const uint8_t denominator = (uint8_t)d;
-				const fraction8_t fraction8 = GetFraction8(numerator, denominator);
-				const fraction8_t reffraction8 = RefGetFraction8(numerator, denominator);
 
-				const fraction16_t fraction16 = GetFraction16(numerator, denominator);
-				const fraction16_t reffraction16 = RefGetFraction16(numerator, denominator);
+				const Fraction8::scalar_t fraction8 = Fraction8::GetScalar(numerator, denominator);
+				const Fraction8::scalar_t reffraction8 = RefGetFraction8(numerator, denominator);
 
-				const fraction32_t fraction32 = GetFraction32(numerator, denominator);
-				const fraction32_t reffraction32 = RefGetFraction32(numerator, denominator);
+				const Fraction16::scalar_t fraction16 = Fraction16::GetScalar(numerator, denominator);
+				const Fraction16::scalar_t reffraction16 = RefGetFraction16(numerator, denominator);
+
+				const Fraction32::scalar_t fraction32 = Fraction32::GetScalar(numerator, denominator);
+				const Fraction32::scalar_t reffraction32 = RefGetFraction32(numerator, denominator);
 
 				if (fraction8 != reffraction8
 					|| fraction16 != reffraction16
@@ -769,4 +777,3 @@ namespace IntegerSignal::Fraction::Test
 }
 
 #endif
-

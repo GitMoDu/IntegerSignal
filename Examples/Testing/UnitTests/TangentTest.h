@@ -11,21 +11,21 @@ namespace IntegerSignal::Trigonometry::Tangent::Test
 	static uint32_t RefTangent32(const angle_t angle)
 	{
 		double radians = (angle * M_PI) / (2.0 * (double)ANGLE_90);
-		return round(tan(radians) * (double)FRACTION32_1X);
+		return round(tan(radians) * (double)Fraction32::FRACTION_1X);
 	}
 
 	// Reference function for tangent calculation using floating-point math for Tangent16
 	static uint16_t RefTangent16(const angle_t angle)
 	{
 		double radians = (angle * M_PI) / (2.0 * (double)ANGLE_90);
-		return round(tan(radians) * (double)FRACTION16_1X);
+		return round(tan(radians) * (double)Fraction16::FRACTION_1X);
 	}
 
 	// Reference function for tangent calculation using floating-point math for Tangent8
 	static uint8_t RefTangent8(const angle_t angle)
 	{
 		double radians = (angle * M_PI) / (2.0 * (double)ANGLE_90);
-		return round(tan(radians) * (double)FRACTION8_1X);
+		return round(tan(radians) * (double)Fraction8::FRACTION_1X);
 	}
 
 	static constexpr double DegreesToRadians(const double degrees) {
@@ -94,8 +94,8 @@ namespace IntegerSignal::Trigonometry::Tangent::Test
 		int32_t maxError = 0;
 		for (uint16_t angle = 0; angle <= angleRange; angle++)
 		{
-			const fraction16_t result = IntegerSignal::Trigonometry::Tangent16(angle);
-			const fraction16_t refResult = RefTangent16(angle);
+			const Fraction16::scalar_t result = IntegerSignal::Trigonometry::Tangent16(angle);
+			const Fraction16::scalar_t refResult = RefTangent16(angle);
 
 			maxError = max((int32_t)maxError, abs((int32_t)result - (int32_t)refResult));
 
@@ -144,8 +144,8 @@ namespace IntegerSignal::Trigonometry::Tangent::Test
 		int32_t maxError = 0;
 		for (uint32_t angle = 0; angle <= angleRange; angle++)
 		{
-			const fraction32_t result = IntegerSignal::Trigonometry::Tangent32(angle);
-			const fraction32_t refResult = RefTangent32(angle);
+			const Fraction32::scalar_t result = IntegerSignal::Trigonometry::Tangent32(angle);
+			const Fraction32::scalar_t refResult = RefTangent32(angle);
 
 			maxError = max((int32_t)maxError, (int32_t)abs((int64_t)result - (int64_t)refResult));
 
@@ -198,12 +198,12 @@ namespace IntegerSignal::Trigonometry::Tangent::Test
 		{
 			const double degrees = ((double)angle * degreesRange) / (double)(angleRange);
 
-			const double tangentUnit = tan(DegreesToRadians(degrees));
-			const fraction8_t unitFraction = round(tangentUnit * double(FRACTION8_1X));
-			const fraction8_t tangentFraction = IntegerSignal::Trigonometry::Tangent8(angle);
+			const double tangentUnit = tan(DegreesToRadians(degrees));			
+			const Fraction8::scalar_t unitFraction = round(tangentUnit * double(Fraction8::FRACTION_1X));
+			const Fraction8::scalar_t tangentFraction = IntegerSignal::Trigonometry::Tangent8(angle);
 
 			const int16_t errorI = (int16_t)tangentFraction - unitFraction;
-			const double errorF = double(errorI) / double(FRACTION8_1X);
+			const double errorF = double(errorI) / double(Fraction8::FRACTION_1X);
 
 			if (errorF > errorTopF)
 			{
@@ -223,7 +223,7 @@ namespace IntegerSignal::Trigonometry::Tangent::Test
 		}
 
 		const double errorAverageF = (double)errorSum / double(angleRange);
-		const double errorAverageI = errorAverageF * (double)FRACTION8_1X;
+		const double errorAverageI = errorAverageF * (double)Fraction8::FRACTION_1X;
 
 		Serial.print(F("\tMax Error\t"));
 		Serial.println(errorLargestI);
@@ -256,11 +256,11 @@ namespace IntegerSignal::Trigonometry::Tangent::Test
 			const double degrees = ((double)angle * degreesRange) / (double)angleRange;
 
 			const double tangentUnit = tan(DegreesToRadians(degrees));
-			const fraction16_t unitFraction = round(tangentUnit * double(FRACTION16_1X));
-			const fraction16_t tangentFraction = IntegerSignal::Trigonometry::Tangent16(angle);
+			const Fraction16::scalar_t unitFraction = round(tangentUnit * double(Fraction16::FRACTION_1X));
+			const Fraction16::scalar_t tangentFraction = IntegerSignal::Trigonometry::Tangent16(angle);
 
 			const int32_t errorI = (int32_t)tangentFraction - unitFraction;
-			const double errorF = double(errorI) / double(FRACTION16_1X);
+			const double errorF = double(errorI) / double(Fraction16::FRACTION_1X);
 
 			if (errorF > errorTopF)
 			{
@@ -280,7 +280,7 @@ namespace IntegerSignal::Trigonometry::Tangent::Test
 		}
 
 		const double errorAverageF = (double)errorSum / (double)angleRange;
-		const double errorAverageI = errorAverageF * (double)FRACTION16_1X;
+		const double errorAverageI = errorAverageF * (double)Fraction16::FRACTION_1X;
 
 		Serial.print(F("\tMax Error\t"));
 		Serial.println(errorLargestI);
@@ -312,11 +312,11 @@ namespace IntegerSignal::Trigonometry::Tangent::Test
 			const double degrees = ((double)angle * degreesRange) / (double)angleRange;
 
 			const double tangentUnit = tan(DegreesToRadians(degrees));
-			const fraction32_t unitFraction = round(tangentUnit * double(FRACTION32_1X));
-			const fraction32_t tangentFraction = IntegerSignal::Trigonometry::Tangent32(angle);
+			const Fraction32::scalar_t unitFraction = round(tangentUnit * double(Fraction32::FRACTION_1X));
+			const Fraction32::scalar_t tangentFraction = IntegerSignal::Trigonometry::Tangent32(angle);
 
 			const int64_t errorI = (int64_t)tangentFraction - unitFraction;
-			const double errorF = double(errorI) / double(FRACTION32_1X);
+			const double errorF = double(errorI) / double(Fraction32::FRACTION_1X);
 
 			if (errorF > errorTopF)
 			{
@@ -342,7 +342,7 @@ namespace IntegerSignal::Trigonometry::Tangent::Test
 		}
 
 		const double errorAverageF = (double)errorSum / (double)angleRange;
-		const double errorAverageI = errorAverageF * (double)FRACTION32_1X;
+		const double errorAverageI = errorAverageF * (double)Fraction32::FRACTION_1X;
 
 		Serial.print(F("\tMax Error\t"));
 		Serial.println(errorLargestI);

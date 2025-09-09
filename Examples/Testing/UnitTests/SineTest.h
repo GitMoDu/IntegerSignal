@@ -11,21 +11,21 @@ namespace IntegerSignal::Trigonometry::Sine::Test
 	static uint32_t RefSine32(const angle_t angle)
 	{
 		double radians = (angle * M_PI) / (2.0 * (double)ANGLE_90);
-		return round(sin(radians) * (double)FRACTION32_1X);
+		return round(sin(radians) * (double)Fraction32::FRACTION_1X);
 	}
 
 	// Reference function for sine calculation using floating-point math
 	static uint16_t RefSine16(const angle_t angle)
 	{
 		double radians = (angle * M_PI) / (2.0 * (double)ANGLE_90);
-		return round(sin(radians) * (double)FRACTION16_1X);
+		return round(sin(radians) * (double)Fraction16::FRACTION_1X);
 	}
 
 	// Reference function for sine calculation using floating-point math for Sine8
 	static uint8_t RefSine8(const angle_t angle)
 	{
 		double radians = (angle * M_PI) / (2.0 * (double)ANGLE_90);
-		return round(sin(radians) * (double)FRACTION8_1X);
+		return round(sin(radians) * (double)Fraction8::FRACTION_1X);
 	}
 
 	static constexpr double DegreesToRadians(const double degrees) {
@@ -90,8 +90,8 @@ namespace IntegerSignal::Trigonometry::Sine::Test
 		uint32_t maxError = 0;
 		for (uint16_t angle = 0; angle <= ANGLE_90; angle++)
 		{
-			const fraction16_t result = IntegerSignal::Trigonometry::Sine16(angle);
-			const fraction16_t refResult = RefSine16(angle);
+			const Fraction16::scalar_t result = IntegerSignal::Trigonometry::Sine16(angle);
+			const Fraction16::scalar_t refResult = RefSine16(angle);
 
 			maxError = max((int32_t)maxError, abs((int32_t)result - (int32_t)refResult));
 
@@ -225,7 +225,7 @@ namespace IntegerSignal::Trigonometry::Sine::Test
 
 		const angle_t angleRange = GetAngle(90);
 
-		fraction8_t errorLargestI = 0;
+		Fraction8::scalar_t errorLargestI = 0;
 		double errorBottomF = 0;
 		double errorTopF = 0;
 
@@ -237,11 +237,11 @@ namespace IntegerSignal::Trigonometry::Sine::Test
 			const angle_t angle = ((uint32_t)i * ANGLE_90) / ANGLE_RANGE;
 
 			const double sineUnit = sin(DegreesToRadians(degrees));
-			const fraction8_t unitFraction = roundf(sineUnit * double(FRACTION8_1X));
-			const fraction8_t sineFraction = IntegerSignal::Trigonometry::Sine8(angle);
+			const Fraction8::scalar_t unitFraction = roundf(sineUnit * double(Fraction8::FRACTION_1X));
+			const Fraction8::scalar_t sineFraction = IntegerSignal::Trigonometry::Sine8(angle);
 
 			const int16_t errorI = (int16_t)sineFraction - unitFraction;
-			const double errorF = errorI / double(FRACTION8_1X);
+			const double errorF = errorI / double(Fraction8::FRACTION_1X);
 
 			if (errorF > errorTopF)
 			{
@@ -261,7 +261,7 @@ namespace IntegerSignal::Trigonometry::Sine::Test
 		}
 
 		const double errorAverageF = (double)errorSum / (double)ANGLE_RANGE;
-		const double errorAverageI = errorAverageF * (double)FRACTION8_1X;
+		const double errorAverageI = errorAverageF * (double)Fraction8::FRACTION_1X;
 
 		Serial.print(F("\tMax Error\t"));
 		Serial.println(errorLargestI);
@@ -283,7 +283,7 @@ namespace IntegerSignal::Trigonometry::Sine::Test
 
 		const angle_t angleRange = GetAngle(90);
 
-		fraction16_t errorLargestI = 0;
+		Fraction16::scalar_t errorLargestI = 0;
 		double errorBottomF = 0;
 		double errorTopF = 0;
 
@@ -295,11 +295,11 @@ namespace IntegerSignal::Trigonometry::Sine::Test
 			const angle_t angle = ((uint32_t)i * ANGLE_90) / ANGLE_RANGE;
 
 			const double sineUnit = sin(DegreesToRadians(degrees));
-			const fraction16_t unitFraction = round(sineUnit * double(FRACTION16_1X));
-			const fraction16_t sineFraction = IntegerSignal::Trigonometry::Sine16(angle);
+			const Fraction16::scalar_t unitFraction = round(sineUnit * double(Fraction16::FRACTION_1X));
+			const Fraction16::scalar_t sineFraction = IntegerSignal::Trigonometry::Sine16(angle);
 
 			const int32_t errorI = (int32_t)sineFraction - unitFraction;
-			const double errorF = errorI / double(FRACTION16_1X);
+			const double errorF = errorI / double(Fraction16::FRACTION_1X);
 
 			if (errorF > errorTopF)
 			{
@@ -319,7 +319,7 @@ namespace IntegerSignal::Trigonometry::Sine::Test
 		}
 
 		const double errorAverageF = (double)errorSum / (double)ANGLE_RANGE;
-		const double errorAverageI = errorAverageF * (double)FRACTION16_1X;
+		const double errorAverageI = errorAverageF * (double)Fraction16::FRACTION_1X;
 
 		Serial.print(F("\tMax Error\t"));
 		Serial.println(errorLargestI);
@@ -340,8 +340,8 @@ namespace IntegerSignal::Trigonometry::Sine::Test
 		Serial.println(F("Integer Trigonometry Sine32"));
 
 		const angle_t angleRange = GetAngle(90);
-
-		fraction32_t errorLargestI = 0;
+		
+		Fraction32::scalar_t errorLargestI = 0;
 		double errorBottomF = 0;
 		double errorTopF = 0;
 
@@ -353,11 +353,11 @@ namespace IntegerSignal::Trigonometry::Sine::Test
 			const angle_t angle = ((uint32_t)i * ANGLE_90) / ANGLE_RANGE;
 
 			const double sineUnit = sin(DegreesToRadians(degrees));
-			const fraction32_t unitFraction = round(sineUnit * double(FRACTION32_1X));
-			const fraction32_t sineFraction = IntegerSignal::Trigonometry::Sine32(angle);
+			const Fraction32::scalar_t unitFraction = round(sineUnit * double(Fraction32::FRACTION_1X));
+			const Fraction32::scalar_t sineFraction = IntegerSignal::Trigonometry::Sine32(angle);
 
 			const int64_t errorI = (int64_t)sineFraction - unitFraction;
-			const double errorF = errorI / double(FRACTION32_1X);
+			const double errorF = errorI / double(Fraction32::FRACTION_1X);
 
 			if (errorF > errorTopF)
 			{
@@ -377,7 +377,7 @@ namespace IntegerSignal::Trigonometry::Sine::Test
 		}
 
 		const double errorAverageF = (double)errorSum / (double)ANGLE_RANGE;
-		const double errorAverageI = errorAverageF * (double)FRACTION32_1X;
+		const double errorAverageI = errorAverageF * (double)Fraction32::FRACTION_1X;
 
 		Serial.print(F("\tMax Error\t"));
 		Serial.println(errorLargestI);
