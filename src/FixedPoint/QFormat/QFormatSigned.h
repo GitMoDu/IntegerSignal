@@ -52,6 +52,15 @@ namespace IntegerSignal
 			/// Number of bits to shift for scaling operations.
 			/// </summary>
 			static constexpr uint8_t BIT_SHIFTS = bit_count<SCALAR_UNIT * 2>::value - 1;
+			// Compile-time validation.
+			static_assert((SCALAR_UNIT& (SCALAR_UNIT - 1)) == 0,
+				"TemplateSignedQFormat: SCALAR_UNIT must be a power of two.");
+			static_assert(BIT_SHIFTS == IntegerSignal::GetBitShifts(static_cast<int64_t>(SCALAR_UNIT)),
+				"TemplateSignedQFormat: BIT_SHIFTS must equal log2(SCALAR_UNIT).");
+
+			// Optional sanity checks (won't evaluate at runtime)
+			static_assert(static_cast<int32_t>(SCALAR_UNIT) == (1 << BIT_SHIFTS),
+				"TemplateSignedQFormat: SCALAR_UNIT != (1 << BIT_SHIFTS).");
 
 		public:
 			/// <summary>

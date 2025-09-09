@@ -49,6 +49,14 @@ namespace IntegerSignal
 			/// </summary>
 			static constexpr uint8_t BIT_SHIFTS = bit_count<SCALAR_UNIT>::value - 1;
 
+			// Compile-time validation.
+			static_assert((SCALAR_UNIT & (SCALAR_UNIT - 1)) == 0,
+				"TemplateUnsignedQFormat: SCALAR_UNIT must be a power of two.");
+			static_assert(BIT_SHIFTS == IntegerSignal::GetBitShifts(static_cast<uint64_t>(SCALAR_UNIT)),
+				"TemplateUnsignedQFormat: BIT_SHIFTS must equal log2(SCALAR_UNIT).");
+			static_assert(static_cast<uint64_t>(SCALAR_UNIT) == (uint64_t(1) << BIT_SHIFTS),
+				"TemplateUnsignedQFormat: SCALAR_UNIT != (1 << BIT_SHIFTS).");
+
 		private:
 			/// <summary>
 			/// Fractions an unsigned value by the Q-format scalar.
