@@ -18,12 +18,9 @@
 
 #include "SquareRootTest.h"
 
-#include "ResizeTest.h"
-#include "FractionTest.h"
 
 #include "SineTest.h"
 #include "TangentTest.h"
-
 
 #include "FixedPointScaleTest.h"
 #include "FixedPointFractionTest.h"
@@ -59,9 +56,9 @@ void setup()
 	pass &= IntegerSignal::TypeTraits::Test::RunTests();
 	pass &= IntegerSignal::Trigonometry::Tangent::Test::RunTests<MaxIterations>();
 	pass &= IntegerSignal::Trigonometry::Sine::Test::RunTests<MaxIterations>();
-	pass &= IntegerSignal::Fraction::Test::RunTests<MaxIterations>();
-	pass &= IntegerSignal::Resize::Test::RunTests<MaxIterations>();
 	pass &= IntegerSignal::SquareRoot::Test::RunTests<MaxIterations>();
+	pass &= IntegerSignal::FixedPoint::Fraction::Test::RunTests<MaxIterations>();
+	pass &= IntegerSignal::FixedPoint::Scale::Test::RunTests<MaxIterations>();
 
 	if (pass)
 	{
@@ -80,7 +77,7 @@ void setup()
 
 		pass &= IntegerSignal::BitScale::Test::RunExhaustive();
 		pass &= IntegerSignal::SquareRoot::Test::RunExhaustive();
-		pass &= IntegerSignal::Fraction::Test::RunExhaustive();
+		pass &= IntegerSignal::FixedPoint::Fraction::Test::RunExhaustive();
 
 		if (pass)
 		{
