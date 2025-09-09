@@ -72,6 +72,33 @@ namespace IntegerSignal
 				/// </summary>
 				static constexpr auto SCALE_STEPS = SCALE_MAX / SCALE_UNIT;
 
+			public:
+				/// <summary>
+				/// Calculates a scaling factor based on the given numerator and denominator values.
+				/// </summary>
+				/// <typeparam name="T">The type of the numerator and denominator values.</typeparam>
+				/// <param name="numerator">The numerator value used in the scaling calculation.</param>
+				/// <param name="denominator">The denominator value used in the scaling calculation.</param>
+				/// <returns>Returns a factor_t value representing the computed scaling factor. 
+				/// If the numerator is negative, returns SCALE_MIN. 
+				/// If the denominator is zero or negative, returns SCALE_UNIT.
+				/// If the numerator is greater than the denominator, returns SCALE_UNIT. 
+				/// Otherwise, returns factor.</returns>
+				template<typename T>
+				static constexpr factor_t GetFactor(const T numerator, const T denominator)
+				{
+					return TemplateGetFactor<T>(numerator, denominator, typename IsUnsignedType<T>::type());
+				}
+
+				/// <summary>
+				/// Scales a value by a given scale factor.
+				/// </summary>
+				template<typename T>
+				static constexpr T Scale(const factor_t factorValue, const T value)
+				{
+					return TemplateScale<T>(factorValue, value, typename IsUnsignedType<T>::type());
+				}
+
 			private:
 				/// <summary>
 				/// Calculates a scaling factor based on the given numerator and denominator, using unsigned integer arithmetic.
@@ -84,7 +111,7 @@ namespace IntegerSignal
 				/// Returns SCALE_UNIT if the denominator is zero or the numerator is greater than the denominator; 
 				/// otherwise, returns scale factor.</returns>
 				template<typename T>
-				static constexpr factor_t GetFactor(const T numerator, const T denominator, TypeTraits::TypeDispatch::TrueType)
+				static constexpr factor_t TemplateGetFactor(const T numerator, const T denominator, TypeTraits::TypeDispatch::TrueType)
 				{
 					using intermediate_t = typename next_uint_type<T>::type;
 
@@ -105,7 +132,7 @@ namespace IntegerSignal
 				/// SCALE_UNIT if the numerator is greater than the denominator; 
 				/// otherwise returns scale factor</returns>
 				template<typename T>
-				static constexpr factor_t GetFactor(const T numerator, const T denominator, TypeTraits::TypeDispatch::FalseType)
+				static constexpr factor_t TemplateGetFactor(const T numerator, const T denominator, TypeTraits::TypeDispatch::FalseType)
 				{
 					using intermediate_t = typename next_int_type<T>::type;
 
@@ -113,36 +140,26 @@ namespace IntegerSignal
 						factor_t((static_cast<intermediate_t>(numerator) * SCALE_UNIT) / denominator);
 				}
 
-			public:
-
-				/// <summary>
-				/// Calculates a scaling factor based on the given numerator and denominator values.
-				/// </summary>
-				/// <typeparam name="T">The type of the numerator and denominator values.</typeparam>
-				/// <param name="numerator">The numerator value used in the scaling calculation.</param>
-				/// <param name="denominator">The denominator value used in the scaling calculation.</param>
-				/// <returns>Returns a factor_t value representing the computed scaling factor. 
-				/// If the numerator is negative, returns SCALE_MIN. 
-				/// If the denominator is zero or negative, returns SCALE_UNIT.
-				/// If the numerator is greater than the denominator, returns SCALE_UNIT. 
-				/// Otherwise, returns factor.</returns>
 				template<typename T>
-				static constexpr factor_t GetFactor(const T numerator, const T denominator)
+				static constexpr T TemplateScale(const factor_t factorValue, const T value, TypeTraits::TypeDispatch::TrueType)
 				{
-					return GetFactor<T>(numerator, denominator, typename IsUnsignedType<T>::type());
+					using larger_t = typename larger_type<T, factor_t>::type;
+					using intermediate_t = typename next_uint_type<larger_t>::type;
+
+					return static_cast<T>(LimitValue<intermediate_t>(
+						SignedRightShift(static_cast<intermediate_t>(value) * static_cast<intermediate_t>(factorValue), BIT_SHIFTS),
+						static_cast<intermediate_t>(type_limits<T>::MIN()),
+						static_cast<intermediate_t>(type_limits<T>::MAX())));
 				}
 
-				/// <summary>
-				/// Scales a value by a given scale factor.
-				/// </summary>
 				template<typename T>
-				static constexpr T Scale(const factor_t factorValue, const T value)
+				static constexpr T TemplateScale(const factor_t factorValue, const T value, TypeTraits::TypeDispatch::FalseType)
 				{
 					using larger_t = typename larger_type<T, factor_t>::type;
 					using intermediate_t = typename next_int_type<larger_t>::type;
 
 					return static_cast<T>(LimitValue<intermediate_t>(
-						SignedRightShift(static_cast<intermediate_t>(value) * factorValue, BIT_SHIFTS),
+						SignedRightShift(static_cast<intermediate_t>(value) * static_cast<intermediate_t>(factorValue), BIT_SHIFTS),
 						type_limits<T>::MIN(), type_limits<T>::MAX()));
 				}
 			};
