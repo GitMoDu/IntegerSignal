@@ -40,7 +40,7 @@ namespace IntegerSignal
 			/// <summary>
 			/// Maximum positive scalar value for unit in the Q-format.
 			/// </summary>
-			static constexpr scalar_t SCALAR_UNIT = SignedRightShift(type_limits<scalar_t>::MAX(), 1);
+			static constexpr scalar_t SCALAR_UNIT = SignedRightShift(type_limits<scalar_t>::MAX(), 1) + 1;
 
 			/// <summary>
 			/// Maximum negative scalar value for unit in the Q-format.
@@ -51,7 +51,8 @@ namespace IntegerSignal
 			/// <summary>
 			/// Number of bits to shift for scaling operations.
 			/// </summary>
-			static constexpr uint8_t BIT_SHIFTS = bit_count<SCALAR_UNIT * 2>::value - 1;
+			static constexpr uint8_t BIT_SHIFTS = bit_count<SCALAR_UNIT>::value - 1;
+
 			// Compile-time validation.
 			static_assert((SCALAR_UNIT& (SCALAR_UNIT - 1)) == 0,
 				"TemplateSignedQFormat: SCALAR_UNIT must be a power of two.");
@@ -73,15 +74,17 @@ namespace IntegerSignal
 
 			/// <summary>
 			/// Calculates a Q-format scalar from a ratio.
+			/// Uses multiplication by SCALAR_UNIT to match the representable signed range [-SCALAR_UNIT; +SCALAR_UNIT].
+			/// Promotes to a wide intermediate to avoid overflow for 32-bit formats.
 			/// </summary>
 			template<typename ArgT>
 			static constexpr scalar_t GetScalar(const ArgT numerator, const ArgT denominator)
 			{
-				using intermediate_t = typename next_int_type<ArgT>::type;
+				using wider_value_t = typename larger_type<ArgT, scalar_t>::type;
+				using intermediate_t = typename next_int_type<wider_value_t>::type;
 
 				return (denominator == 0) ? (numerator >= 0 ? SCALAR_UNIT : SCALAR_UNIT_NEGATIVE)
-					//: LimitValue<intermediate_t, SCALAR_UNIT_NEGATIVE, SCALAR_UNIT>((static_cast<intermediate_t>(numerator) * SCALAR_UNIT) / denominator);
-					: LimitValue<intermediate_t, SCALAR_UNIT_NEGATIVE, SCALAR_UNIT>((static_cast<intermediate_t>(numerator) << BIT_SHIFTS) / denominator);
+					: LimitValue<intermediate_t, intermediate_t(SCALAR_UNIT_NEGATIVE), intermediate_t(SCALAR_UNIT)>((static_cast<intermediate_t>(numerator) << BIT_SHIFTS) / denominator);
 			}
 
 			/// <summary>
@@ -92,20 +95,8 @@ namespace IntegerSignal
 			{
 				using larger_t = typename larger_type<T, scalar_t>::type;
 				using intermediate_t = typename next_int_type<larger_t>::type;
+
 				return static_cast<T>(SignedRightShift(static_cast<intermediate_t>(value) * scalarValue, BIT_SHIFTS));
-			}
-
-			/// <summary>
-			/// Interpolates between two values using the Q-format scalar.
-			/// </summary>
-			template<typename T>
-			static constexpr T Interpolate(const scalar_t scalarValue, const T from, const T to)
-			{
-				using larger_t = typename larger_type<T, scalar_t>::type; // Larger of value type and unsigned scalar type.
-				using intermediate_t = typename next_int_type<larger_t>::type; // Next larger signed type for intermediate calculations.
-
-				return static_cast<T>(SignedRightShift((static_cast<intermediate_t>(to) * scalarValue) +
-					(static_cast<intermediate_t>(from) * (SCALAR_UNIT - scalarValue)), BIT_SHIFTS));
 			}
 		};
 	}
