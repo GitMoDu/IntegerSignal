@@ -21,14 +21,14 @@ namespace IntegerSignal
 				/// </summary>
 				static constexpr uint8_t Table[] PROGMEM
 				{
-					0, 6, 12, 18, 24, 31, 37, 43,
-					49, 55, 61, 68, 74, 79, 85, 91,
-					97, 103, 109, 114, 120, 125, 131, 136,
-					141, 146, 151, 156, 161, 166, 171, 175,
-					180, 184, 188, 193, 197, 201, 204, 208,
-					212, 215, 218, 221, 224, 227, 230, 233,
-					235, 237, 240, 242, 244, 245, 247, 248,
-					250, 251, 252, 253, 253, 254, 254, 254
+					0, 6, 13, 19, 25, 31, 37, 44,
+					50, 56, 62, 68, 74, 80, 86, 92,
+					98, 103, 109, 115, 120, 126, 131, 136,
+					142, 147, 152, 157, 162, 167, 171, 176,
+					180, 185, 189, 193, 197, 201, 205, 208,
+					212, 215, 219, 222, 225, 228, 231, 233,
+					236, 238, 240, 242, 244, 246, 247, 249,
+					250, 251, 252, 253, 254, 254, 255, 255
 				};
 
 				static constexpr uint16_t LutSize = sizeof(Table) / sizeof(Table[0]);
@@ -59,7 +59,8 @@ namespace IntegerSignal
 #else
 						const uint8_t b = Table[flooredIndex + 1];
 #endif
-						return a + (((uint16_t)(b - a) * angleError) >> GetBitShifts(StepError));
+						// Ceiling interpolation within the LUT step (+StepError), which de-biases the final Q0.6 rounding.
+						return a + (((static_cast<uint16_t>(b - a) * angleError) + (StepError >> 1)) >> GetBitShifts(StepError));
 					}
 					else
 					{

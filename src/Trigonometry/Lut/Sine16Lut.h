@@ -110,7 +110,8 @@ namespace IntegerSignal
 #else
 						const uint16_t b = Table[flooredIndex + 1];
 #endif
-						return a + (((uint32_t)(b - a) * angleError) >> GetBitShifts(StepError));
+						// Ceiling interpolation within the LUT step (+StepError), which de-biases the final Q0.14 rounding.
+						return a + (((static_cast<uint32_t>(b - a) * angleError) + StepError) >> GetBitShifts(StepError));
 					}
 					else
 					{
