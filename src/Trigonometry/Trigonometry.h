@@ -25,18 +25,20 @@ namespace IntegerSignal
 	namespace Trigonometry
 	{
 		/// <summary>
-		/// Represents an abstract angle in the range [0; UINT16_MAX]
-		/// Corresponding to [0; 360] degrees of rotation.
+		/// Modular fixed-point angle for a full rotation.
+		/// - Domain: [0; ANGLE_RANGE], where ANGLE_RANGE == UINT16_MAX.
+		/// - Semantics: values wrap modulo (ANGLE_RANGE + 1). 0 and ANGLE_RANGE + 1 represent the same angle.
 		/// </summary>
 		typedef uint16_t angle_t;
 
 		static constexpr angle_t ANGLE_RANGE = UINT16_MAX;
 
 		/// <summary>
-		/// Converts degrees to the abstract angle representation.
+		/// Converts integer degrees to angle_t by linear mapping into the full-turn domain.
+		/// The result is implicitly modulo 360 degrees (wrap-around).
 		/// </summary>
-		/// <param name="degrees">>[-360;360] degrees of rotation.</param>
-		/// <returns>Abstract angle in the range [0; UINT16_MAX]</returns>
+		/// <param name="degrees">Any integer degrees (e.g. -720..+720).</param>
+		/// <returns>Modular angle in [0; ANGLE_RANGE].</returns>
 		static constexpr angle_t GetAngle(const int16_t degrees)
 		{
 			return ((int32_t)degrees * ((int32_t)ANGLE_RANGE + 1)) / 360;

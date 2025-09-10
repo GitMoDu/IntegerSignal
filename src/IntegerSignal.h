@@ -12,8 +12,6 @@
 #include "FixedPoint/Fraction.h"
 #include "FixedPoint/Scale.h"
 
-#include "Scale/Fraction.h"
-#include "Scale/Resize.h"
 
 #include "Color/Rgb8.h"
 #include "Color/Rgb10.h"
