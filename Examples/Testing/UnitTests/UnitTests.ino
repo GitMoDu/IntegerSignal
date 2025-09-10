@@ -25,6 +25,12 @@
 #include "FixedPointScaleTest.h"
 #include "FixedPointFractionTest.h"
 
+#include "LowPassFilterTest.h"
+#include "EmaFilterTest.h"
+#include "DemaFilterTest.h"
+#include "SignedFilterTest.h"
+#include "StrengthFilterTest.h"
+
 inline void PrintPlaform();
 
 void setup()
@@ -59,6 +65,12 @@ void setup()
 	pass &= IntegerSignal::SquareRoot::Test::RunTests<MaxIterations>();
 	pass &= IntegerSignal::FixedPoint::Fraction::Test::RunTests<MaxIterations>();
 	pass &= IntegerSignal::FixedPoint::Scale::Test::RunTests<MaxIterations>();
+
+	pass &= IntegerSignal::Filters::LowPass::Test::RunTests<MaxIterations>();
+	pass &= IntegerSignal::Filters::Ema::Test::RunTests<MaxIterations>();
+	pass &= IntegerSignal::Filters::Dema::Test::RunTests<MaxIterations>();
+	pass &= IntegerSignal::Filter::Template::Test::RunTests<MaxIterations>();
+	pass &= IntegerSignal::Filters::Strength::Test::RunTests<MaxIterations>();
 
 	if (pass)
 	{
