@@ -69,8 +69,8 @@ void setup()
 	pass &= IntegerSignal::Filters::LowPass::Test::RunTests<MaxIterations>();
 	pass &= IntegerSignal::Filters::Ema::Test::RunTests<MaxIterations>();
 	pass &= IntegerSignal::Filters::Dema::Test::RunTests<MaxIterations>();
-	pass &= IntegerSignal::Filter::Template::Test::RunTests<MaxIterations>();
-	pass &= IntegerSignal::Filters::Strength::Test::RunTests<MaxIterations>();
+	pass &= IntegerSignal::Filters::Template::SignedTest::RunTests<MaxIterations>();
+	pass &= IntegerSignal::Filters::Template::StrengthTest::RunTests<MaxIterations>();
 
 	if (pass)
 	{
