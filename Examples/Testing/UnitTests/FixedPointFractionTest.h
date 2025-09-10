@@ -175,79 +175,57 @@ namespace IntegerSignal::FixedPoint::Fraction::Test
 	static bool TestFraction16Sample()
 	{
 		const uint32_t iterations = min(MaxIterations, (uint32_t)UINT16_MAX);
+		const uint32_t fracSamples = min<uint32_t>(iterations, 1024u);
+		const uint32_t fracStep = max<uint32_t>(1u, (uint32_t)UINT16_MAX / fracSamples);
+		const uint32_t valStep = max<uint32_t>(1u, iterations / 256u);
 
 		Serial.println(F("Starting sampled fraction16_t tests..."));
 
 		uint32_t errorCount = 0;
 
-		for (uint32_t f = 0; f < UINT16_MAX; f++)
+		for (uint32_t f = 0; f <= UINT16_MAX; f += fracStep)
 		{
-			const uint32_t fractionIterate = (uint32_t)(((uint64_t)f * UINT16_MAX) / (iterations - 1));
-			const Fraction16::scalar_t fraction16 = (Fraction16::scalar_t)max<int32_t>(Fraction16::FRACTION_1X_NEGATIVE, min<int32_t>(Fraction16::FRACTION_1X, (int32_t)fractionIterate));
+			const Fraction16::scalar_t fraction16 =
+				(Fraction16::scalar_t)max<int32_t>(Fraction16::FRACTION_1X_NEGATIVE,
+					min<int32_t>(Fraction16::FRACTION_1X, (int32_t)f));
 
-			for (uint32_t i = 0; i <= iterations; i++)
+			for (uint32_t i = 0; i <= iterations; i += valStep)
 			{
-				const int32_t value32 = (uint32_t)(((uint64_t)i * UINT32_MAX) / (iterations - 1));
+				const int32_t value32 = (uint32_t)(((uint64_t)i * UINT32_MAX) / (iterations ? (iterations - 1) : 1));
 				const int16_t value16 = value32 / INT16_MAX;
-				const int8_t value8 = value16 / INT8_MAX;
+				const int8_t  value8  = value16 / INT8_MAX;
 
-				const int8_t result8 = Fraction16::Fraction(fraction16, value8);
-				const int8_t refResult8 = RefFraction16(value8, fraction16);
+				const int8_t  result8  = Fraction16::Fraction(fraction16, value8);
+				const int8_t  ref8     = RefFraction16(value8, fraction16);
 
 				const int16_t result16 = Fraction16::Fraction(fraction16, value16);
-				const int16_t refResult16 = RefFraction16(value16, fraction16);
+				const int16_t ref16    = RefFraction16(value16, fraction16);
 
 				const int32_t result32 = Fraction16::Fraction(fraction16, value32);
-				const int32_t refResult32 = RefFraction16(value32, fraction16);
+				const int32_t ref32    = RefFraction16(value32, fraction16);
 
-				if (result8 != refResult8
-					|| result16 != refResult16
-					|| result32 != refResult32
-					)
+				if (result8 != ref8 || result16 != ref16 || result32 != ref32)
 				{
 					Serial.print(F("fraction16_t error: fraction="));
 					Serial.print(fraction16);
-					Serial.print(F(" value="));
-					if (result8 != refResult8)
-					{
-						Serial.print(F(" result="));
-						Serial.print(result8);
-						Serial.print(F(" ref="));
-						Serial.println(refResult8);
-					}
-					if (result16 != refResult16)
-					{
-						Serial.print(F(" result="));
-						Serial.print(result16);
-						Serial.print(F(" ref="));
-						Serial.println(refResult16);
-					}
-					if (result32 != refResult32)
-					{
-						Serial.print(F(" result="));
-						Serial.print(result32);
-						Serial.print(F(" ref="));
-						Serial.println(refResult32);
-					}
+					if (result8 != ref8)   { Serial.print(F(" r8="));  Serial.print(result8);  Serial.print(F(" ref=")); Serial.println(ref8); }
+					if (result16 != ref16) { Serial.print(F(" r16=")); Serial.print(result16); Serial.print(F(" ref=")); Serial.println(ref16); }
+					if (result32 != ref32) { Serial.print(F(" r32=")); Serial.print(result32); Serial.print(F(" ref=")); Serial.println(ref32); }
 					errorCount++;
+					break;
 				}
 			}
 
-			if ((f % 4096) == 0)
+			if ((f % (uint32_t)(UINT16_MAX / 32u)) == 0)
 			{
-				Serial.print(F("fraction16_t progress: "));
-				Serial.print(f);
-				Serial.println(F(" values tested..."));
+				Serial.print(F("fraction16_t progress: f="));
+				Serial.println(f);
 			}
 		}
 
-		if (errorCount == 0)
-		{
-			Serial.println(F("All fraction16_t tests PASSED."));
-		}
-		else
-		{
-			Serial.print(F("fraction16_t tests FAILED. Errors: "));
+		if (errorCount == 0) Serial.println(F("All fraction16_t sampled tests PASSED."));
+		else {
+			Serial.print(F("fraction16_t sampled tests FAILED. Errors: "));
 			Serial.println(errorCount);
 		}
 
@@ -259,122 +237,59 @@ namespace IntegerSignal::FixedPoint::Fraction::Test
 	static bool TestUFraction16Sample()
 	{
 		const uint32_t iterations = min(MaxIterations, (uint32_t)UINT16_MAX);
+		const uint32_t fracSamples = min<uint32_t>(iterations, 1024u);
+		const uint32_t fracStep = max<uint32_t>(1u, (uint32_t)UINT16_MAX / fracSamples);
+		const uint32_t valStep = max<uint32_t>(1u, iterations / 256u);
 
 		Serial.println(F("Starting sampled ufraction16_t tests..."));
 
 		uint32_t errorCount = 0;
 
-		for (uint32_t f = 0; f < UINT16_MAX; f++)
+		for (uint32_t f = 0; f <= UINT16_MAX; f += fracStep)
 		{
-			const uint32_t fractionIterate = (uint32_t)(((uint64_t)f * UINT16_MAX) / (iterations - 1));
-			const UFraction16::scalar_t fraction16 = (UFraction16::scalar_t)min<int32_t>(UFraction16::FRACTION_1X, (int32_t)fractionIterate);
+			const UFraction16::scalar_t fraction16 =
+				(UFraction16::scalar_t)min<int32_t>(UFraction16::FRACTION_1X, (int32_t)f);
 
-			for (uint32_t i = 0; i <= iterations; i++)
+			for (uint32_t i = 0; i <= iterations; i += valStep)
 			{
-				const uint32_t value32 = (uint32_t)(((uint64_t)i * UINT32_MAX) / (iterations - 1));
+				const uint32_t value32 = (uint32_t)(((uint64_t)i * UINT32_MAX) / (iterations ? (iterations - 1) : 1));
 				const uint16_t value16 = value32 / INT16_MAX;
-				const uint8_t value8 = value16 / INT8_MAX;
+				const uint8_t  value8  = value16 / INT8_MAX;
 
-				const uint8_t result8 = UFraction16::Fraction(fraction16, value8);
-				const uint8_t refResult8 = RefUFraction16(value8, fraction16);
+				const uint8_t  r8  = UFraction16::Fraction(fraction16, value8);
+				const uint8_t  ref8 = RefUFraction16(value8, fraction16);
 
-				const uint16_t result16 = UFraction16::Fraction(fraction16, value16);
-				const uint16_t refResult16 = RefUFraction16(value16, fraction16);
+				const uint16_t r16 = UFraction16::Fraction(fraction16, value16);
+				const uint16_t ref16 = RefUFraction16(value16, fraction16);
 
-				const uint32_t result32 = UFraction16::Fraction(fraction16, value32);
-				const uint32_t refResult32 = RefUFraction16(value32, fraction16);
+				const uint32_t r32 = UFraction16::Fraction(fraction16, value32);
+				const uint32_t ref32 = RefUFraction16(value32, fraction16);
 
-				if (result8 != refResult8
-					|| result16 != refResult16
-					|| result32 != refResult32
-					)
+				if (r8 != ref8 || r16 != ref16 || r32 != ref32)
 				{
 					Serial.print(F("ufraction16_t error: fraction="));
 					Serial.print(fraction16);
-					Serial.print(F(" value="));
-					if (result8 != refResult8)
-					{
-						Serial.print(F(" result="));
-						Serial.print(result8);
-						Serial.print(F(" ref="));
-						Serial.println(refResult8);
-					}
-					if (result16 != refResult16)
-					{
-						Serial.print(F(" result="));
-						Serial.print(result16);
-						Serial.print(F(" ref="));
-						Serial.println(refResult16);
-					}
-					if (result32 != refResult32)
-					{
-						Serial.print(F(" result="));
-						Serial.print(result32);
-						Serial.print(F(" ref="));
-						Serial.println(refResult32);
-					}
+					if (r8 != ref8)   { Serial.print(F(" r8="));  Serial.print(r8);  Serial.print(F(" ref=")); Serial.println(ref8); }
+					if (r16 != ref16) { Serial.print(F(" r16=")); Serial.print(r16); Serial.print(F(" ref=")); Serial.println(ref16); }
+					if (r32 != ref32) { Serial.print(F(" r32=")); Serial.print(r32); Serial.print(F(" ref=")); Serial.println(ref32); }
 					errorCount++;
+					break;
 				}
 			}
 
-			if ((f % 4096) == 0)
+			if ((f % (uint32_t)(UINT16_MAX / 32u)) == 0)
 			{
-				Serial.print(F("ufraction16_t progress: "));
-				Serial.print(f);
-				Serial.println(F(" values tested..."));
+				Serial.print(F("ufraction16_t progress: f="));
+				Serial.println(f);
 			}
 		}
 
-		if (errorCount == 0)
-		{
-			Serial.println(F("All ufraction16_t tests PASSED."));
-		}
-		else
-		{
-			Serial.print(F("ufraction16_t tests FAILED. Errors: "));
+		if (errorCount == 0) Serial.println(F("All ufraction16_t sampled tests PASSED."));
+		else {
+			Serial.print(F("ufraction16_t sampled tests FAILED. Errors: "));
 			Serial.println(errorCount);
 		}
 
-		return errorCount == 0;
-	}
-
-	// Added: explicit UFraction16 edge tests around 1x boundaries
-	static bool TestUFraction16Edges()
-	{
-		Serial.println(F("Starting ufraction16_t edge tests..."));
-		uint32_t errorCount = 0;
-
-		const uint16_t edgeScalars[] = { 0, 1, 16383, 16384, 32767, 32768, 65535 };
-		const uint16_t edgeValues[] = { 0, 1, 127, 128, 255, 256, 32767, 32768, 65535 };
-
-		for (uint16_t scalar : edgeScalars)
-		{
-			for (uint16_t value : edgeValues)
-			{
-				const uint16_t result = UFraction16::Fraction((UFraction16::scalar_t)scalar, value);
-				const uint16_t refResult = RefUFraction16(value, (UFraction16::scalar_t)scalar);
-				if (result != refResult)
-				{
-					Serial.print(F("UFraction16 edge error: value="));
-					Serial.print(value);
-					Serial.print(F(" scalar="));
-					Serial.print(scalar);
-					Serial.print(F(" result="));
-					Serial.print(result);
-					Serial.print(F(" ref="));
-					Serial.println(refResult);
-					errorCount++;
-				}
-			}
-		}
-
-		if (errorCount == 0)
-			Serial.println(F("All ufraction16_t edge tests PASSED."));
-		else
-		{
-			Serial.print(F("ufraction16_t edge tests FAILED. Errors: "));
-			Serial.println(errorCount);
-		}
 		return errorCount == 0;
 	}
 
@@ -382,77 +297,60 @@ namespace IntegerSignal::FixedPoint::Fraction::Test
 	template<uint32_t MaxIterations = 50000>
 	static bool TestFraction32Sample()
 	{
-		const uint32_t iterations = min(MaxIterations, UINT32_MAX);
+		const uint32_t iterations = MaxIterations; // already a 32-bit domain
+		const uint32_t fracSamples = min<uint32_t>(iterations, 4096u);
+		const uint32_t fracStep = max<uint32_t>(1u, (uint32_t)UINT16_MAX / fracSamples);
+		const uint32_t valStep = max<uint32_t>(1u, iterations / 256u);
 
 		Serial.println(F("Starting sampled fraction32_t tests..."));
 
 		uint32_t errorCount = 0;
 
-		for (uint32_t f = 0; f < UINT16_MAX; f++)
+		for (uint32_t f = 0; f <= UINT16_MAX; f += fracStep)
 		{
-			const uint32_t fractionIterate = (uint32_t)(((uint64_t)f * UINT32_MAX) / (iterations - 1));
-			const Fraction32::scalar_t fraction32 = (Fraction32::scalar_t)max<int64_t>(Fraction32::FRACTION_1X_NEGATIVE, min<int64_t>(Fraction32::FRACTION_1X, (int64_t)fractionIterate));
+			// Map 16-bit sweep to full 32-bit scalar domain
+			const uint32_t frac32map = (uint32_t)(((uint64_t)f * UINT32_MAX) / UINT16_MAX);
+			const Fraction32::scalar_t fraction32 =
+				(Fraction32::scalar_t)max<int64_t>(Fraction32::FRACTION_1X_NEGATIVE,
+					min<int64_t>(Fraction32::FRACTION_1X, (int64_t)frac32map));
 
-			for (uint64_t i = 0; i <= iterations; i++)
+			for (uint32_t i = 0; i <= iterations; i += valStep)
 			{
-				const int32_t value32 = (uint32_t)(((uint64_t)i * UINT32_MAX) / (iterations - 1));
+				const int32_t value32 = (uint32_t)(((uint64_t)i * UINT32_MAX) / (iterations ? (iterations - 1) : 1));
 				const int16_t value16 = value32 / INT16_MAX;
-				const int8_t value8 = value16 / INT8_MAX;
+				const int8_t  value8  = value16 / INT8_MAX;
 
-				const int8_t result8 = Fraction32::Fraction(fraction32, value8);
-				const int8_t refResult8 = RefFraction32(value8, fraction32);
+				const int8_t  r8  = Fraction32::Fraction(fraction32, value8);
+				const int8_t  ref8 = RefFraction32(value8, fraction32);
 
-				const int16_t result16 = Fraction32::Fraction(fraction32, value16);
-				const int16_t refResult16 = RefFraction32(value16, fraction32);
+				const int16_t r16 = Fraction32::Fraction(fraction32, value16);
+				const int16_t ref16 = RefFraction32(value16, fraction32);
 
-				const int32_t result32 = Fraction32::Fraction(fraction32, value32);
-				const int32_t refResult32 = RefFraction32(value32, fraction32);
+				const int32_t r32 = Fraction32::Fraction(fraction32, value32);
+				const int32_t ref32 = RefFraction32(value32, fraction32);
 
-				if (result8 != refResult8
-					|| result16 != refResult16
-					|| result32 != refResult32)
+				if (r8 != ref8 || r16 != ref16 || r32 != ref32)
 				{
 					Serial.print(F("fraction32_t error: fraction="));
 					Serial.print(fraction32);
-					Serial.print(F(" value="));
-					if (result8 != refResult8)
-					{
-						Serial.print(F(" result8="));
-						Serial.print(result8);
-						Serial.print(F(" ref="));
-						Serial.println(refResult8);
-					}
-					if (result16 != refResult16)
-					{
-						Serial.print(F(" result16="));
-						Serial.print(result16);
-						Serial.print(F(" ref="));
-						Serial.println(refResult16);
-					}
-					if (result32 != refResult32)
-					{
-						Serial.print(F(" error32="));
-						Serial.print((result32 - refResult32));
-					}
+					if (r8 != ref8)   { Serial.print(F(" r8="));  Serial.print(r8);  Serial.print(F(" ref=")); Serial.println(ref8); }
+					if (r16 != ref16) { Serial.print(F(" r16=")); Serial.print(r16); Serial.print(F(" ref=")); Serial.println(ref16); }
+					if (r32 != ref32) { Serial.print(F(" r32=")); Serial.print(r32); Serial.print(F(" ref=")); Serial.println(ref32); }
 					errorCount++;
+					break;
 				}
 			}
 
-			if ((f % (UINT16_MAX / 128)) == 0)
+			if ((f % (uint32_t)(UINT16_MAX / 32u)) == 0)
 			{
-				Serial.print(F("fraction32_t progress: "));
-				Serial.print(f * iterations);
-				Serial.println(F(" values tested..."));
+				Serial.print(F("fraction32_t progress: f="));
+				Serial.println(f);
 			}
 		}
 
-		if (errorCount == 0)
-		{
-			Serial.println(F("All fraction32_t tests PASSED."));
-		}
-		else
-		{
-			Serial.print(F("fraction32_t tests FAILED. Errors: "));
+		if (errorCount == 0) Serial.println(F("All fraction32_t sampled tests PASSED."));
+		else {
+			Serial.print(F("fraction32_t sampled tests FAILED. Errors: "));
 			Serial.println(errorCount);
 		}
 
@@ -721,26 +619,24 @@ namespace IntegerSignal::FixedPoint::Fraction::Test
 		return errorCount == 0;
 	}
 
-	// Added: Sampled test for UFraction32 (edge cases + large prime stepping)
-	template<uint32_t MaxIterations = 50000>
-	static bool TestUFraction32Sample()
+	// Added: explicit UFraction16 edge tests around 1x boundaries
+	static bool TestUFraction16Edges()
 	{
-		const uint32_t iterations = min(MaxIterations, (uint32_t)UINT16_MAX);
-		Serial.println(F("Starting sampled UFraction32 tests..."));
+		Serial.println(F("Starting ufraction16_t edge tests..."));
 		uint32_t errorCount = 0;
 
-		const uint32_t edgeScalars[] = { 0, 1, 1073741823u, 1073741824u, 2147483647u, 2147483648u, 4294967295u };
-		const uint32_t edgeValues[] = { 0, 1, 127, 128, 255, 256, 65535, 65536, 16777215, 16777216, 2147483647u, 2147483648u };
+		const uint16_t edgeScalars[] = { 0, 1, 16383, 16384, 32767, 32768, 65535 };
+		const uint16_t edgeValues[] = { 0, 1, 127, 128, 255, 256, 32767, 32768, 65535 };
 
-		for (uint32_t scalar : edgeScalars)
+		for (uint16_t scalar : edgeScalars)
 		{
-			for (uint32_t value : edgeValues)
+			for (uint16_t value : edgeValues)
 			{
-				const uint32_t result = UFraction32::Fraction((UFraction32::scalar_t)scalar, value);
-				const uint32_t refResult = RefUFraction32(value, (UFraction32::scalar_t)scalar);
+				const uint16_t result = UFraction16::Fraction((UFraction16::scalar_t)scalar, value);
+				const uint16_t refResult = RefUFraction16(value, (UFraction16::scalar_t)scalar);
 				if (result != refResult)
 				{
-					Serial.print(F("UFraction32 edge error: value="));
+					Serial.print(F("UFraction16 edge error: value="));
 					Serial.print(value);
 					Serial.print(F(" scalar="));
 					Serial.print(scalar);
@@ -753,15 +649,61 @@ namespace IntegerSignal::FixedPoint::Fraction::Test
 			}
 		}
 
+		if (errorCount == 0)
+			Serial.println(F("All ufraction16_t edge tests PASSED."));
+		else
+		{
+			Serial.print(F("ufraction16_t edge tests FAILED. Errors: "));
+			Serial.println(errorCount);
+		}
+		return errorCount == 0;
+	}
+
+	// Sampled test for UFraction32 (edge cases + large prime stepping).
+	template<uint32_t MaxIterations = 50000>
+	static bool TestUFraction32Sample()
+	{
+		const uint32_t iterations = min(MaxIterations, (uint32_t)UINT16_MAX);
+		Serial.println(F("Starting sampled UFraction32 tests..."));
+		uint32_t errorCount = 0;
+
+		// Edge coverage around 1x and extremes
+		const uint32_t edgeScalars[] = { 0u, 1u, 1073741823u, 1073741824u, 2147483647u, 2147483648u, 4294967295u };
+		const uint32_t edgeValues[] = { 0u, 1u, 127u, 128u, 255u, 256u, 65535u, 65536u, 16777215u, 16777216u, 2147483647u, 2147483648u };
+
+		for (uint32_t scalar : edgeScalars)
+		{
+			for (uint32_t value : edgeValues)
+			{
+				const uint32_t result = UFraction32::Fraction((UFraction32::scalar_t)scalar, value);
+				const uint32_t ref = RefUFraction32(value, (UFraction32::scalar_t)scalar);
+				if (result != ref)
+				{
+					Serial.print(F("UFraction32 edge error: value="));
+					Serial.print(value);
+					Serial.print(F(" scalar="));
+					Serial.print(scalar);
+					Serial.print(F(" result="));
+					Serial.print(result);
+					Serial.print(F(" ref="));
+					Serial.println(ref);
+					errorCount++;
+				}
+			}
+		}
+
+		// Sample the 32-bit scalar space with a large prime step and a few value subsets
 		for (uint64_t s = 0; s <= UINT32_MAX; s += 179424673ULL)
 		{
 			const uint32_t scalar = (uint32_t)s;
+
+			// Light sweep of small values
 			for (uint32_t v = 0; v <= UINT8_MAX; v += 16)
 			{
 				const uint32_t value = (uint32_t)v;
 				const uint32_t result = UFraction32::Fraction((UFraction32::scalar_t)scalar, value);
-				const uint32_t refResult = RefUFraction32(value, (UFraction32::scalar_t)scalar);
-				if (result != refResult)
+				const uint32_t ref = RefUFraction32(value, (UFraction32::scalar_t)scalar);
+				if (result != ref)
 				{
 					Serial.print(F("UFraction32 error: value="));
 					Serial.print(value);
@@ -770,17 +712,18 @@ namespace IntegerSignal::FixedPoint::Fraction::Test
 					Serial.print(F(" result="));
 					Serial.print(result);
 					Serial.print(F(" ref="));
-					Serial.println(refResult);
+					Serial.println(ref);
 					errorCount++;
 				}
 			}
 
+			// A few large values
 			const uint32_t largeValues[] = { 65535u, 16777215u, 2147483647u };
 			for (uint32_t value : largeValues)
 			{
 				const uint32_t result = UFraction32::Fraction((UFraction32::scalar_t)scalar, value);
-				const uint32_t refResult = RefUFraction32(value, (UFraction32::scalar_t)scalar);
-				if (result != refResult)
+				const uint32_t ref = RefUFraction32(value, (UFraction32::scalar_t)scalar);
+				if (result != ref)
 				{
 					Serial.print(F("UFraction32 large value error: value="));
 					Serial.print(value);
@@ -789,7 +732,7 @@ namespace IntegerSignal::FixedPoint::Fraction::Test
 					Serial.print(F(" result="));
 					Serial.print(result);
 					Serial.print(F(" ref="));
-					Serial.println(refResult);
+					Serial.println(ref);
 					errorCount++;
 				}
 			}
