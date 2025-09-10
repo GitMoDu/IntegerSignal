@@ -6,6 +6,14 @@
 #include "Base/TypeTraits.h"
 #include "Base/BitSize.h"
 
+// Configure strict compile-time checks.
+// Default: disabled on AVR and older GCC to avoid non-constant-expression issues.
+#ifndef INTEGER_SIGNAL_QFORMAT_STRICT_CHECKS
+#  if defined(__AVR__) || (defined(__GNUC__) && (__GNUC__ < 7))
+#  else
+#    define INTEGER_SIGNAL_QFORMAT_STRICT_CHECKS 1
+#  endif
+#endif
 
 namespace IntegerSignal
 {
@@ -59,10 +67,11 @@ namespace IntegerSignal
 			static_assert(BIT_SHIFTS == IntegerSignal::GetBitShifts(static_cast<int64_t>(SCALAR_UNIT)),
 				"TemplateSignedQFormat: BIT_SHIFTS must equal log2(SCALAR_UNIT).");
 
+#if defined(INTEGER_SIGNAL_QFORMAT_STRICT_CHECKS)
 			// Optional sanity checks (won't evaluate at runtime)
 			static_assert(static_cast<int32_t>(SCALAR_UNIT) == (1 << BIT_SHIFTS),
 				"TemplateSignedQFormat: SCALAR_UNIT != (1 << BIT_SHIFTS).");
-
+#endif
 		public:
 			/// <summary>
 			/// Checks if a scalar value is valid.
