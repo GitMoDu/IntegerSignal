@@ -26,6 +26,8 @@ namespace IntegerSignal
 					using Base = IntegerSignal::Filter::AbstractFilter<unsigned_t>;
 
 				public:
+					static_assert(factor >= 1, "Dema::Filter requires factor >= 1");
+
 					static constexpr uint8_t MaxFactor = sizeof(unsigned_t) * 8;
 					static constexpr unsigned_t Half = 1 << (factor - 1);
 
@@ -33,6 +35,7 @@ namespace IntegerSignal
 					using Base::Input;
 
 				private:
+					// Residual accumulators (post-subtraction) for the two EMA stages.
 					intermediate_t HighValue1 = 0;
 					intermediate_t HighValue2 = 0;
 
@@ -41,16 +44,17 @@ namespace IntegerSignal
 				public:
 					Filter() : Base() {}
 
+					// Clear to a steady-state output equal to 'value'
 					virtual void Clear(const unsigned_t value = 0)
 					{
 						Base::Clear(value);
 
-						// Set both stages of the filter to produce 'value' as output
-						Output = value;
+						// For steady state output Y, each stage's residual must be: R = Y * (2^factor - 1)
+						const intermediate_t Qminus1 = (intermediate_t(1) << factor) - 1;
+						HighValue1 = (intermediate_t)value * Qminus1;
+						HighValue2 = (intermediate_t)value * Qminus1;
 
-						// In a DEMA filter, we need both HighValue1 and HighValue2 to be in a steady state.
-						HighValue2 = value << factor;
-						HighValue1 = value << factor;
+						Output = value;
 					}
 
 					virtual void Step()

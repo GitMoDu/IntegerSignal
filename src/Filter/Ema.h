@@ -26,6 +26,8 @@ namespace IntegerSignal
 					using Base = IntegerSignal::Filter::AbstractFilter<unsigned_t>;
 
 				public:
+					static_assert(factor >= 1, "Ema::Filter requires factor >= 1");
+
 					static constexpr uint8_t MaxFactor = sizeof(unsigned_t) * 8;
 					static constexpr unsigned_t Half = 1 << (factor - 1);
 
@@ -33,18 +35,21 @@ namespace IntegerSignal
 					using Base::Input;
 
 				private:
+					// HighValue stores the residual (post-subtraction) accumulator.
 					intermediate_t HighValue = 0;
 					unsigned_t Output = 0;
 
 				public:
 					Filter() : Base() {}
 
+					// Clear to a steady-state output equal to 'value'
 					virtual void Clear(const unsigned_t value = 0)
 					{
 						Base::Clear(value);
-						HighValue = value;
-						Output = (HighValue + Half) >> factor;
-						HighValue -= Output;
+						// Residual for steady-state output Y is Y * (2^factor - 1)
+						const intermediate_t Qminus1 = (intermediate_t(1) << factor) - 1;
+						HighValue = (intermediate_t)value * Qminus1;
+						Output = value;
 					}
 
 					virtual void Step()
