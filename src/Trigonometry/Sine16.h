@@ -33,8 +33,8 @@ namespace IntegerSignal
 			}
 			else
 			{
-				// Scale Sine16 to positive Fraction.
-				return Lut::Sine16::GetInterpolated(angle) >> 2;
+				// Scale quarter-wave LUT to Q-format fraction (power-of-two unit).
+				return static_cast<uint32_t>(Lut::Sine16::GetInterpolated(angle) + 4) >> 2;
 			}
 		}
 
