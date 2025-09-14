@@ -1,10 +1,13 @@
 #ifndef _INTEGER_SIGNAL_INCLUDE_h
 #define _INTEGER_SIGNAL_INCLUDE_h
 
+#include "Base/TypeTraits.h"
+
 #include "Base/Operation.h"
 #include "Base/BitSize.h"
 #include "Base/ByteSize.h"
-#include "Base/TypeTraits.h"
+#include "Base/BitShift.h"
+
 #include "Base/Convert.h"
 #include "Base/Mix.h"
 #include "Base/SquareRoot.h"

@@ -86,35 +86,6 @@ namespace IntegerSignal
 	{
 		return (value <= 1) ? 0 : 1 + GetBitShifts(value >> 1);
 	}
-
-	/// <summary>
-	/// Performs a signed right shift on the given value.
-	/// For positive values, it behaves like a standard right shift.
-	/// For negative values, it preserves the sign bit (the leftmost bit), effectively dividing the value by a power of two while maintaining the sign.
-	/// </summary>
-	/// <typeparam name="T">The type of the value, inferred from the argument.</typeparam>
-	/// <param name="value">The value to shift.</param>
-	/// <param name="shifts">The number of positions to shift.</param>
-	/// <returns>The result of the signed right shift.</returns>
-	template<typename T>
-	constexpr T SignedRightShift(const T value, const uint8_t shifts)
-	{
-		return (value < 0) ? -(-value >> shifts) : (value >> shifts);
-	}
-
-	/// <summary>
-	/// Performs a signed right shift on a value, preserving its sign.
-	/// </summary>
-	/// <typeparam name="T">The type of the value to shift.</typeparam>
-	/// <typeparam name="shifts">Templated number of bits to shift to the right.</typeparam>
-	/// <param name="value">The value to be right-shifted.</param>
-	/// <returns>The result of right-shifting the value by the specified number of bits, with sign preserved.</returns>
-	template<typename T,
-		const uint8_t shifts>
-	constexpr T SignedRightShift(const T value)
-	{
-		return (value < 0) ? -(-value >> shifts) : (value >> shifts);
-	}
 }
 
 #endif
