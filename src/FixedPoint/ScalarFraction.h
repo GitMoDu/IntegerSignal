@@ -9,13 +9,14 @@ namespace IntegerSignal
 	namespace FixedPoint
 	{
 		/// <summary>
-		/// Fixed-point fraction types in Q-format for both unsigned [0;+1] and signed [-1;+1] fractions.
+		/// Q-format fractional scalars for fixed-point math.
+		/// Unsigned types represent [0, 1]; signed types represent [-1, 1].
+		/// Unit (1.0) is a power-of-two value, enabling fast shift-based math.
 		/// </summary>
 		namespace ScalarFraction
 		{
 			/// <summary>
-			/// UQ0.7 format (8-bit unsigned with 7 fractional bits).
-			/// Represents fraction range [0.0 ; +1.0].
+			/// UQ0.7 (8-bit unsigned, 7 fractional bits). Range: [0.0, 1.0].
 			/// </summary>
 			struct UFraction8 final : QFormatUnsigned::TemplateFormat<uint8_t>
 			{
@@ -25,8 +26,7 @@ namespace IntegerSignal
 			};
 
 			/// <summary>
-			/// UQ0.15 format (16-bit unsigned with 15 fractional bits).
-			/// Represents fraction range [0.0 ; +1.0].
+			/// UQ0.15 (16-bit unsigned, 15 fractional bits). Range: [0.0, 1.0].
 			/// </summary>
 			struct UFraction16 final : QFormatUnsigned::TemplateFormat<uint16_t>
 			{
@@ -36,8 +36,7 @@ namespace IntegerSignal
 			};
 
 			/// <summary>
-			/// UQ0.31 format (32-bit unsigned with 31 fractional bits).
-			/// Represents fraction range [0.0 ; +1.0].
+			/// UQ0.31 (32-bit unsigned, 31 fractional bits). Range: [0.0, 1.0].
 			/// </summary>
 			struct UFraction32 final : QFormatUnsigned::TemplateFormat<uint32_t>
 			{
@@ -47,8 +46,7 @@ namespace IntegerSignal
 			};
 
 			/// <summary>
-			/// Q0.6 format (8-bit signed with 1 sign bit and 6 fractional bits).
-			/// Represents fraction range [-1.0 ; +1.0].
+			/// Q0.6 (8-bit signed, 6 fractional bits + sign). Range: [-1.0, 1.0].
 			/// </summary>
 			struct Fraction8 final : QFormatSigned::TemplateFormat<int8_t>
 			{
@@ -59,8 +57,7 @@ namespace IntegerSignal
 			};
 
 			/// <summary>
-			/// Q0.14 format (16-bit signed with 1 sign bit and 14 fractional bits).
-			/// Represents fraction range [-1.0 ; +1.0].
+			/// Q0.14 (16-bit signed, 14 fractional bits + sign). Range: [-1.0, 1.0].
 			/// </summary>
 			struct Fraction16 final : QFormatSigned::TemplateFormat<int16_t>
 			{
@@ -71,8 +68,7 @@ namespace IntegerSignal
 			};
 
 			/// <summary>
-			/// Q0.30 format (32-bit signed with 1 sign bit and 30 fractional bits).
-			/// Represents fraction range [-1.0 ; +1.0].
+			/// Q0.30 (32-bit signed, 30 fractional bits + sign). Range: [-1.0, 1.0].
 			/// </summary>
 			struct Fraction32 final : QFormatSigned::TemplateFormat<int32_t>
 			{
@@ -83,7 +79,7 @@ namespace IntegerSignal
 			};
 
 			/// <summary>
-			/// Defines type aliases for scalar types used in various fixed-point fraction types.
+			/// Scalar type aliases for the above formats.
 			/// </summary>
 			namespace ScalarAliases
 			{
@@ -99,7 +95,7 @@ namespace IntegerSignal
 			using namespace ScalarAliases;
 
 			/// <summary>
-			/// Provides constant aliases for commonly used fixed-point fraction values.
+			/// Typed constants for common fractional values.
 			/// </summary>
 			namespace ConstantAliases
 			{
@@ -117,10 +113,9 @@ namespace IntegerSignal
 			}
 			using namespace ConstantAliases;
 
-
-
 			/// <summary>
-			/// Provides automatic overloads for the Fraction function that scales a value by a given fractional scalar.
+			/// Overloads for multiplying a value by a fractional scalar.
+			/// Forwards to the corresponding base implementation.
 			/// </summary>
 			namespace FractionAliases
 			{
@@ -163,8 +158,8 @@ namespace IntegerSignal
 			using namespace FractionAliases;
 
 			/// <summary>
-			/// Helper aliases to compute a scalar from numerator/denominator for each width.
-			/// Unsigned variants clamp to [0; +1], signed variants clamp to [-1; +1].
+			/// Helpers to compute a scalar from numerator/denominator.
+			/// Unsigned results clamp to [0, 1]; signed results clamp to [-1, 1].
 			/// </summary>
 			namespace ScalarAliases
 			{
@@ -209,7 +204,8 @@ namespace IntegerSignal
 			using namespace ScalarAliases;
 
 			/// <summary>
-			/// Provides automatic overloads for the Interpolate functions that perform linear interpolation between two values using different unsigned fractional scalar types.
+			/// Linear interpolation between two values using an unsigned fractional scalar.
+			/// The scalar must be in [0, UFractionN::FRACTION_1X].
 			/// </summary>
 			namespace InterpolateAliases
 			{
