@@ -7,7 +7,7 @@ namespace IntegerSignal
 {
 	namespace Trigonometry
 	{
-		using namespace FixedPoint::Fraction;
+		using namespace FixedPoint::ScalarFraction;
 
 		/// <summary>
 		/// Tangent in fixed-point Q-format (32-bit signed fraction, Q0.30).

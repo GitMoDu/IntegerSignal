@@ -7,18 +7,18 @@ namespace IntegerSignal
 {
 	namespace Trigonometry
 	{
-		using namespace FixedPoint::Fraction;
+		using namespace FixedPoint::ScalarFraction;
 
 		/// <summary>
 		/// Tangent in fixed-point Q-format (16-bit signed fraction, Q0.14).
-		/// Produces a Fraction16::scalar_t. Uses quarter-wave LUT and identities to cover
+		/// Produces a fraction16_t. Uses quarter-wave LUT and identities to cover
 		/// the full 0..360 degrees range. Results are scaled to Fraction16::FRACTION_1X (power-of-two) via shifts.
 		/// Note: Near 90 deg and 270 deg the magnitude grows quickly; this implementation uses LUT
 		/// interpolation and the reciprocal identity (tan(x) = 1 / tan(90 deg - x)) and may saturate to Fraction16::FRACTION_1X.
 		/// </summary>
 		/// <param name="angle">Modular angle_t in [0; ANGLE_RANGE].</param>
 		/// <returns>Signed Q-format fraction, approximately in [-Fraction16::FRACTION_1X; +Fraction16::FRACTION_1X].</returns>
-		static Fraction16::scalar_t Tangent16(const angle_t angle)
+		static fraction16_t Tangent16(const angle_t angle)
 		{
 			if (angle == 0)
 			{
@@ -37,7 +37,7 @@ namespace IntegerSignal
 				{
 					// For angles between 45 and 90 deg, use:
 					// tan(x) = 1 / tan(90 deg - x)
-					const Fraction16::scalar_t tanComplement = Lut::Tangent16::GetInterpolated(ANGLE_90 - angle) >> 2;
+					const fraction16_t tanComplement = Lut::Tangent16::GetInterpolated(ANGLE_90 - angle) >> 2;
 					if (tanComplement == 0)
 					{
 						// Avoid division by zero; saturate to unit.
@@ -74,9 +74,9 @@ namespace IntegerSignal
 		/// </summary>
 		/// <param name="angle">Modular angle_t in [0; ANGLE_RANGE].</param>
 		/// <returns>Signed Q-format fraction.</returns>
-		static Fraction16::scalar_t Cotangent16(const angle_t angle)
+		static fraction16_t Cotangent16(const angle_t angle)
 		{
-			const Fraction16::scalar_t tanValue = Tangent16(angle);
+			const fraction16_t tanValue = Tangent16(angle);
 			if (tanValue == 0)
 			{
 				// Handle division by zero case

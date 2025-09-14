@@ -1,7 +1,7 @@
 #ifndef _INTEGER_SIGNAL_COLOR_RGB8_h
 #define _INTEGER_SIGNAL_COLOR_RGB8_h
 
-#include "../FixedPoint/Fraction.h"
+#include "../FixedPoint/ScalarFraction.h"
 #include "../Trigonometry/Trigonometry.h"
 #include "Hsv.h"
 
@@ -13,7 +13,7 @@ namespace IntegerSignal
 	/// </summary>
 	namespace Rgb8
 	{
-		using namespace FixedPoint::Fraction;
+		using namespace FixedPoint::ScalarFraction;
 
 		// RGB8 color components are represented as uint8_t.
 		using component_t = uint8_t;
@@ -23,9 +23,6 @@ namespace IntegerSignal
 
 		// RGB8 color is packed into a single uint32_t value.
 		using color_t = uint32_t;
-
-		// Fraction type used for interpolation (unsigned Q0.15).
-		using fraction_t = Hsv::fraction_t;
 
 		/// <summary>
 		/// Construct ARGB color from components.
@@ -91,26 +88,26 @@ namespace IntegerSignal
 
 		/// <summary>
 		/// Linear interpolation between two colors using an unsigned Q-format fraction.
-		/// fraction is fraction_t in [0; UFraction16::FRACTION_1X].
+		/// fraction is ufraction16_t in [0; UFraction16::FRACTION_1X].
 		/// </summary>
-		static color_t ColorInterpolateLinear(const color_t& from, const color_t& to, const fraction_t fraction)
+		static color_t ColorInterpolateLinear(const color_t& from, const color_t& to, const ufraction16_t fraction)
 		{
-			const fraction_t inverse = UFraction16::FRACTION_1X - fraction;
+			const ufraction16_t inverse = UFraction16::FRACTION_1X - fraction;
 
 			return Color(
-				UFraction16::Fraction(inverse, Red(from)) + UFraction16::Fraction(fraction, Red(to)),
-				UFraction16::Fraction(inverse, Green(from)) + UFraction16::Fraction(fraction, Green(to)),
-				UFraction16::Fraction(inverse, Blue(from)) + UFraction16::Fraction(fraction, Blue(to))
+				Fraction(inverse, Red(from)) + Fraction(fraction, Red(to)),
+				Fraction(inverse, Green(from)) + Fraction(fraction, Green(to)),
+				Fraction(inverse, Blue(from)) + Fraction(fraction, Blue(to))
 			);
 		}
 
 		/// <summary>
 		/// Weighted RMS interpolation between two colors using an unsigned Q-format fraction.
-		/// fraction is fraction_t in [0; UFraction16::FRACTION_1X].
+		/// fraction is ufraction16_t in [0; UFraction16::FRACTION_1X].
 		/// </summary>
-		static color_t ColorInterpolate(const color_t& from, const color_t& to, const fraction_t fraction)
+		static color_t ColorInterpolate(const color_t& from, const color_t& to, const ufraction16_t fraction)
 		{
-			const fraction_t inverse = UFraction16::FRACTION_1X - fraction;
+			const ufraction16_t inverse = UFraction16::FRACTION_1X - fraction;
 
 			component_t red, green, blue;
 
@@ -118,29 +115,29 @@ namespace IntegerSignal
 			uint16_t x, y;
 
 			// Red
-			x = UFraction16::Fraction(inverse, Red(from));
-			y = UFraction16::Fraction(fraction, Red(to));
+			x = Fraction(inverse, Red(from));
+			y = Fraction(fraction, Red(to));
 			red = SquareRoot16((x * x) + (y * y));
 
 			// Green
-			x = UFraction16::Fraction(inverse, Green(from));
-			y = UFraction16::Fraction(fraction, Green(to));
+			x = Fraction(inverse, Green(from));
+			y = Fraction(fraction, Green(to));
 			green = SquareRoot16((x * x) + (y * y));
 
 			// Blue
-			x = UFraction16::Fraction(inverse, Blue(from));
-			y = UFraction16::Fraction(fraction, Blue(to));
+			x = Fraction(inverse, Blue(from));
+			y = Fraction(fraction, Blue(to));
 			blue = SquareRoot16((x * x) + (y * y));
 
 			return Color(red, green, blue);
 		}
 
 		/// <summary>
-		/// Convert HSV (fraction_t) to RGB8.
-		/// Hue, saturation, value are fraction_t in [0; UFraction16::FRACTION_1X].
+		/// Convert HSV (ufraction16_t) to RGB8.
+		/// Hue, saturation, value are ufraction16_t in [0; UFraction16::FRACTION_1X].
 		/// Hue wraps modulo unit and is internally mapped to 6 equal segments.
 		/// </summary>
-		static color_t ColorHsvFraction(const fraction_t hue, const fraction_t saturation, const fraction_t value)
+		static color_t ColorHsvFraction(const ufraction16_t hue, const ufraction16_t saturation, const ufraction16_t value)
 		{
 			return Hsv::TemplateHsvFraction<color_t, component_t, COMPONENT_MAX>(hue, saturation, value,
 				[](const component_t red, const component_t green, const component_t blue)
@@ -155,10 +152,10 @@ namespace IntegerSignal
 		/// </summary>
 		static color_t ColorHsv(const Trigonometry::angle_t hue, const uint8_t saturation, const uint8_t value)
 		{
-			// Map inputs to fraction_t scalars.
-			const fraction_t hue16 = UFraction16::GetScalar<uint16_t>(hue, Trigonometry::ANGLE_RANGE);
-			const fraction_t sat16 = UFraction16::GetScalar(saturation, uint8_t(UINT8_MAX));
-			const fraction_t val16 = UFraction16::GetScalar(value, uint8_t(UINT8_MAX));
+			// Map inputs to ufraction16_t scalars.
+			const ufraction16_t hue16 = UFraction16::GetScalar<uint16_t>(hue, Trigonometry::ANGLE_RANGE);
+			const ufraction16_t sat16 = UFraction16::GetScalar(saturation, uint8_t(UINT8_MAX));
+			const ufraction16_t val16 = UFraction16::GetScalar(value, uint8_t(UINT8_MAX));
 
 			return ColorHsvFraction(hue16, sat16, val16);
 		}

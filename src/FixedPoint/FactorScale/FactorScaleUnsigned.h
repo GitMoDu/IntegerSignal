@@ -1,17 +1,16 @@
-#ifndef _INTEGER_SIGNAL_FIXED_POINT_SCALE_h
-#define _INTEGER_SIGNAL_FIXED_POINT_SCALE_h
+#ifndef _INTEGER_SIGNAL_FIXED_POINT_FACTOR_SCALE_UNSIGNED_h
+#define _INTEGER_SIGNAL_FIXED_POINT_FACTOR_SCALE_UNSIGNED_h
 
 #include <stdint.h>
-#include "Base/Operation.h"
-#include "Base/TypeTraits.h"
-#include "Base/BitSize.h"
-
+#include "../../Base/Operation.h"
+#include "../../Base/TypeTraits.h"
+#include "../../Base/BitSize.h"
 
 namespace IntegerSignal
 {
 	namespace FixedPoint
 	{
-		namespace FactorScale
+		namespace FactorScaleUnsigned
 		{
 			using namespace TypeTraits::TypeNext;
 			using namespace TypeTraits::TypeLimits;
@@ -31,7 +30,7 @@ namespace IntegerSignal
 			/// </summary>
 			/// <typeparam name="unsigned_factor_t">Underlying unsigned integer type for the scale factor.</typeparam>
 			template<typename unsigned_factor_t>
-			class TemplateFactorScale
+			class TemplateFormat
 			{
 			public:
 				/// <summary>
@@ -87,6 +86,7 @@ namespace IntegerSignal
 				template<typename T>
 				static constexpr factor_t GetFactor(const T numerator, const T denominator)
 				{
+					static_assert(is_unsigned<T>::value, "GetFactor requires an unsigned integer type.");
 					return TemplateGetFactor<T>(numerator, denominator, typename IsUnsignedType<T>::type());
 				}
 
@@ -115,8 +115,8 @@ namespace IntegerSignal
 				{
 					using intermediate_t = typename next_uint_type<T>::type;
 
-					return denominator == 0 ? SCALE_UNIT : numerator > denominator ? SCALE_UNIT :
-						factor_t((static_cast<intermediate_t>(numerator) * SCALE_UNIT) / denominator);
+					return denominator == 0 ? SCALE_UNIT :
+						static_cast<factor_t>((static_cast<intermediate_t>(numerator) << GetBitShifts(SCALE_UNIT)) / denominator);
 				}
 
 				/// <summary>
@@ -136,8 +136,8 @@ namespace IntegerSignal
 				{
 					using intermediate_t = typename next_int_type<T>::type;
 
-					return numerator < 0 ? SCALE_MIN : denominator <= 0 ? SCALE_UNIT : numerator > denominator ? SCALE_UNIT :
-						factor_t((static_cast<intermediate_t>(numerator) * SCALE_UNIT) / denominator);
+					return numerator < 0 ? SCALE_MIN : denominator <= 0 ? SCALE_UNIT :
+						static_cast<factor_t>((static_cast<intermediate_t>(numerator) << GetBitShifts(SCALE_UNIT)) / denominator);
 				}
 
 				template<typename T>
@@ -164,57 +164,7 @@ namespace IntegerSignal
 				}
 			};
 		}
-
-		namespace Scale
-		{
-			/// <summary>
-			/// 8-bit unsigned scale factor for fixed-point scaling operations.
-			/// Provides scaling with 4-bit precision (16 distinct steps).
-			/// 
-			/// Scale range: 1/16x (0.0625) to 15x
-			/// Unit scale (1.0x): 16
-			/// </summary>
-			struct Scale8 final : FactorScale::TemplateFactorScale<uint8_t>
-			{
-				using Base = FactorScale::TemplateFactorScale<uint8_t>;
-
-				static constexpr uint8_t SCALE_15X = UINT8_MAX;
-				static constexpr uint8_t SCALE_1X = Base::SCALE_UNIT;
-				static constexpr uint8_t SCALE_1_16X = 1;
-			};
-
-			/// <summary>
-			/// 16-bit unsigned scale factor for fixed-point scaling operations.
-			/// Provides scaling with 8-bit precision (256 distinct steps).
-			/// 
-			/// Scale range: 1/256x (0.00390625) to 255x
-			/// Unit scale (1.0x): 256
-			/// </summary>
-			struct Scale16 final : FactorScale::TemplateFactorScale<uint16_t>
-			{
-				using Base = FactorScale::TemplateFactorScale<uint16_t>;
-
-				static constexpr uint16_t SCALE_255X = UINT16_MAX;
-				static constexpr uint16_t SCALE_1X = Base::SCALE_UNIT;
-				static constexpr uint8_t SCALE_1_256X = 1;
-			};
-
-			/// <summary>
-			/// 32-bit unsigned scale factor for fixed-point scaling operations.
-			/// Provides scaling with 16-bit precision (65536 distinct steps).
-			/// 
-			/// Scale range: 1/65536x (0.0000152587890625) to 65535x
-			/// Unit scale (1.0x): 65536
-			/// </summary>
-			struct Scale32 final : FactorScale::TemplateFactorScale<uint32_t>
-			{
-				using Base = FactorScale::TemplateFactorScale<uint32_t>;
-
-				static constexpr uint32_t SCALE_65535X = UINT16_MAX;
-				static constexpr uint32_t SCALE_1X = Base::SCALE_UNIT;
-				static constexpr uint8_t SCALE_1_65536X = 1;
-			};
-		}
 	}
 }
+
 #endif

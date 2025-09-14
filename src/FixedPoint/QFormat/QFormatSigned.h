@@ -17,7 +17,7 @@
 
 namespace IntegerSignal
 {
-	namespace QFormat
+	namespace QFormatSigned
 	{
 		using namespace TypeTraits::TypeLimits;
 		using namespace TypeTraits::TypeNext;
@@ -36,7 +36,7 @@ namespace IntegerSignal
 		/// </summary>
 		/// <typeparam name="signed_scalar_t">Underlying signed integer type.</typeparam>
 		template<typename signed_scalar_t>
-		class TemplateSignedQFormat
+		class TemplateFormat
 		{
 		public:
 			/// <summary>

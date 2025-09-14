@@ -9,7 +9,7 @@
 
 namespace IntegerSignal
 {
-	namespace QFormat
+	namespace QFormatUnsigned
 	{
 		using namespace TypeTraits::TypeLimits;
 		using namespace TypeTraits::TypeNext;
@@ -29,7 +29,7 @@ namespace IntegerSignal
 		/// </summary>
 		/// <typeparam name="unsigned_scalar_t">Underlying unsigned integer type.</typeparam>
 		template<typename unsigned_scalar_t>
-		class TemplateUnsignedQFormat
+		class TemplateFormat
 		{
 		public:
 			/// <summary>
