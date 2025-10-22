@@ -14,26 +14,26 @@ namespace IntegerSignal
 				// Reference function for sine calculation using floating-point math for Sine32
 				static uint32_t RefSine32(const angle_t angle)
 				{
-					double radians = (angle * M_PI) / (2.0 * (double)ANGLE_90);
+					double radians = ((double)angle * M_PI) / (2.0 * (double)ANGLE_90);
 					return round(sin(radians) * (double)Fraction32::FRACTION_1X);
 				}
 
 				// Reference function for sine calculation using floating-point math
 				static uint16_t RefSine16(const angle_t angle)
 				{
-					double radians = (angle * M_PI) / (2.0 * (double)ANGLE_90);
+					double radians = ((double)angle * M_PI) / (2.0 * (double)ANGLE_90);
 					return round(sin(radians) * (double)Fraction16::FRACTION_1X);
 				}
 
 				// Reference function for sine calculation using floating-point math for Sine8
 				static uint8_t RefSine8(const angle_t angle)
 				{
-					double radians = (angle * M_PI) / (2.0 * (double)ANGLE_90);
+					double radians = ((double)angle * M_PI) / (2.0 * (double)ANGLE_90);
 					return round(sin(radians) * (double)Fraction8::FRACTION_1X);
 				}
 
 				static constexpr double DegreesToRadians(const double degrees) {
-					return degrees * (double)(M_PI) / 180.0;
+					return (double)degrees * (double)(M_PI) / 180.0;
 				}
 
 				// Exhaustive test for GetInterpolated function for Sine32
@@ -90,7 +90,6 @@ namespace IntegerSignal
 				{
 					Serial.println(F("Starting exhaustive GetInterpolated tests for Sine16..."));
 
-					uint32_t errorCount = 0;
 					uint32_t maxError = 0;
 					for (uint16_t angle = 0; angle <= ANGLE_90; angle++)
 					{
@@ -107,7 +106,6 @@ namespace IntegerSignal
 							Serial.print(result);
 							Serial.print(F(" ref="));
 							Serial.println(refResult);
-							errorCount++;
 						}
 						if ((angle % (ANGLE_90 / 10)) == 0)
 						{
@@ -116,20 +114,20 @@ namespace IntegerSignal
 							Serial.println(F(" angles tested..."));
 						}
 					}
-					if (errorCount == 0)
-					{
-						Serial.println(F("All GetInterpolated tests for Sine16 PASSED."));
-					}
-					else
-					{
-						Serial.print(F("GetInterpolated tests for Sine16 FAILED. Errors: "));
-						Serial.println(errorCount);
-					}
 
 					Serial.print(F(" Max unit error:"));
 					Serial.println(maxError);
 
-					return errorCount == 0;
+					if (maxError <= ErrorTolerance)
+					{
+						Serial.println(F("All GetInterpolated tests for Sine16 PASSED."));
+						return true;
+					}
+					else
+					{
+						Serial.print(F("GetInterpolated tests for Sine16 FAILED. Errors: "));
+						return false;
+					}
 				}
 
 				// Exhaustive test for GetInterpolated function for Sine8
@@ -405,7 +403,7 @@ namespace IntegerSignal
 
 #if (INTEGER_TRIGONOMETRY_LUT == INTEGER_TRIGONOMETRY_LUT_TINY)
 					static constexpr uint8_t Error8Max = 1;
-					static constexpr uint8_t Error16Max = 6;
+					static constexpr uint8_t Error16Max = 5;
 					static constexpr uint8_t Error32Max = 222202;
 #else
 					static constexpr uint8_t Error8Max = 1;
