@@ -2,17 +2,10 @@
 #define _UINT_SIZE_TEST_h
 
 #include <IntegerSignalTesting.h>
-#include <stdint.h>
-#if __has_include(<type_traits>)
-#include <type_traits>
-using std::is_same;
-#else
-template<typename A, typename B>
-struct is_same { static const bool value = false; };
 
-template<typename A>
-struct is_same<A, A> { static const bool value = true; };
-#endif
+// Include for is_same definition.
+#include "TypeTraitsTest.h"
+
 
 namespace IntegerSignal
 {

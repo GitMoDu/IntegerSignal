@@ -2,6 +2,18 @@
 #define _TYPE_TRAITS_TEST_h
 
 #include <IntegerSignalTesting.h>
+#include <stdint.h>
+
+#if __has_include(<type_traits>)
+#include <type_traits>
+using std::is_same;
+#else
+template<typename A, typename B>
+struct is_same { static const bool value = false; };
+
+template<typename A>
+struct is_same<A, A> { static const bool value = true; };
+#endif
 
 namespace IntegerSignal
 {
@@ -58,8 +70,8 @@ namespace IntegerSignal
 			static bool RefIsUnsignedType()
 			{
 				bool pass = true;
-				pass &= std::is_same<TypeTraits::TypeSign::IsUnsignedType<uint8_t>::type, TypeTraits::TypeDispatch::TrueType>::value;
-				pass &= std::is_same<TypeTraits::TypeSign::IsUnsignedType<int8_t>::type, TypeTraits::TypeDispatch::FalseType>::value;
+				pass &= is_same<TypeTraits::TypeSign::IsUnsignedType<uint8_t>::type, TypeTraits::TypeDispatch::TrueType>::value;
+				pass &= is_same<TypeTraits::TypeSign::IsUnsignedType<int8_t>::type, TypeTraits::TypeDispatch::FalseType>::value;
 				return pass;
 			}
 
