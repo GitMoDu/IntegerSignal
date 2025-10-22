@@ -101,7 +101,7 @@ namespace IntegerSignal
 					Serial.println(errorCount);
 				}
 
-				return errorCount > 0;
+				return errorCount == 0;
 			}
 
 			template<uint32_t MaxIterations>
