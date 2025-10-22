@@ -38,7 +38,7 @@ namespace IntegerSignal
 			else
 			{
 				// Map 16-bit quarter-wave amplitude to Q0.30 range
-				return ((static_cast<uint32_t>(Lut::Sine16::GetInterpolated(angle)) + 3) << 14);
+				return (static_cast<uint32_t>(Lut::Sine16::GetInterpolated(angle)) + 3) << 14;
 			}
 		}
 
