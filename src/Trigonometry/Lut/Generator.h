@@ -1,7 +1,8 @@
 #ifndef _INTEGER_TRIGONOMETRY_LUT_GENERATOR_h
 #define _INTEGER_TRIGONOMETRY_LUT_GENERATOR_h
 
-#include "../../FixedPoint/Fraction.h"
+#include "../../FixedPoint/FactorScale.h"
+#include "../../FixedPoint/ScalarFraction.h"
 #include "../Sine16.h"
 #include "../Sine8.h"
 
@@ -10,7 +11,7 @@
 
 namespace IntegerSignal::Trigonometry::Lut::Generator
 {
-	using namespace FixedPoint::Fraction;
+	using namespace FixedPoint::ScalarFraction;
 
 	static constexpr double DegreesToRadians(const double degrees) {
 		return degrees * (double)(M_PI) / 180.0;

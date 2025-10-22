@@ -7,7 +7,7 @@ namespace IntegerSignal
 {
 	namespace Trigonometry
 	{
-		using namespace FixedPoint::Fraction;
+		using namespace FixedPoint::ScalarFraction;
 
 		/// <summary>
 		/// Sine using fixed-point Q-format (8-bit signed fraction, Q0.6).
