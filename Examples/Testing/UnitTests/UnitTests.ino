@@ -11,13 +11,12 @@
 #include <IntegerTrigonometry16.h>
 #include <IntegerTrigonometry.h>
 
-#include "OperationTest.h"
 #include "TypeTraitsTest.h"
+#include "OperationTest.h"
 #include "BitScaleTest.h"
 #include "UIntSizeTest.h"
 
 #include "SquareRootTest.h"
-
 
 #include "SineTest.h"
 #include "TangentTest.h"
@@ -56,15 +55,18 @@ void setup()
 
 	Serial.flush();
 
-	pass &= IntegerSignal::Operation::Test::RunTests();
-	pass &= IntegerSignal::UIntSize::Test::RunTests();
-	pass &= IntegerSignal::BitScale::Test::RunTests<MaxIterations>();
 	pass &= IntegerSignal::TypeTraits::Test::RunTests();
+	pass &= IntegerSignal::Operation::Test::RunTests();
+	pass &= IntegerSignal::BitScale::Test::RunTests<MaxIterations>();
+	pass &= IntegerSignal::UIntSize::Test::RunTests();
+
+	pass &= IntegerSignal::SquareRoot::Test::RunTests<MaxIterations>();
+
 	pass &= IntegerSignal::Trigonometry::Tangent::Test::RunTests<MaxIterations>();
 	pass &= IntegerSignal::Trigonometry::Sine::Test::RunTests<MaxIterations>();
-	pass &= IntegerSignal::SquareRoot::Test::RunTests<MaxIterations>();
-	pass &= IntegerSignal::FixedPoint::Fraction::Test::RunTests<MaxIterations>();
-	pass &= IntegerSignal::FixedPoint::Scale::Test::RunTests<MaxIterations>();
+
+	pass &= IntegerSignal::FixedPoint::ScalarFraction::Test::RunTests<MaxIterations>();
+	pass &= IntegerSignal::FixedPoint::FactorScale::Test::RunTests<MaxIterations>();
 
 	pass &= IntegerSignal::Filters::LowPass::Test::RunTests<MaxIterations>();
 	pass &= IntegerSignal::Filters::Ema::Test::RunTests<MaxIterations>();
@@ -89,7 +91,7 @@ void setup()
 
 		pass &= IntegerSignal::BitScale::Test::RunExhaustive();
 		pass &= IntegerSignal::SquareRoot::Test::RunExhaustive();
-		pass &= IntegerSignal::FixedPoint::Fraction::Test::RunExhaustive();
+		pass &= IntegerSignal::FixedPoint::ScalarFraction::Test::RunExhaustive();
 
 		if (pass)
 		{
