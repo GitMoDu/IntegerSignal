@@ -48,9 +48,9 @@ namespace IntegerSignal
 				{
 					const int16_t scaled = (denominator == 0) ? 0
 						: (int16_t)(((int16_t)numerator * Fraction8::FRACTION_1X) / denominator);
-					return (Fraction8::scalar_t)min<int16_t>(
+					return (Fraction8::scalar_t)MinValue<int16_t>(
 						Fraction8::FRACTION_1X,
-						max<int16_t>(Fraction8::FRACTION_1X_NEGATIVE, scaled));
+						MaxValue<int16_t>(Fraction8::FRACTION_1X_NEGATIVE, scaled));
 				}
 
 				// Reference function for GetScalar (signed Fraction16)
@@ -58,9 +58,9 @@ namespace IntegerSignal
 				{
 					const int32_t scaled = (denominator == 0) ? 0
 						: (int32_t)(((int32_t)numerator * Fraction16::FRACTION_1X) / denominator);
-					return (Fraction16::scalar_t)min<int32_t>(
+					return (Fraction16::scalar_t)MinValue<int32_t>(
 						Fraction16::FRACTION_1X,
-						max<int32_t>(Fraction16::FRACTION_1X_NEGATIVE, scaled));
+						MaxValue<int32_t>(Fraction16::FRACTION_1X_NEGATIVE, scaled));
 				}
 
 				// Reference function for GetScalar (signed Fraction32)
@@ -68,9 +68,9 @@ namespace IntegerSignal
 				{
 					const int64_t scaled = (denominator == 0) ? 0
 						: (int64_t)(((int64_t)numerator * Fraction32::FRACTION_1X) / denominator);
-					return (Fraction32::scalar_t)min<int64_t>(
+					return (Fraction32::scalar_t)MinValue<int64_t>(
 						Fraction32::FRACTION_1X,
-						max<int64_t>(Fraction32::FRACTION_1X_NEGATIVE, scaled));
+						MaxValue<int64_t>(Fraction32::FRACTION_1X_NEGATIVE, scaled));
 				}
 
 				// Reference interpolation functions
@@ -93,7 +93,7 @@ namespace IntegerSignal
 						for (uint16_t f = 1; f <= UINT8_MAX; f++)
 						{
 							const int8_t value = (uint8_t)v;
-							const Fraction8::scalar_t fraction8 = (Fraction8::scalar_t)max<int8_t>(Fraction8::FRACTION_1X_NEGATIVE, min<int8_t>(Fraction8::FRACTION_1X, (int8_t)f));
+							const Fraction8::scalar_t fraction8 = (Fraction8::scalar_t)MaxValue<int8_t>(Fraction8::FRACTION_1X_NEGATIVE, MinValue<int8_t>(Fraction8::FRACTION_1X, (int8_t)f));
 							const int8_t result = Fraction8::Fraction(fraction8, value);
 							const int8_t refResult = RefFraction8(value, fraction8);
 							if (result != refResult)
@@ -140,7 +140,7 @@ namespace IntegerSignal
 						for (uint32_t f = 1; f <= UINT16_MAX; f++)
 						{
 							const int16_t value = (uint16_t)v;
-							const Fraction16::scalar_t fraction16 = (Fraction16::scalar_t)max<int32_t>(Fraction16::FRACTION_1X_NEGATIVE, min<int32_t>(Fraction16::FRACTION_1X, (int32_t)f));
+							const Fraction16::scalar_t fraction16 = (Fraction16::scalar_t)MaxValue<int32_t>(Fraction16::FRACTION_1X_NEGATIVE, MinValue<int32_t>(Fraction16::FRACTION_1X, (int32_t)f));
 							const int16_t result = Fraction16::Fraction(fraction16, value);
 							const int16_t refResult = RefFraction16(value, fraction16);
 							if (result != refResult)
@@ -180,10 +180,10 @@ namespace IntegerSignal
 				template<uint32_t MaxIterations = 50000>
 				static bool TestFraction16Sample()
 				{
-					const uint32_t iterations = min(MaxIterations, (uint32_t)UINT16_MAX);
-					const uint32_t fracSamples = min<uint32_t>(iterations, 1024u);
-					const uint32_t fracStep = max<uint32_t>(1u, (uint32_t)UINT16_MAX / fracSamples);
-					const uint32_t valStep = max<uint32_t>(1u, iterations / 256u);
+					const uint32_t iterations = MinValue<uint32_t>(MaxIterations, (uint32_t)UINT16_MAX);
+					const uint32_t fracSamples = MinValue<uint32_t>(iterations, 1024u);
+					const uint32_t fracStep = MaxValue<uint32_t>(1u, (uint32_t)UINT16_MAX / fracSamples);
+					const uint32_t valStep = MaxValue<uint32_t>(1u, iterations / 256u);
 
 					Serial.println(F("Starting sampled fraction16_t tests..."));
 
@@ -192,8 +192,8 @@ namespace IntegerSignal
 					for (uint32_t f = 0; f <= UINT16_MAX; f += fracStep)
 					{
 						const Fraction16::scalar_t fraction16 =
-							(Fraction16::scalar_t)max<int32_t>(Fraction16::FRACTION_1X_NEGATIVE,
-								min<int32_t>(Fraction16::FRACTION_1X, (int32_t)f));
+							(Fraction16::scalar_t)MaxValue<int32_t>(Fraction16::FRACTION_1X_NEGATIVE,
+								MinValue<int32_t>(Fraction16::FRACTION_1X, (int32_t)f));
 
 						for (uint32_t i = 0; i <= iterations; i += valStep)
 						{
@@ -242,10 +242,10 @@ namespace IntegerSignal
 				template<uint32_t MaxIterations = 50000>
 				static bool TestUFraction16Sample()
 				{
-					const uint32_t iterations = min(MaxIterations, (uint32_t)UINT16_MAX);
-					const uint32_t fracSamples = min<uint32_t>(iterations, 1024u);
-					const uint32_t fracStep = max<uint32_t>(1u, (uint32_t)UINT16_MAX / fracSamples);
-					const uint32_t valStep = max<uint32_t>(1u, iterations / 256u);
+					const uint32_t iterations = MinValue<uint32_t>(MaxIterations, (uint32_t)UINT16_MAX);
+					const uint32_t fracSamples = MinValue<uint32_t>(iterations, 1024u);
+					const uint32_t fracStep = MaxValue<uint32_t>(1u, (uint32_t)UINT16_MAX / fracSamples);
+					const uint32_t valStep = MaxValue<uint32_t>(1u, iterations / 256u);
 
 					Serial.println(F("Starting sampled ufraction16_t tests..."));
 
@@ -254,7 +254,7 @@ namespace IntegerSignal
 					for (uint32_t f = 0; f <= UINT16_MAX; f += fracStep)
 					{
 						const UFraction16::scalar_t fraction16 =
-							(UFraction16::scalar_t)min<int32_t>(UFraction16::FRACTION_1X, (int32_t)f);
+							(UFraction16::scalar_t)MinValue<int32_t>(UFraction16::FRACTION_1X, (int32_t)f);
 
 						for (uint32_t i = 0; i <= iterations; i += valStep)
 						{
@@ -304,9 +304,9 @@ namespace IntegerSignal
 				static bool TestFraction32Sample()
 				{
 					const uint32_t iterations = MaxIterations; // already a 32-bit domain
-					const uint32_t fracSamples = min<uint32_t>(iterations, 4096u);
-					const uint32_t fracStep = max<uint32_t>(1u, (uint32_t)UINT16_MAX / fracSamples);
-					const uint32_t valStep = max<uint32_t>(1u, iterations / 256u);
+					const uint32_t fracSamples = MinValue<uint32_t>(iterations, 4096u);
+					const uint32_t fracStep = MaxValue<uint32_t>(1u, (uint32_t)UINT16_MAX / fracSamples);
+					const uint32_t valStep = MaxValue<uint32_t>(1u, iterations / 256u);
 
 					Serial.println(F("Starting sampled fraction32_t tests..."));
 
@@ -317,8 +317,8 @@ namespace IntegerSignal
 						// Map 16-bit sweep to full 32-bit scalar domain
 						const uint32_t frac32map = (uint32_t)(((uint64_t)f * UINT32_MAX) / UINT16_MAX);
 						const Fraction32::scalar_t fraction32 =
-							(Fraction32::scalar_t)max<int64_t>(Fraction32::FRACTION_1X_NEGATIVE,
-								min<int64_t>(Fraction32::FRACTION_1X, (int64_t)frac32map));
+							(Fraction32::scalar_t)MaxValue<int64_t>(Fraction32::FRACTION_1X_NEGATIVE,
+								MinValue<int64_t>(Fraction32::FRACTION_1X, (int64_t)frac32map));
 
 						for (uint32_t i = 0; i <= iterations; i += valStep)
 						{
@@ -375,7 +375,7 @@ namespace IntegerSignal
 
 					for (uint16_t f = 1; f <= UINT8_MAX; f++)
 					{
-						const Fraction8::scalar_t fraction8 = (Fraction8::scalar_t)max<int8_t>(Fraction8::FRACTION_1X_NEGATIVE, min<int8_t>(Fraction8::FRACTION_1X, (int8_t)f));
+						const Fraction8::scalar_t fraction8 = (Fraction8::scalar_t)MaxValue<int8_t>(Fraction8::FRACTION_1X_NEGATIVE, MinValue<int8_t>(Fraction8::FRACTION_1X, (int8_t)f));
 
 						for (uint32_t i = 0; i <= iterations; i++)
 						{
@@ -589,7 +589,7 @@ namespace IntegerSignal
 						for (uint32_t f = 1; f <= UINT16_MAX; f++)
 						{
 							const uint16_t value = (uint16_t)v;
-							const UFraction16::scalar_t fraction16 = (UFraction16::scalar_t)min<uint16_t>(UINT16_MAX, (uint16_t)f); // allow >1x
+							const UFraction16::scalar_t fraction16 = (UFraction16::scalar_t)MinValue<uint16_t>(UINT16_MAX, (uint16_t)f); // allow >1x
 							const uint16_t result = UFraction16::Fraction(fraction16, value);
 							const uint16_t refResult = RefUFraction16(value, fraction16);
 							if (result != refResult)

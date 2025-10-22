@@ -506,7 +506,7 @@ namespace IntegerSignal
 
 					for (uint32_t factor : testFactors)
 					{
-						for (uint32_t i = 0; i < iterations; i += max<uint32_t>(1, iterations / 50))
+						for (uint32_t i = 0; i < iterations; i += MaxValue<uint32_t>(1, iterations / 50))
 						{
 							const uint32_t value32 = (uint32_t)((uint64_t)i * (UINT32_MAX / iterations));
 							const uint16_t value16 = (uint16_t)((uint32_t)i * (UINT16_MAX / iterations));

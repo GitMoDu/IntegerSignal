@@ -289,7 +289,7 @@ namespace IntegerSignal
 				static bool TestEmaU8Sample()
 				{
 					static_assert(Factor >= 1, "EMA requires factor >= 1");
-					const uint32_t iterations = min<uint32_t>(MaxIterations, UINT16_MAX);
+					const uint32_t iterations = MinValue<uint32_t>(MaxIterations, UINT16_MAX);
 					Serial.print(F("Starting sampled EmaU8<")); Serial.print(Factor); Serial.println(F("> tests..."));
 
 					using F = IntegerSignal::Filters::EmaU8<Factor>;
@@ -324,7 +324,7 @@ namespace IntegerSignal
 								break;
 							}
 
-							if ((i % (max<uint32_t>(1, iterations / 10))) == 0)
+							if ((i % (MaxValue<uint32_t>(1, iterations / 10))) == 0)
 							{
 								Serial.print(F("EmaU8<")); Serial.print(Factor); Serial.print(F("> progress: "));
 								Serial.print(i); Serial.println(F(" samples..."));
@@ -342,7 +342,7 @@ namespace IntegerSignal
 				static bool TestEmaU16Sample()
 				{
 					static_assert(Factor >= 1, "EMA requires factor >= 1");
-					const uint32_t iterations = min<uint32_t>(MaxIterations, (uint32_t)UINT16_MAX);
+					const uint32_t iterations = MinValue<uint32_t>(MaxIterations, (uint32_t)UINT16_MAX);
 					Serial.print(F("Starting sampled EmaU16<")); Serial.print(Factor); Serial.println(F("> tests..."));
 
 					using F = IntegerSignal::Filters::EmaU16<Factor>;
@@ -359,7 +359,7 @@ namespace IntegerSignal
 							F f; f.Clear(y0); // was y0 << Factor
 							uint64_t residual = (uint64_t)y0 * ((1u << Factor) - 1u);
 
-							for (uint32_t i = 0; i <= iterations; i += max<uint32_t>(1, iterations / 64))
+							for (uint32_t i = 0; i <= iterations; i += MaxValue<uint32_t>(1, iterations / 64))
 							{
 								const uint16_t xSweep = (uint16_t)((i * UINT16_MAX) / (iterations ? iterations : 1));
 								const uint16_t x = (uint16_t)((xSweep >> 1) + (xEdge >> 1));
@@ -394,7 +394,7 @@ namespace IntegerSignal
 				static bool TestEmaU32Sample()
 				{
 					static_assert(Factor >= 1, "EMA requires factor >= 1");
-					const uint32_t iterations = min<uint32_t>(MaxIterations, (uint32_t)65536);
+					const uint32_t iterations = MinValue<uint32_t>(MaxIterations, (uint32_t)65536);
 					Serial.print(F("Starting sampled EmaU32<")); Serial.print(Factor); Serial.println(F("> tests..."));
 
 					using F = IntegerSignal::Filters::EmaU32<Factor>;
@@ -415,7 +415,7 @@ namespace IntegerSignal
 							F f; f.Clear(y0); // was y0 << Factor
 							uint64_t residual = (uint64_t)y0 * ((1u << Factor) - 1u);
 
-							for (uint32_t i = 0; i <= iterations; i += max<uint32_t>(1, iterations / 128))
+							for (uint32_t i = 0; i <= iterations; i += MaxValue<uint32_t>(1, iterations / 128))
 							{
 								const uint32_t xSweep = (uint32_t)((uint64_t)i * 4294967295ULL / (iterations ? iterations : 1));
 								const uint32_t x = (xSweep >> 1) + (xEdge >> 1);

@@ -323,7 +323,7 @@ namespace IntegerSignal
 				template<uint8_t Factor, uint32_t MaxIterations = 50000>
 				static bool TestLowPassU8Sample()
 				{
-					const uint32_t iterations = min<uint32_t>(MaxIterations, UINT16_MAX);
+					const uint32_t iterations = MinValue<uint32_t>(MaxIterations, UINT16_MAX);
 					Serial.print(F("Starting sampled LowPassU8<"));
 					Serial.print(Factor);
 					Serial.println(F("> tests..."));
@@ -365,7 +365,7 @@ namespace IntegerSignal
 								break;
 							}
 
-							if ((i % (max<uint32_t>(1, iterations / 10))) == 0)
+							if ((i % (MaxValue<uint32_t>(1, iterations / 10))) == 0)
 							{
 								Serial.print(F("LowPassU8<"));
 								Serial.print(Factor);
@@ -391,7 +391,7 @@ namespace IntegerSignal
 				template<uint8_t Factor, uint32_t MaxIterations = 10000>
 				static bool TestLowPassU16Sample()
 				{
-					const uint32_t iterations = min<uint32_t>(MaxIterations, (uint32_t)UINT16_MAX);
+					const uint32_t iterations = MinValue<uint32_t>(MaxIterations, (uint32_t)UINT16_MAX);
 					Serial.print(F("Starting sampled LowPassU16<"));
 					Serial.print(Factor);
 					Serial.println(F("> tests..."));
@@ -410,7 +410,7 @@ namespace IntegerSignal
 							F f; f.Clear(y0);
 							uint64_t H = ((uint64_t)y0) << Factor;
 
-							for (uint32_t i = 0; i <= iterations; i += max<uint32_t>(1, iterations / 64))
+							for (uint32_t i = 0; i <= iterations; i += MaxValue<uint32_t>(1, iterations / 64))
 							{
 								// Mix between edge x and a sweep
 								const uint16_t xSweep = (uint16_t)((i * UINT16_MAX) / (iterations ? iterations : 1));
@@ -454,7 +454,7 @@ namespace IntegerSignal
 				template<uint8_t Factor, uint32_t MaxIterations = 5000>
 				static bool TestLowPassU32Sample()
 				{
-					const uint32_t iterations = min<uint32_t>(MaxIterations, (uint32_t)65536);
+					const uint32_t iterations = MinValue<uint32_t>(MaxIterations, (uint32_t)65536);
 					Serial.print(F("Starting sampled LowPassU32<"));
 					Serial.print(Factor);
 					Serial.println(F("> tests..."));
@@ -477,7 +477,7 @@ namespace IntegerSignal
 							F f; f.Clear(y0);
 							uint64_t H = ((uint64_t)y0) << Factor;
 
-							for (uint32_t i = 0; i <= iterations; i += max<uint32_t>(1, iterations / 128))
+							for (uint32_t i = 0; i <= iterations; i += MaxValue<uint32_t>(1, iterations / 128))
 							{
 								// Mix between an edge x and a sweep across full range (downsampled)
 								const uint32_t xSweep = (uint32_t)((uint64_t)i * 4294967295ULL / (iterations ? iterations : 1));

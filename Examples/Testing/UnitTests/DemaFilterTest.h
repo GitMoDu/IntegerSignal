@@ -226,7 +226,7 @@ namespace IntegerSignal
 				template<uint8_t Factor, uint32_t MaxIterations = 50000>
 				static bool TestDemaU8Sample()
 				{
-					const uint32_t iterations = min<uint32_t>(MaxIterations, UINT16_MAX);
+					const uint32_t iterations = MinValue<uint32_t>(MaxIterations, UINT16_MAX);
 #if defined(ARDUINO)
 					Serial.print(F("Starting sampled DemaU8<")); Serial.print(Factor); Serial.println(F("> tests..."));
 #endif
@@ -264,7 +264,7 @@ namespace IntegerSignal
 								break;
 							}
 #if defined(ARDUINO)
-							if ((i % (max<uint32_t>(1, iterations / 10))) == 0)
+							if ((i % (MaxValue<uint32_t>(1, iterations / 10))) == 0)
 							{
 								Serial.print(F("DemaU8<")); Serial.print(Factor); Serial.print(F("> progress: "));
 								Serial.print(i); Serial.println(F(" samples..."));
@@ -283,7 +283,7 @@ namespace IntegerSignal
 				template<uint8_t Factor, uint32_t MaxIterations = 10000>
 				static bool TestDemaU16Sample()
 				{
-					const uint32_t iterations = min<uint32_t>(MaxIterations, (uint32_t)UINT16_MAX);
+					const uint32_t iterations = MinValue<uint32_t>(MaxIterations, (uint32_t)UINT16_MAX);
 #if defined(ARDUINO)
 					Serial.print(F("Starting sampled DemaU16<")); Serial.print(Factor); Serial.println(F("> tests..."));
 #endif
@@ -302,7 +302,7 @@ namespace IntegerSignal
 							uint64_t r1 = (uint64_t)y0 * ((1u << Factor) - 1u);
 							uint64_t r2 = r1;
 
-							for (uint32_t i = 0; i <= iterations; i += max<uint32_t>(1, iterations / 64))
+							for (uint32_t i = 0; i <= iterations; i += MaxValue<uint32_t>(1, iterations / 64))
 							{
 								const uint16_t xSweep = (uint16_t)((i * UINT16_MAX) / (iterations ? iterations : 1));
 								const uint16_t x = (uint16_t)((xSweep >> 1) + (xEdge >> 1));
@@ -339,7 +339,7 @@ namespace IntegerSignal
 				template<uint8_t Factor, uint32_t MaxIterations = 5000>
 				static bool TestDemaU32Sample()
 				{
-					const uint32_t iterations = min<uint32_t>(MaxIterations, (uint32_t)65536);
+					const uint32_t iterations = MinValue<uint32_t>(MaxIterations, (uint32_t)65536);
 #if defined(ARDUINO)
 					Serial.print(F("Starting sampled DemaU32<")); Serial.print(Factor); Serial.println(F("> tests..."));
 #endif
@@ -362,7 +362,7 @@ namespace IntegerSignal
 							uint64_t r1 = (uint64_t)y0 * ((1u << Factor) - 1u);
 							uint64_t r2 = r1;
 
-							for (uint32_t i = 0; i <= iterations; i += max<uint32_t>(1, iterations / 128))
+							for (uint32_t i = 0; i <= iterations; i += MaxValue<uint32_t>(1, iterations / 128))
 							{
 								const uint32_t xSweep = (uint32_t)((uint64_t)i * 4294967295ULL / (iterations ? iterations : 1));
 								const uint32_t x = (xSweep >> 1) + (xEdge >> 1);
