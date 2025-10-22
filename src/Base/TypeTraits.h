@@ -123,6 +123,35 @@ namespace IntegerSignal
 			template<> struct IsUnsignedType<uint16_t> { typedef TypeDispatch::TrueType type; };
 			template<> struct IsUnsignedType<uint32_t> { typedef TypeDispatch::TrueType type; };
 			template<> struct IsUnsignedType<uint64_t> { typedef TypeDispatch::TrueType type; };
+
+			/// <summary>
+			/// make_unsigned / make_signed replacements (no <type_traits> dependency).
+			/// Maps signed -> corresponding unsigned and unsigned -> identity.
+			/// </summary>
+			template<typename T> struct make_unsigned { using type = T; };
+			template<> struct make_unsigned<int8_t>  { using type = uint8_t;  };
+			template<> struct make_unsigned<int16_t> { using type = uint16_t; };
+			template<> struct make_unsigned<int32_t> { using type = uint32_t; };
+			template<> struct make_unsigned<int64_t> { using type = uint64_t; };
+
+			template<> struct make_unsigned<uint8_t>  { using type = uint8_t;  };
+			template<> struct make_unsigned<uint16_t> { using type = uint16_t; };
+			template<> struct make_unsigned<uint32_t> { using type = uint32_t; };
+			template<> struct make_unsigned<uint64_t> { using type = uint64_t; };
+
+			/// <summary>
+			/// make_signed: maps unsigned -> corresponding signed and signed -> identity.
+			/// </summary>
+			template<typename T> struct make_signed { using type = T; };
+			template<> struct make_signed<uint8_t>  { using type = int8_t;  };
+			template<> struct make_signed<uint16_t> { using type = int16_t; };
+			template<> struct make_signed<uint32_t> { using type = int32_t; };
+			template<> struct make_signed<uint64_t> { using type = int64_t; };
+
+			template<> struct make_signed<int8_t>  { using type = int8_t;  };
+			template<> struct make_signed<int16_t> { using type = int16_t; };
+			template<> struct make_signed<int32_t> { using type = int32_t; };
+			template<> struct make_signed<int64_t> { using type = int64_t; };
 		}
 	}
 }
