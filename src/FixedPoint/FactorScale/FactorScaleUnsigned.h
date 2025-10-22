@@ -86,7 +86,8 @@ namespace IntegerSignal
 				template<typename T>
 				static constexpr factor_t GetFactor(const T numerator, const T denominator)
 				{
-					static_assert(is_unsigned<T>::value, "GetFactor requires an unsigned integer type.");
+					// Accept signed or unsigned integral types. Tag-dispatch handles signed vs unsigned behaviour.
+					static_assert((is_signed<T>::value || is_unsigned<T>::value), "GetFactor requires an integer type.");
 					return TemplateGetFactor<T>(numerator, denominator, typename IsUnsignedType<T>::type());
 				}
 
