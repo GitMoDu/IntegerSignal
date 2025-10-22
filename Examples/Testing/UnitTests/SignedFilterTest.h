@@ -150,7 +150,8 @@ namespace IntegerSignal
 					bool pass = true;
 
 					// Test sequence: exhaustive small core + some ramps and edges
-					int8_t seq[512];
+					// Reduced buffer size for AVR stack safety.
+					int8_t seq[256];
 					size_t n = 0;
 
 					// Exhaustive small range around zero
@@ -158,9 +159,9 @@ namespace IntegerSignal
 					// Edges
 					seq[n++] = INT8_MIN; seq[n++] = INT8_MAX;
 					// Ramp up
-					for (int v = -128; v <= 127; v += 8) seq[n++] = (int8_t)v;
+					for (int v = -128; v <= 127; v += 8) { if (n < sizeof(seq)/sizeof(seq[0])) seq[n++] = (int8_t)v; }
 					// Ramp down
-					for (int v = 127; v >= -128; v -= 8) seq[n++] = (int8_t)v;
+					for (int v = 127; v >= -128; v -= 8) { if (n < sizeof(seq)/sizeof(seq[0])) seq[n++] = (int8_t)v; }
 
 					// LowPass<4>
 					{
@@ -190,7 +191,8 @@ namespace IntegerSignal
 				{
 					bool pass = true;
 
-					int16_t seq[512];
+					// Reduced buffer size for AVR stack safety.
+					int16_t seq[128];
 					size_t n = 0;
 
 					// Key edges
@@ -201,7 +203,7 @@ namespace IntegerSignal
 					for (uint32_t i = 0; i < MaxIterations; i += (MaxIterations / 64) ? (MaxIterations / 64) : 1)
 					{
 						const int32_t v = (int32_t)((int64_t)i * INT16_MAX / (MaxIterations ? MaxIterations : 1)) - (INT16_MAX / 2);
-						seq[n++] = (int16_t)v;
+						if (n < sizeof(seq) / sizeof(seq[0])) seq[n++] = (int16_t)v;
 						if (n >= sizeof(seq) / sizeof(seq[0])) break;
 					}
 
@@ -233,7 +235,8 @@ namespace IntegerSignal
 				{
 					bool pass = true;
 
-					int32_t seq[512];
+					// Reduced buffer size for AVR stack safety.
+					int32_t seq[128];
 					size_t n = 0;
 
 					// Key edges
@@ -244,7 +247,7 @@ namespace IntegerSignal
 					for (uint32_t i = 0; i < MaxIterations; i += (MaxIterations / 64) ? (MaxIterations / 64) : 1)
 					{
 						const int64_t v = (int64_t)i * INT32_MAX / (MaxIterations ? MaxIterations : 1) - (INT32_MAX / 2);
-						seq[n++] = (int32_t)v;
+						if (n < sizeof(seq) / sizeof(seq[0])) seq[n++] = (int32_t)v;
 						if (n >= sizeof(seq) / sizeof(seq[0])) break;
 					}
 
