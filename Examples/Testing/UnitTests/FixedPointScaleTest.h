@@ -2,13 +2,12 @@
 #define _FIXED_POINT_SCALE_TEST_h
 
 #include <IntegerSignalTesting.h>
-#include <FixedPoint/Scale.h>
 
 namespace IntegerSignal
 {
 	namespace FixedPoint
 	{
-		namespace Scale
+		namespace FactorScale
 		{
 			namespace Test
 			{

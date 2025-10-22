@@ -7,7 +7,7 @@ namespace IntegerSignal
 {
 	namespace FixedPoint
 	{
-		namespace Fraction
+		namespace ScalarFraction
 		{
 			namespace Test
 			{
