@@ -119,7 +119,7 @@ namespace IntegerSignal
 
 					for (uint32_t i = 0; i <= iters; i += (iters / 64) ? (iters / 64) : 1)
 					{
-						const T in = (T)((WideT)i * (WideT)TypeTraits::TypeLimits::type_limits<T>::MAX() / (WideT)iters);
+						const T in = (T)((WideT)i * (WideT)TypeTraits::TypeLimits::type_limits<T>::Max() / (WideT)iters);
 
 						// base path
 						base.Set(in);
@@ -168,7 +168,7 @@ namespace IntegerSignal
 						BaseFilterT base; S0 sf; base.Clear(0); sf.Clear();
 						for (uint32_t i = 0; i <= MaxIterations; i += (MaxIterations / 64) ? (MaxIterations / 64) : 1)
 						{
-							const T in = (T)(i & TypeTraits::TypeLimits::type_limits<T>::MAX());
+							const T in = (T)(i & TypeTraits::TypeLimits::type_limits<T>::Max());
 							base.Set(in); base.Step();
 							sf.Set(in); sf.Step();
 							if (sf.Get() != in)
@@ -186,7 +186,7 @@ namespace IntegerSignal
 						BaseFilterT base; S255 sf; base.Clear(0); sf.Clear();
 						for (uint32_t i = 0; i <= MaxIterations; i += (MaxIterations / 64) ? (MaxIterations / 64) : 1)
 						{
-							const T in = (T)(i & TypeTraits::TypeLimits::type_limits<T>::MAX());
+							const T in = (T)(i & TypeTraits::TypeLimits::type_limits<T>::Max());
 							base.Set(in); base.Step();
 							sf.Set(in); sf.Step();
 							if (sf.Get() != base.Get())

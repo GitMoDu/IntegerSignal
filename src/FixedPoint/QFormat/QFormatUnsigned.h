@@ -41,7 +41,7 @@ namespace IntegerSignal
 			/// <summary>
 			/// Maximum scalar value for unit in the Q-format.
 			/// </summary>
-			static constexpr scalar_t SCALAR_UNIT = (type_limits<scalar_t>::MAX() >> 1) + 1;
+			static constexpr scalar_t SCALAR_UNIT = (type_limits<scalar_t>::Max() >> 1) + 1;
 
 		private:
 			/// <summary>

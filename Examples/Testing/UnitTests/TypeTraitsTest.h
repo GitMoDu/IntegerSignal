@@ -25,12 +25,19 @@ namespace IntegerSignal
 			static bool RefTypeLimits()
 			{
 				bool pass = true;
-				pass &= (TypeTraits::TypeLimits::type_limits<uint8_t>::MAX() == UINT8_MAX);
-				pass &= (TypeTraits::TypeLimits::type_limits<uint8_t>::MIN() == 0);
-				pass &= (TypeTraits::TypeLimits::type_limits<int8_t>::MAX() == INT8_MAX);
-				pass &= (TypeTraits::TypeLimits::type_limits<int8_t>::MIN() == INT8_MIN);
-				pass &= (TypeTraits::TypeLimits::type_limits<uint16_t>::MAX() == UINT16_MAX);
-				pass &= (TypeTraits::TypeLimits::type_limits<int16_t>::MIN() == INT16_MIN);
+				pass &= (TypeTraits::TypeLimits::type_limits<uint8_t>::Max() == UINT8_MAX);
+				pass &= (TypeTraits::TypeLimits::type_limits<uint8_t>::Min() == 0);
+				pass &= (TypeTraits::TypeLimits::type_limits<int8_t>::Max() == INT8_MAX);
+				pass &= (TypeTraits::TypeLimits::type_limits<int8_t>::Min() == INT8_MIN);
+
+				pass &= (TypeTraits::TypeLimits::type_limits<uint16_t>::Max() == UINT16_MAX);
+				pass &= (TypeTraits::TypeLimits::type_limits<int16_t>::Max() == INT16_MAX);
+				pass &= (TypeTraits::TypeLimits::type_limits<int16_t>::Min() == INT16_MIN);
+
+				pass &= (TypeTraits::TypeLimits::type_limits<uint32_t>::Max() == UINT32_MAX);
+				pass &= (TypeTraits::TypeLimits::type_limits<int32_t>::Max() == INT32_MAX);
+				pass &= (TypeTraits::TypeLimits::type_limits<int32_t>::Min() == INT32_MIN);
+
 				return pass;
 			}
 
@@ -41,6 +48,7 @@ namespace IntegerSignal
 				pass &= (sizeof(typename TypeTraits::TypeNext::next_uint_type<uint8_t>::type) == 2);
 				pass &= (sizeof(typename TypeTraits::TypeNext::next_uint_type<uint16_t>::type) == 4);
 				pass &= (sizeof(typename TypeTraits::TypeNext::next_uint_type<uint32_t>::type) == 8);
+
 				return pass;
 			}
 

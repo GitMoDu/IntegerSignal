@@ -47,7 +47,7 @@ namespace IntegerSignal
 				/// <summary>
 				/// Maximum allowed scale factor.
 				/// </summary>
-				static constexpr factor_t SCALE_MAX = type_limits<factor_t>::MAX();
+				static constexpr factor_t SCALE_MAX = type_limits<factor_t>::Max();
 
 			private:
 				/// <summary>
@@ -149,8 +149,8 @@ namespace IntegerSignal
 
 					return static_cast<T>(LimitValue<intermediate_t>(
 						SignedRightShift(static_cast<intermediate_t>(value) * static_cast<intermediate_t>(factorValue), BIT_SHIFTS),
-						static_cast<intermediate_t>(type_limits<T>::MIN()),
-						static_cast<intermediate_t>(type_limits<T>::MAX())));
+						static_cast<intermediate_t>(type_limits<T>::Min()),
+						static_cast<intermediate_t>(type_limits<T>::Max())));
 				}
 
 				template<typename T>
@@ -161,7 +161,7 @@ namespace IntegerSignal
 
 					return static_cast<T>(LimitValue<intermediate_t>(
 						SignedRightShift(static_cast<intermediate_t>(value) * static_cast<intermediate_t>(factorValue), BIT_SHIFTS),
-						type_limits<T>::MIN(), type_limits<T>::MAX()));
+						type_limits<T>::Min(), type_limits<T>::Max()));
 				}
 			};
 		}
