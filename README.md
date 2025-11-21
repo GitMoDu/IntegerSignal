@@ -1,4 +1,6 @@
-# IntegerSignal
+# ![A toolkit for doing Digital Signal Processing on chips that are bad at math](https://github.com/GitMoDu/IntegerSignal/blob/master/Media/banner.jpg)
+
+`A toolkit for doing Digital Signal Processing on chips that are bad at math.`
 
 Header-only C++ library for fast, deterministic, integer-only signal processing and math utilities for microcontrollers. No floating point required.
 
