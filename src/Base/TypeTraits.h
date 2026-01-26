@@ -98,6 +98,24 @@ namespace IntegerSignal
 			};
 		}
 
+		/// <summary>
+		/// Provides enable_if/disable_if SFINAE helpers.
+		/// </summary>
+		namespace TypeEnableIf
+		{
+			template<bool Condition, typename T = void>
+			struct enable_if {};
+
+			template<typename T>
+			struct enable_if<true, T> { using type = T; };
+
+			template<bool Condition, typename T = void>
+			struct disable_if { using type = T; };
+
+			template<typename T>
+			struct disable_if<true, T> {};
+		}
+
 		namespace TypeSign
 		{
 			/// <summary>
