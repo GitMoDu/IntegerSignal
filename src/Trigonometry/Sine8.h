@@ -25,11 +25,6 @@ namespace IntegerSignal
 				// Skip interpolation and reading Table[0];
 				return 0;
 			}
-			else if (angle < 0)
-			{
-				// Dead path for unsigned angle_t; kept for symmetry with other targets.
-				return Sine8(ANGLE_RANGE - angle);
-			}
 			else if (angle >= ANGLE_180)
 			{
 				// sin(x) = -sin(x - 180 deg)
