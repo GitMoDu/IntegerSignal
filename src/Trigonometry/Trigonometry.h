@@ -9,14 +9,9 @@
 // Define INTEGER_TRIGONOMETRY_LUT as INTEGER_TRIGONOMETRY_LUT_DEFAULT to use the 256 items LUT.
 #define INTEGER_TRIGONOMETRY_LUT_DEFAULT 2
 
-
-// No LUT size defined, use best guess according to platform.
+// No LUT size defined, use default.
 #if !defined(INTEGER_TRIGONOMETRY_LUT)
-#if defined(__SIZEOF_INT__) && (__SIZEOF_INT__ > 2)
 #define INTEGER_TRIGONOMETRY_LUT INTEGER_TRIGONOMETRY_LUT_DEFAULT
-#else
-#define INTEGER_TRIGONOMETRY_LUT INTEGER_TRIGONOMETRY_LUT_TINY
-#endif
 #endif
 
 namespace IntegerSignal
