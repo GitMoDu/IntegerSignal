@@ -73,6 +73,13 @@ namespace IntegerSignal
 		{
 			struct TrueType {};
 			struct FalseType {};
+
+			// std::is_same equivalent (C++11, no <type_traits> dependency).
+			template<typename T, typename U>
+			struct is_same { enum { value = false }; using type = FalseType; };
+
+			template<typename T>
+			struct is_same<T, T> { enum { value = true }; using type = TrueType; };
 		}
 
 		/// <summary>
