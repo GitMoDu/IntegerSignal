@@ -27,6 +27,7 @@
 #include "Curve/ScaleDown.h"
 #include "Curve/Power.h"
 #include "Curve/Root.h"
+#include "Curve/LinearInterpolate.h"
 
 #include "Filter/IFilter.h"
 #include "Filter/Signed.h"

@@ -30,6 +30,7 @@
 #include "DemaFilterTest.h"
 #include "SignedFilterTest.h"
 #include "StrengthFilterTest.h"
+#include "LinearInterpolateTest.h"
 
 inline void PrintPlaform();
 
@@ -61,6 +62,7 @@ void setup()
 	pass &= IntegerSignal::UIntSize::Test::RunTests();
 	pass &= IntegerSignal::BitScale::Test::RunTests<MaxIterations>();
 	pass &= IntegerSignal::SquareRoot::Test::RunTests<MaxIterations>();
+	pass &= IntegerSignal::Curves::LinearInterpolate::Test::RunTests();
 
 #if !defined(ARDUINO_ARCH_AVR) // AVR doesn't have enought flash for all tests at the same time, pick a few or run a better micro.
 	pass &= IntegerSignal::FixedPoint::ScalarFraction::Test::RunTests<MaxIterations>();
