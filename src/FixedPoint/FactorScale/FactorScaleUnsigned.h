@@ -117,7 +117,7 @@ namespace IntegerSignal
 					using larger_t = typename larger_type<T, factor_t>::type;
 					using intermediate_t = typename next_uint_type<larger_t>::type;
 
-					return denominator == 0 ? SCALE_UNIT :
+					return denominator == 0 ? SCALE_UNIT : numerator > denominator ? SCALE_UNIT :
 						static_cast<factor_t>((static_cast<intermediate_t>(numerator) << GetBitShifts(SCALE_UNIT)) / denominator);
 				}
 
@@ -139,7 +139,7 @@ namespace IntegerSignal
 					using larger_t = typename larger_type<T, factor_t>::type;
 					using intermediate_t = typename next_int_type<larger_t>::type;
 
-					return numerator < 0 ? SCALE_MIN : denominator <= 0 ? SCALE_UNIT :
+					return numerator < 0 ? SCALE_MIN : denominator <= 0 ? SCALE_UNIT : numerator > denominator ? SCALE_UNIT :
 						static_cast<factor_t>((static_cast<intermediate_t>(numerator) << GetBitShifts(SCALE_UNIT)) / denominator);
 				}
 
