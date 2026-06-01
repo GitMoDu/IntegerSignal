@@ -19,7 +19,14 @@ namespace IntegerSignal::Trigonometry::Lut::Generator
 
 	static uint16_t GetTangentUnit16(const double angle)
 	{
-		return tan((double)DegreesToRadians(angle)) * (double)(UINT16_MAX - 0);
+		// tan(45)=1.0 -> UINT16_MAX
+		const double v = tan(DegreesToRadians(angle));
+		const double scaled = v * (double)UINT16_MAX;
+
+		// Round and clamp.
+		if (scaled <= 0.0) return 0;
+		if (scaled >= (double)UINT16_MAX) return UINT16_MAX;
+		return (uint16_t)(scaled + 0.5);
 	}
 
 	static uint16_t GetSineUnit16(const double angle)
@@ -27,49 +34,17 @@ namespace IntegerSignal::Trigonometry::Lut::Generator
 		return sin((double)DegreesToRadians(angle)) * (double)(UINT16_MAX - 0);
 	}
 
-	static uint16_t GetSineUnit8(const double angle)
+	static uint8_t GetSineUnit8(const double angle)
 	{
-		return sin((double)DegreesToRadians(angle)) * (double)UINT8_MAX;
-	}
+		// Runtime does: (lut + 2) >> 2 into Q0.6 where 1.0 == 64.
+		// LUT should therefore be in ~[0..256], stored in uint8_t (clamped to 255).
+		const double v = sin(DegreesToRadians(angle));
+		const double scaled = v * (double)((uint16_t)Fraction8::FRACTION_1X << 2); // 256.0
 
-
-	static void PrintQuarterTableSine8()
-	{
-		Serial.println(F("8 bit Sin Table"));
-		Serial.println();
-
-		Serial.println('{');
-
-		uint8_t item = 0;
-		for (uint16_t i = 0; i <= UINT8_MAX; i++)
-		{
-			double angle = (90.0 * (double)i) / (double)UINT8_MAX;
-			const uint8_t value = GetSineUnit8(angle);
-
-			if (i < UINT8_MAX)
-			{
-				Serial.print(value);
-				Serial.print(',');
-			}
-			else
-			{
-				Serial.print(value);
-				break;
-			}
-
-			item++;
-			if (item >= 8)
-			{
-				Serial.println();
-				item = 0;
-			}
-			else
-			{
-				Serial.print(' ');
-			}
-		}
-
-		Serial.println(F("};"));
+		// Floor (truncate) on purpose to avoid double-round bias with (+2)>>2 at runtime.
+		if (scaled <= 0.0) return 0;
+		if (scaled >= 255.0) return 255;
+		return (uint8_t)(scaled);
 	}
 
 	static void PrintQuarterTableSine16(const uint16_t tableSize)
@@ -82,46 +57,12 @@ namespace IntegerSignal::Trigonometry::Lut::Generator
 		uint8_t item = 0;
 		for (uint16_t i = 0; i < tableSize; i++)
 		{
-			double angle = (90.0 * (double)i) / (double)tableSize;
+			// Inclusive mapping: i==tableSize-1 => angle==90.0
+			const double t = (tableSize <= 1) ? 0.0 : (double)i / (double)(tableSize - 1);
+			const double angle = 90.0 * t;
+
 			const uint16_t value = GetSineUnit16(angle);
-			if (i < tableSize - 1)
-			{
-				Serial.print(value);
-				Serial.print(',');
-			}
-			else
-			{
-				Serial.print(value);
-				break;
-			}
 
-			item++;
-			if (item >= 8)
-			{
-				Serial.println();
-				item = 0;
-			}
-			else
-			{
-				Serial.print(' ');
-			}
-		}
-
-		Serial.println(F("};"));
-	}
-
-	static void PrintQuarterTableTangent16(const uint16_t tableSize)
-	{
-		Serial.println(F("16 bit Tan Table"));
-		Serial.println();
-
-		Serial.println('{');
-
-		uint8_t item = 0;
-		for (uint16_t i = 0; i < tableSize; i++)
-		{
-			double angle = (45.0 * (double)i) / (double)tableSize;
-			const uint16_t value = GetTangentUnit16(angle);
 			if (i < tableSize - 1)
 			{
 				Serial.print(value);
@@ -158,8 +99,55 @@ namespace IntegerSignal::Trigonometry::Lut::Generator
 		uint8_t item = 0;
 		for (uint8_t i = 0; i < tableSize; i++)
 		{
-			double angle = (90.0 * (double)i) / (double)tableSize;
-			const uint16_t value = GetSineUnit8(angle);
+			// Inclusive mapping: i==tableSize-1 => angle==90.0
+			const double t = (tableSize <= 1) ? 0.0 : (double)i / (double)(tableSize - 1);
+			const double angle = 90.0 * t;
+
+			const uint8_t value = GetSineUnit8(angle);
+
+			if (i < tableSize - 1)
+			{
+				Serial.print(value);
+				Serial.print(',');
+			}
+			else
+			{
+				Serial.print(value);
+				break;
+			}
+
+			item++;
+			if (item >= 8)
+			{
+				Serial.println();
+				item = 0;
+			}
+			else
+			{
+				Serial.print(' ');
+			}
+		}
+
+		Serial.println(F("};"));
+	}
+
+	static void PrintQuarterTableTangent16(const uint16_t tableSize)
+	{
+		Serial.println(F("16 bit Tan Table"));
+		Serial.println();
+
+		Serial.println('{');
+
+		uint8_t item = 0;
+
+		for (uint16_t i = 0; i < tableSize; i++)
+		{
+			// Inclusive mapping: i==tableSize-1 => angle==45.0
+			const double t = (tableSize <= 1) ? 0.0 : (double)i / (double)(tableSize - 1);
+			const double angle = 45.0 * t;
+
+			const uint16_t value = GetTangentUnit16(angle);
+
 			if (i < tableSize - 1)
 			{
 				Serial.print(value);
