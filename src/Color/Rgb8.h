@@ -238,7 +238,7 @@ namespace IntegerSignal
 		}
 
 		/// <summary>RGB8 constant for black (0xFF000000).</summary>
-		static constexpr color_t BLACK = 0;
+		static constexpr color_t BLACK = Color(0, 0, 0);
 
 		/// <summary>RGB8 constant for white (0xFFFFFFFF).</summary>
 		static constexpr color_t WHITE = Color(COMPONENT_MAX, COMPONENT_MAX, COMPONENT_MAX);
