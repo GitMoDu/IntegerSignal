@@ -30,6 +30,7 @@
 #include "DemaFilterTest.h"
 #include "SignedFilterTest.h"
 #include "StrengthFilterTest.h"
+#include "ColorTest.h"
 #include "LinearInterpolateTest.h"
 
 inline void PrintPlaform();
@@ -61,6 +62,7 @@ void setup()
 	pass &= IntegerSignal::Operation::Test::RunTests();
 	pass &= IntegerSignal::UIntSize::Test::RunTests();
 	pass &= IntegerSignal::BitScale::Test::RunTests<MaxIterations>();
+	pass &= IntegerSignal::Color::Test::RunTests();
 	pass &= IntegerSignal::SquareRoot::Test::RunTests<MaxIterations>();
 	pass &= IntegerSignal::Curves::LinearInterpolate::Test::RunTests();
 
