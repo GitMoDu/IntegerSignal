@@ -27,7 +27,7 @@ namespace IntegerSignal
 				public:
 					void Clear(const T value = 0) { Base::Clear(value); Out = value >> Shift; }
 					void Step() { Out = (T)(Input >> Shift); }
-					const T Get() const { return Out; }
+					T Get() const { return Out; }
 				};
 
 				// Reference Mix (use the same implementation as Strength)

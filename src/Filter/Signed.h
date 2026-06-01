@@ -51,7 +51,7 @@ namespace IntegerSignal
 					Signal.Step();
 				}
 
-				virtual const signed_t Get() const
+				virtual signed_t Get() const
 				{
 					return (signed_t)(Signal.Get()) - Middle();
 				}

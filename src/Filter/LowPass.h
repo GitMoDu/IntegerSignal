@@ -48,7 +48,7 @@ namespace IntegerSignal
 						HighValue = HighValue - (HighValue >> factor) + Input;
 					}
 
-					virtual const unsigned_t Get() const
+					virtual unsigned_t Get() const
 					{
 						// Fast operation, no need to store the raw output.
 						return (unsigned_t)(HighValue >> factor);

@@ -26,7 +26,7 @@ namespace IntegerSignal
 					typename BaseCurve = Curves::Template::Curve<value_t>>
 					struct Curve
 				{
-					static const value_t Get(const value_t input)
+					static value_t Get(const value_t input)
 					{
 						return ((intermediate_t)BaseCurve::Get(input) * scale) / UINT8_MAX;
 					}

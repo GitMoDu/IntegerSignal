@@ -1,7 +1,5 @@
-// ICurve.h
-
-#ifndef _I_CURVE_h
-#define _I_CURVE_h
+#ifndef _INTEGER_SIGNAL_I_CURVE_h
+#define _INTEGER_SIGNAL_I_CURVE_h
 
 #include <stdint.h>
 
@@ -16,7 +14,7 @@ namespace IntegerSignal
 		template<typename value_t>
 		struct ICurve
 		{
-			virtual const value_t Get(const value_t input) const { return input; }
+			virtual value_t Get(const value_t input) const { return input; }
 		};
 
 		namespace Template
@@ -43,7 +41,7 @@ namespace IntegerSignal
 			{
 				Interface() : ICurve<value_t>() {}
 
-				virtual const value_t Get(const value_t input) const final
+				virtual value_t Get(const value_t input) const final
 				{
 					return CurveType::Get(input);
 				}

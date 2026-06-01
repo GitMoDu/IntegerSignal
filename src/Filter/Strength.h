@@ -45,7 +45,7 @@ namespace IntegerSignal
 					Output = Mix::Template::Linear<unsigned_t, intermediate_t>(Input, FilterType::Get(), filterStrength);
 				}
 
-				virtual const unsigned_t Get() const
+				virtual unsigned_t Get() const
 				{
 					return Output;
 				}

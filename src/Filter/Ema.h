@@ -59,7 +59,7 @@ namespace IntegerSignal
 						HighValue -= Output;
 					}
 
-					virtual const unsigned_t Get() const
+					virtual unsigned_t Get() const
 					{
 						return Output;
 					}

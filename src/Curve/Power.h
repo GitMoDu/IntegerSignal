@@ -24,7 +24,7 @@ namespace IntegerSignal
 					typename BaseCurve = Curves::Template::Curve<value_t>>
 					struct Curve2
 				{
-					static const value_t Get(const value_t input)
+					static value_t Get(const value_t input)
 					{
 						const value_t in = BaseCurve::Get(input);
 
@@ -43,7 +43,7 @@ namespace IntegerSignal
 					typename BaseCurve = Curves::Template::Curve<value_t>>
 					struct Curve3
 				{
-					static const value_t Get(const value_t input)
+					static value_t Get(const value_t input)
 					{
 						const value_t in = BaseCurve::Get(input);
 						const intermediate_t power = (intermediate_t)in * in >> (sizeof(value_t) * 8);

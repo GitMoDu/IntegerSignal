@@ -1,7 +1,5 @@
-// IFilter.h
-
-#ifndef _I_FILTER_h
-#define _I_FILTER_h
+#ifndef _INTEGER_SIGNAL_I_FILTER_h
+#define _INTEGER_SIGNAL_I_FILTER_h
 
 #include <stdint.h>
 
@@ -27,7 +25,7 @@ namespace IntegerSignal
 			/// Set the input value.
 			/// </summary>
 			/// <param name="value"></param>
-			virtual void Set(const value_t value) {}
+			virtual void Set(const value_t /*value*/) {}
 
 			/// <summary>
 			/// Step the current input to update the output.
@@ -38,7 +36,7 @@ namespace IntegerSignal
 			/// Get the latest output value.
 			/// </summary>
 			/// <returns></returns>
-			virtual const value_t Get() const { return 0; }
+			virtual value_t Get() const { return 0; }
 		};
 
 		template<typename value_t>
