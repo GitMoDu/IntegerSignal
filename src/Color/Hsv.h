@@ -51,66 +51,58 @@ namespace IntegerSignal
 				{
 					return colorFunc(component_t(value), component_t(value), component_t(value));
 				}
-				else
+
+				const component_t valueScaled = Fraction(value, COMPONENT_MAX);
+				return colorFunc(component_t(valueScaled), component_t(valueScaled), component_t(valueScaled));
+			}
+
+			// Scale hue to [0, 6*unit] for segment math and derive integer segment index [0..5].
+			// Note: if hue == unit, hueSegment == 6 and wraps via (hueSegment % 6) to 0.
+			const uint32_t hueScaled = Fraction(hue, FullScale);
+			const uint8_t hueSegment = Fraction(hue, Segments);
+
+			// Fractional position within the current segment in [0, unit).
+			const ufraction16_t segmentHue = hueScaled - (uint32_t(hueSegment) * UFraction16::FRACTION_1X);
+			const ufraction16_t oneMinusSegment = static_cast<ufraction16_t>(UFraction16::FRACTION_1X - segmentHue);
+
+			// Interpolants (shared for both branches)
+			const ufraction16_t t = Fraction(segmentHue, saturation);        // segmentHue * saturation
+			const ufraction16_t u = Fraction(oneMinusSegment, saturation);  // (1 - segmentHue) * saturation
+
+			if (DirectComponents) // All math in ufraction16_t, no component rescaling.
+			{
+				const ufraction16_t valueMinSaturation = value - Fraction(saturation, value);
+				const ufraction16_t valueMinusT = value - Fraction(t, value);
+				const ufraction16_t valueMinusU = value - Fraction(u, value);
+
+				switch (hueSegment % Segments)
 				{
-					const component_t valueScaled = Fraction(value, COMPONENT_MAX);
-					return colorFunc(component_t(valueScaled), component_t(valueScaled), component_t(valueScaled));
+				case 0: return colorFunc(component_t(value), component_t(valueMinusU), component_t(valueMinSaturation));
+				case 1: return colorFunc(component_t(valueMinusT), component_t(value), component_t(valueMinSaturation));
+				case 2: return colorFunc(component_t(valueMinSaturation), component_t(value), component_t(valueMinusU));
+				case 3: return colorFunc(component_t(valueMinSaturation), component_t(valueMinusT), component_t(value));
+				case 4: return colorFunc(component_t(valueMinusU), component_t(valueMinSaturation), component_t(value));
+				case (Segments - 1):
+				default: return colorFunc(component_t(value), component_t(valueMinSaturation), component_t(valueMinusT));
 				}
 			}
 			else
 			{
-				// Scale hue to [0, 6*unit] for segment math and derive integer segment index [0..5].
-				// Note: if hue == unit, hueSegment == 6 and wraps via (hueSegment % 6) to 0.
-				const uint32_t hueScaled = Fraction(hue, FullScale);
-				const uint8_t hueSegment = Fraction(hue, Segments);
+				// Math in component_t; components are scaled from ufraction16_t to [0, COMPONENT_MAX].
+				const component_t valueComp = Fraction(value, COMPONENT_MAX);
+				const component_t valueMinSaturation = valueComp - Fraction(saturation, valueComp);
+				const component_t valueMinusT = valueComp - Fraction(t, valueComp);
+				const component_t valueMinusU = valueComp - Fraction(u, valueComp);
 
-				// Fractional position within the current segment in [0, unit).
-				const ufraction16_t segmentHue = hueScaled - (uint32_t(hueSegment) * UFraction16::FRACTION_1X);
-
-				if (DirectComponents) // All math in ufraction16_t, no component rescaling.
+				switch (hueSegment % Segments)
 				{
-					const ufraction16_t valueMinSaturation = value - Fraction(saturation, value);
-					const ufraction16_t saturationPortion = Fraction(segmentHue, saturation);
-					const ufraction16_t valueMinusSaturationPortion = value - Fraction(saturationPortion, value);
-					const ufraction16_t valueMinusInverseSaturationPortion = value - Fraction(ufraction16_t(UFraction16::FRACTION_1X - saturationPortion), value);
-
-					switch (hueSegment % Segments)
-					{
-					case 0: return colorFunc(component_t(value), component_t(valueMinusInverseSaturationPortion), component_t(valueMinSaturation));
-					case 1: return colorFunc(component_t(valueMinusSaturationPortion), component_t(value), component_t(valueMinSaturation));
-					case 2: return colorFunc(component_t(valueMinSaturation), component_t(value), component_t(valueMinusInverseSaturationPortion));
-					case 3: return colorFunc(component_t(valueMinSaturation), component_t(valueMinusSaturationPortion), component_t(value));
-					case 4: return colorFunc(component_t(valueMinusInverseSaturationPortion), component_t(valueMinSaturation), component_t(value));
-					case (Segments - 1):
-					default: return colorFunc(component_t(value), component_t(valueMinSaturation), component_t(valueMinusSaturationPortion));
-					}
-				}
-				else // Math in component_t; components are scaled from ufraction16_t to [0, COMPONENT_MAX].
-				{
-					const component_t valueComp = Fraction(value, COMPONENT_MAX);
-					const component_t valueMinSaturation = valueComp - Fraction(saturation, valueComp);
-
-					// Cache saturationPortion in fraction space to avoid an extra rescale.
-					const ufraction16_t saturationPortion = Fraction(segmentHue, saturation);
-					const component_t valueMinusSaturationPortion = valueComp - Fraction(saturationPortion, valueComp);
-					const component_t valueMinusInverseSaturationPortion = valueComp - Fraction(static_cast<ufraction16_t>(UFraction16::FRACTION_1X - saturationPortion), valueComp);
-
-					switch (hueSegment % Segments)
-					{
-					case 0:
-						return colorFunc(valueComp, valueMinusInverseSaturationPortion, valueMinSaturation);
-					case 1:
-						return colorFunc(valueMinusSaturationPortion, valueComp, valueMinSaturation);
-					case 2:
-						return colorFunc(valueMinSaturation, valueComp, valueMinusInverseSaturationPortion);
-					case 3:
-						return colorFunc(valueMinSaturation, valueMinusSaturationPortion, valueComp);
-					case 4:
-						return colorFunc(valueMinusInverseSaturationPortion, valueMinSaturation, valueComp);
-					case (Segments - 1):
-					default:
-						return colorFunc(valueComp, valueMinSaturation, valueMinusSaturationPortion);
-					}
+				case 0:	return colorFunc(valueComp, valueMinusU, valueMinSaturation);
+				case 1: return colorFunc(valueMinusT, valueComp, valueMinSaturation);
+				case 2: return colorFunc(valueMinSaturation, valueComp, valueMinusU);
+				case 3: return colorFunc(valueMinSaturation, valueMinusT, valueComp);
+				case 4: return colorFunc(valueMinusU, valueMinSaturation, valueComp);
+				case (Segments - 1):
+				default: return colorFunc(valueComp, valueMinSaturation, valueMinusT);
 				}
 			}
 		}
