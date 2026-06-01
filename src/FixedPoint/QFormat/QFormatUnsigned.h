@@ -97,7 +97,8 @@ namespace IntegerSignal
 			template<typename T>
 			static constexpr scalar_t GetScalar(const T numerator, const T denominator)
 			{
-				using intermediate_t = typename next_uint_type<T>::type; // Next larger unsigned type for intermediate calculations.
+				using larger_t = typename larger_type<T, scalar_t>::type; // Wider of input and scalar type.
+				using intermediate_t = typename next_uint_type<larger_t>::type; // Next larger unsigned type for intermediate calculations.
 
 				return numerator < 0 ? scalar_t(0) : denominator <= 0 ? SCALAR_UNIT : numerator > denominator ? SCALAR_UNIT :
 					scalar_t((static_cast<intermediate_t>(numerator) << BIT_SHIFTS) / denominator);

@@ -802,12 +802,113 @@ namespace IntegerSignal
 					return errorCount == 0;
 				}
 
+				static bool TestGetFactorWideIntermediateRegression()
+				{
+					Serial.println(F("Starting GetFactor wide-intermediate regression tests..."));
+
+					bool pass = true;
+
+					const uint8_t unsignedNumerators[] = { 1u, 3u, 7u, 15u, 31u, 63u, 127u, 255u };
+					const uint8_t unsignedDenominators[] = { 1u, 2u, 3u, 5u, 7u, 11u, 127u, 255u };
+
+					for (size_t n = 0; n < sizeof(unsignedNumerators) / sizeof(unsignedNumerators[0]); ++n)
+					{
+						for (size_t d = 0; d < sizeof(unsignedDenominators) / sizeof(unsignedDenominators[0]); ++d)
+						{
+							const uint8_t numerator = unsignedNumerators[n];
+							const uint8_t denominator = unsignedDenominators[d];
+
+							const Scale16::factor_t result16 = Scale16::GetFactor(numerator, denominator);
+							const Scale16::factor_t ref16 = RefGetFactor16(numerator, denominator);
+							const Scale32::factor_t result32 = Scale32::GetFactor(numerator, denominator);
+							const Scale32::factor_t ref32 = RefGetFactor32(numerator, denominator);
+
+							if (result16 != ref16 || result32 != ref32)
+							{
+								Serial.print(F("Unsigned GetFactor regression: n="));
+								Serial.print(numerator);
+								Serial.print(F(" d="));
+								Serial.print(denominator);
+								if (result16 != ref16)
+								{
+									Serial.print(F(" s16="));
+									Serial.print(result16);
+									Serial.print(F(" ref16="));
+									Serial.print(ref16);
+								}
+								if (result32 != ref32)
+								{
+									Serial.print(F(" s32="));
+									Serial.print(result32);
+									Serial.print(F(" ref32="));
+									Serial.print(ref32);
+								}
+								Serial.println();
+								pass = false;
+							}
+						}
+					}
+
+					const int8_t signedNumerators[] = { -1, 0, 1, 3, 7, 15, 31, 63, 127 };
+					const int8_t signedDenominators[] = { -1, 0, 1, 2, 3, 5, 7, 63, 127 };
+
+					for (size_t n = 0; n < sizeof(signedNumerators) / sizeof(signedNumerators[0]); ++n)
+					{
+						for (size_t d = 0; d < sizeof(signedDenominators) / sizeof(signedDenominators[0]); ++d)
+						{
+							const int8_t numerator = signedNumerators[n];
+							const int8_t denominator = signedDenominators[d];
+
+							const Scale16::factor_t result16 = Scale16::GetFactor(numerator, denominator);
+							const Scale16::factor_t ref16 = RefGetFactor16Signed(numerator, denominator);
+							const Scale32::factor_t result32 = Scale32::GetFactor(numerator, denominator);
+							const Scale32::factor_t ref32 = RefGetFactor32Signed(numerator, denominator);
+
+							if (result16 != ref16 || result32 != ref32)
+							{
+								Serial.print(F("Signed GetFactor regression: n="));
+								Serial.print((int)numerator);
+								Serial.print(F(" d="));
+								Serial.print((int)denominator);
+								if (result16 != ref16)
+								{
+									Serial.print(F(" s16="));
+									Serial.print(result16);
+									Serial.print(F(" ref16="));
+									Serial.print(ref16);
+								}
+								if (result32 != ref32)
+								{
+									Serial.print(F(" s32="));
+									Serial.print(result32);
+									Serial.print(F(" ref32="));
+									Serial.print(ref32);
+								}
+								Serial.println();
+								pass = false;
+							}
+						}
+					}
+
+					if (pass)
+					{
+						Serial.println(F("GetFactor wide-intermediate regression tests PASSED."));
+					}
+					else
+					{
+						Serial.println(F("GetFactor wide-intermediate regression tests FAILED."));
+					}
+
+					return pass;
+				}
+
 				template<uint32_t MaxIterations = 50000>
 				static bool RunTests()
 				{
 					bool pass = true;
 
 					pass &= TestGetFactorExhaustive8();
+					pass &= TestGetFactorWideIntermediateRegression();
 
 					pass &= TestScale8Exhaustive8();
 					pass &= TestScale16Exhaustive8();

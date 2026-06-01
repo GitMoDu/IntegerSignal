@@ -978,6 +978,113 @@ namespace IntegerSignal
 					return errorCount == 0;
 				}
 
+				static bool TestGetScalarWideIntermediateRegression()
+				{
+					Serial.println(F("Starting GetScalar wide-intermediate regression tests..."));
+					bool pass = true;
+
+					const uint8_t unsignedNumerators[] = { 0u, 1u, 3u, 7u, 15u, 31u, 63u, 127u, 255u };
+					const uint8_t unsignedDenominators[] = { 0u, 1u, 2u, 3u, 5u, 7u, 11u, 127u, 255u };
+
+					for (size_t n = 0; n < sizeof(unsignedNumerators) / sizeof(unsignedNumerators[0]); ++n)
+					{
+						for (size_t d = 0; d < sizeof(unsignedDenominators) / sizeof(unsignedDenominators[0]); ++d)
+						{
+							const uint8_t numerator = unsignedNumerators[n];
+							const uint8_t denominator = unsignedDenominators[d];
+
+							const UFraction16::scalar_t resultU16 = GetScalarU16(numerator, denominator);
+							const UFraction16::scalar_t refU16 = (denominator == 0) ? UFraction16::FRACTION_1X
+								: (numerator > denominator) ? UFraction16::FRACTION_1X
+								: (UFraction16::scalar_t)(((uint32_t)numerator * UFraction16::FRACTION_1X) / denominator);
+							const UFraction32::scalar_t resultU32 = GetScalarU32(numerator, denominator);
+							const UFraction32::scalar_t refU32 = (denominator == 0) ? UFraction32::FRACTION_1X
+								: (numerator > denominator) ? UFraction32::FRACTION_1X
+								: (UFraction32::scalar_t)(((uint64_t)numerator * UFraction32::FRACTION_1X) / denominator);
+
+							if (resultU16 != refU16 || resultU32 != refU32)
+							{
+								Serial.print(F("Unsigned GetScalar regression: n="));
+								Serial.print(numerator);
+								Serial.print(F(" d="));
+								Serial.print(denominator);
+								if (resultU16 != refU16)
+								{
+									Serial.print(F(" u16="));
+									Serial.print(resultU16);
+									Serial.print(F(" ref16="));
+									Serial.print(refU16);
+								}
+								if (resultU32 != refU32)
+								{
+									Serial.print(F(" u32="));
+									Serial.print(resultU32);
+									Serial.print(F(" ref32="));
+									Serial.print(refU32);
+								}
+								Serial.println();
+								pass = false;
+							}
+						}
+					}
+
+					const int8_t signedNumerators[] = { -127, -63, -1, 0, 1, 3, 7, 15, 31, 63, 127 };
+					const int8_t signedDenominators[] = { -127, -1, 0, 1, 2, 3, 5, 7, 63, 127 };
+
+					for (size_t n = 0; n < sizeof(signedNumerators) / sizeof(signedNumerators[0]); ++n)
+					{
+						for (size_t d = 0; d < sizeof(signedDenominators) / sizeof(signedDenominators[0]); ++d)
+						{
+							const int8_t numerator = signedNumerators[n];
+							const int8_t denominator = signedDenominators[d];
+
+							const Fraction16::scalar_t resultS16 = GetScalarS16(numerator, denominator);
+							const Fraction16::scalar_t refS16 = (denominator == 0)
+								? (numerator >= 0 ? Fraction16::FRACTION_1X : Fraction16::FRACTION_1X_NEGATIVE)
+								: (Fraction16::scalar_t)LimitValue<int32_t, int32_t(Fraction16::FRACTION_1X_NEGATIVE), int32_t(Fraction16::FRACTION_1X)>((((int32_t)numerator) * Fraction16::FRACTION_1X) / denominator);
+							const Fraction32::scalar_t resultS32 = GetScalarS32(numerator, denominator);
+							const Fraction32::scalar_t refS32 = (denominator == 0)
+								? (numerator >= 0 ? Fraction32::FRACTION_1X : Fraction32::FRACTION_1X_NEGATIVE)
+								: (Fraction32::scalar_t)LimitValue<int64_t, int64_t(Fraction32::FRACTION_1X_NEGATIVE), int64_t(Fraction32::FRACTION_1X)>((((int64_t)numerator) * Fraction32::FRACTION_1X) / denominator);
+
+							if (resultS16 != refS16 || resultS32 != refS32)
+							{
+								Serial.print(F("Signed GetScalar regression: n="));
+								Serial.print((int)numerator);
+								Serial.print(F(" d="));
+								Serial.print((int)denominator);
+								if (resultS16 != refS16)
+								{
+									Serial.print(F(" s16="));
+									Serial.print(resultS16);
+									Serial.print(F(" ref16="));
+									Serial.print(refS16);
+								}
+								if (resultS32 != refS32)
+								{
+									Serial.print(F(" s32="));
+									Serial.print(resultS32);
+									Serial.print(F(" ref32="));
+									Serial.print(refS32);
+								}
+								Serial.println();
+								pass = false;
+							}
+						}
+					}
+
+					if (pass)
+					{
+						Serial.println(F("GetScalar wide-intermediate regression tests PASSED."));
+					}
+					else
+					{
+						Serial.println(F("GetScalar wide-intermediate regression tests FAILED."));
+					}
+
+					return pass;
+				}
+
 
 				template<uint32_t MaxIterations = 50000, uint8_t maxError32 = 0>
 				static bool RunTests()
@@ -985,6 +1092,7 @@ namespace IntegerSignal
 					bool pass = true;
 
 					pass &= TestGetFraction8Exhaustive();
+					pass &= TestGetScalarWideIntermediateRegression();
 					pass &= TestUFraction8Types();
 
 					pass &= TestUInterpolate8();

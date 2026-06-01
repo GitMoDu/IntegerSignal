@@ -114,7 +114,8 @@ namespace IntegerSignal
 				template<typename T>
 				static constexpr factor_t TemplateGetFactor(const T numerator, const T denominator, TypeTraits::TypeDispatch::TrueType)
 				{
-					using intermediate_t = typename next_uint_type<T>::type;
+					using larger_t = typename larger_type<T, factor_t>::type;
+					using intermediate_t = typename next_uint_type<larger_t>::type;
 
 					return denominator == 0 ? SCALE_UNIT :
 						static_cast<factor_t>((static_cast<intermediate_t>(numerator) << GetBitShifts(SCALE_UNIT)) / denominator);
@@ -135,7 +136,8 @@ namespace IntegerSignal
 				template<typename T>
 				static constexpr factor_t TemplateGetFactor(const T numerator, const T denominator, TypeTraits::TypeDispatch::FalseType)
 				{
-					using intermediate_t = typename next_int_type<T>::type;
+					using larger_t = typename larger_type<T, factor_t>::type;
+					using intermediate_t = typename next_int_type<larger_t>::type;
 
 					return numerator < 0 ? SCALE_MIN : denominator <= 0 ? SCALE_UNIT :
 						static_cast<factor_t>((static_cast<intermediate_t>(numerator) << GetBitShifts(SCALE_UNIT)) / denominator);

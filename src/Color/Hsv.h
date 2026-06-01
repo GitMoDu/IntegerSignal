@@ -33,7 +33,7 @@ namespace IntegerSignal
 			typename component_t,
 			component_t COMPONENT_MAX,
 			typename ColorFunc>
-		static color_t TemplateHsvFraction(
+		inline color_t TemplateHsvFraction(
 			const ufraction16_t hue, const ufraction16_t saturation, const ufraction16_t value,
 			ColorFunc&& colorFunc)
 		{
