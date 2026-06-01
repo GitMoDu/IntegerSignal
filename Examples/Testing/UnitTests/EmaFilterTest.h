@@ -591,17 +591,16 @@ namespace IntegerSignal
 				template<uint32_t MaxIterations = 50000, uint8_t LinearityTolerance = 0>
 				static bool RunTests()
 				{
-					Serial.println(F("Starting EMA filter tests..."));
+					IntegerSignal::Testing::TestLogger::PrintSuite(F("EMA filter tests"));
 					bool pass = true;
 
-					pass &= RunEmaU8<MaxIterations, LinearityTolerance>();
-					pass &= RunEmaI8<MaxIterations, LinearityTolerance>();
-					pass &= RunEmaU16<MaxIterations, LinearityTolerance>();
-					pass &= RunEmaU32<MaxIterations, LinearityTolerance>();
-					pass &= RunEmaI32<MaxIterations, LinearityTolerance>();
+					pass &= IntegerSignal::Testing::TestLogger::Report(F("EMA U8"), RunEmaU8<MaxIterations, LinearityTolerance>());
+					pass &= IntegerSignal::Testing::TestLogger::Report(F("EMA I8"), RunEmaI8<MaxIterations, LinearityTolerance>());
+					pass &= IntegerSignal::Testing::TestLogger::Report(F("EMA U16"), RunEmaU16<MaxIterations, LinearityTolerance>());
+					pass &= IntegerSignal::Testing::TestLogger::Report(F("EMA U32"), RunEmaU32<MaxIterations, LinearityTolerance>());
+					pass &= IntegerSignal::Testing::TestLogger::Report(F("EMA I32"), RunEmaI32<MaxIterations, LinearityTolerance>());
 
-					if (pass) Serial.println(F("EMA filter tests PASSED."));
-					else      Serial.println(F("EMA filter tests FAILED."));
+					IntegerSignal::Testing::TestLogger::PrintSuiteResult(F("EMA filter tests"), pass);
 
 					return pass;
 				}

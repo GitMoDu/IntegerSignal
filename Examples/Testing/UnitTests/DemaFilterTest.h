@@ -480,19 +480,18 @@ namespace IntegerSignal
 				static bool RunTests()
 				{
 #if defined(ARDUINO)
-					Serial.println(F("Starting DEMA filter tests..."));
+					IntegerSignal::Testing::TestLogger::PrintSuite(F("DEMA filter tests"));
 #endif
 					bool pass = true;
 
-					pass &= RunDemaU8<MaxIterations, LinearityTolerance>();
-					pass &= RunDemaI8<MaxIterations, LinearityTolerance>();
-					pass &= RunDemaU16<MaxIterations, LinearityTolerance>();
-					pass &= RunDemaU32<MaxIterations, LinearityTolerance>();
-					pass &= RunDemaI32<MaxIterations, LinearityTolerance>();
+					pass &= IntegerSignal::Testing::TestLogger::Report(F("DEMA U8"), RunDemaU8<MaxIterations, LinearityTolerance>());
+					pass &= IntegerSignal::Testing::TestLogger::Report(F("DEMA I8"), RunDemaI8<MaxIterations, LinearityTolerance>());
+					pass &= IntegerSignal::Testing::TestLogger::Report(F("DEMA U16"), RunDemaU16<MaxIterations, LinearityTolerance>());
+					pass &= IntegerSignal::Testing::TestLogger::Report(F("DEMA U32"), RunDemaU32<MaxIterations, LinearityTolerance>());
+					pass &= IntegerSignal::Testing::TestLogger::Report(F("DEMA I32"), RunDemaI32<MaxIterations, LinearityTolerance>());
 
 #if defined(ARDUINO)
-					if (pass) Serial.println(F("DEMA filter tests PASSED."));
-					else      Serial.println(F("DEMA filter tests FAILED."));
+					IntegerSignal::Testing::TestLogger::PrintSuiteResult(F("DEMA filter tests"), pass);
 #endif
 					return pass;
 				}

@@ -5,11 +5,45 @@
 
 #include <Arduino.h>
 
+#ifndef INTEGER_SIGNAL_TEST_VERBOSE
+#define INTEGER_SIGNAL_TEST_VERBOSE 0
+#endif
+
 /// <summary>
 /// Tests the square root result against a slow but accurate reference implementation.
 /// </summary>
 namespace IntegerSignal::Testing
 {
+	struct TestLogger
+	{
+		static void PrintResult(const __FlashStringHelper* name, const bool pass)
+		{
+			Serial.print(name);
+			Serial.println(pass ? F(": PASS") : F(": FAIL"));
+		}
+
+		static void PrintSuite(const __FlashStringHelper* name)
+		{
+			Serial.println(name);
+		}
+
+		static void PrintSuiteResult(const __FlashStringHelper* name, const bool pass)
+		{
+			PrintResult(name, pass);
+		}
+
+		static bool Report(const __FlashStringHelper* name, const bool pass)
+		{
+			PrintResult(name, pass);
+			return pass;
+		}
+
+		static constexpr bool Verbose()
+		{
+			return INTEGER_SIGNAL_TEST_VERBOSE != 0;
+		}
+	};
+
 	// Prints a uint64_t value in decimal format.
 	void PrintUInt64(uint64_t value)
 	{

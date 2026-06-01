@@ -227,7 +227,6 @@ namespace IntegerSignal
 					}
 
 					const double errorAverageF = (double)errorSum / double(angleRange);
-					const double errorAverageI = errorAverageF * (double)Fraction8::FRACTION_1X;
 
 					Serial.print(F("\tMax Error\t"));
 					Serial.println(errorLargestI);
@@ -284,7 +283,6 @@ namespace IntegerSignal
 					}
 
 					const double errorAverageF = (double)errorSum / (double)angleRange;
-					const double errorAverageI = errorAverageF * (double)Fraction16::FRACTION_1X;
 
 					Serial.print(F("\tMax Error\t"));
 					Serial.println(errorLargestI);
@@ -346,7 +344,6 @@ namespace IntegerSignal
 					}
 
 					const double errorAverageF = (double)errorSum / (double)angleRange;
-					const double errorAverageI = errorAverageF * (double)Fraction32::FRACTION_1X;
 
 					Serial.print(F("\tMax Error\t"));
 					Serial.println(errorLargestI);
@@ -370,7 +367,7 @@ namespace IntegerSignal
 #if (INTEGER_TRIGONOMETRY_LUT == INTEGER_TRIGONOMETRY_LUT_TINY)
 					static constexpr uint8_t Error8Max = 1;
 					static constexpr uint8_t Error16Max = 1;
-					static constexpr uint8_t Error32Max = 30370 * 2;
+					static constexpr uint32_t Error32Max = 30370UL * 2UL;
 					static constexpr double DegreesRange = 43.0;
 
 #else

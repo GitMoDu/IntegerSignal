@@ -46,11 +46,6 @@ namespace IntegerSignal
 					using Base = ShiftDownFilter<uint8_t, Shift>;
 					using F = IntegerSignal::Filters::StrengthU8<Base, StrengthScale>;
 
-					Serial.print(F("StrengthU8 exhaustive (mock) shift="));
-					Serial.print(Shift);
-					Serial.print(F(" strength="));
-					Serial.println(StrengthScale);
-
 					uint32_t errorCount = 0;
 
 					F sf; Base base;
@@ -74,24 +69,19 @@ namespace IntegerSignal
 						const uint8_t ref = RefMix<uint8_t, uint16_t>(in, raw, StrengthScale);
 						if (out != ref)
 						{
-							Serial.print(F("StrengthU8 mock mismatch: in="));
-							Serial.print(in);
-							Serial.print(F(" raw="));
-							Serial.print(raw);
-							Serial.print(F(" out="));
-							Serial.print(out);
-							Serial.print(F(" ref="));
-							Serial.println(ref);
+							if (IntegerSignal::Testing::TestLogger::Verbose())
+							{
+								Serial.print(F("StrengthU8 mock mismatch: in="));
+								Serial.print(in);
+								Serial.print(F(" raw="));
+								Serial.print(raw);
+								Serial.print(F(" out="));
+								Serial.print(out);
+								Serial.print(F(" ref="));
+								Serial.println(ref);
+							}
 							errorCount++;
 						}
-					}
-
-					if (errorCount == 0)
-						Serial.println(F("OK"));
-					else
-					{
-						Serial.print(F("FAILED errors="));
-						Serial.println(errorCount);
 					}
 					return errorCount == 0;
 				}
@@ -103,10 +93,6 @@ namespace IntegerSignal
 				static bool TestSampledAgainstBase()
 				{
 					using SFilter = StrengthAlias<BaseFilterT, StrengthScale>;
-
-					Serial.print(F("Strength sampled vs base: S="));
-					Serial.print(StrengthScale);
-					Serial.println();
 
 					BaseFilterT base;
 					SFilter sf;
@@ -134,22 +120,22 @@ namespace IntegerSignal
 						const T ref = RefMix<T, WideT>(in, raw, StrengthScale);
 						if (out != ref)
 						{
-							Serial.print(F("Strength mismatch: in="));
-							IntegerSignal::Testing::PrintUInt64(in);
-							Serial.print(F(" raw="));
-							IntegerSignal::Testing::PrintUInt64(raw);
-							Serial.print(F(" out="));
-							IntegerSignal::Testing::PrintUInt64(out);
-							Serial.print(F(" ref="));
-							IntegerSignal::Testing::PrintUInt64(ref);
-							Serial.println();
+							if (IntegerSignal::Testing::TestLogger::Verbose())
+							{
+								Serial.print(F("Strength mismatch: in="));
+								IntegerSignal::Testing::PrintUInt64(in);
+								Serial.print(F(" raw="));
+								IntegerSignal::Testing::PrintUInt64(raw);
+								Serial.print(F(" out="));
+								IntegerSignal::Testing::PrintUInt64(out);
+								Serial.print(F(" ref="));
+								IntegerSignal::Testing::PrintUInt64(ref);
+								Serial.println();
+							}
 							errorCount++;
 							break;
 						}
 					}
-
-					if (errorCount == 0) Serial.println(F("OK"));
-					else { Serial.print(F("FAILED errors=")); Serial.println(errorCount); }
 
 					return errorCount == 0;
 				}
@@ -173,7 +159,7 @@ namespace IntegerSignal
 							sf.Set(in); sf.Step();
 							if (sf.Get() != in)
 							{
-								Serial.println(F("Edge S=0 failed"));
+								if (IntegerSignal::Testing::TestLogger::Verbose()) Serial.println(F("Edge S=0 failed"));
 								pass = false; break;
 							}
 						}
@@ -191,7 +177,7 @@ namespace IntegerSignal
 							sf.Set(in); sf.Step();
 							if (sf.Get() != base.Get())
 							{
-								Serial.println(F("Edge S=255 failed"));
+								if (IntegerSignal::Testing::TestLogger::Verbose()) Serial.println(F("Edge S=255 failed"));
 								pass = false; break;
 							}
 						}
@@ -255,15 +241,14 @@ namespace IntegerSignal
 				template<uint32_t MaxIterations = 50000, uint8_t DummyTol = 0>
 				static bool RunTests()
 				{
-					Serial.println(F("Starting Strength meta-filter tests..."));
+					IntegerSignal::Testing::TestLogger::PrintSuite(F("Strength meta-filter tests"));
 					bool pass = true;
 
-					pass &= RunU8<MaxIterations, DummyTol>();
-					pass &= RunU16<MaxIterations, DummyTol>();
-					pass &= RunU32<MaxIterations, DummyTol>();
+					pass &= IntegerSignal::Testing::TestLogger::Report(F("Strength U8"), RunU8<MaxIterations, DummyTol>());
+					pass &= IntegerSignal::Testing::TestLogger::Report(F("Strength U16"), RunU16<MaxIterations, DummyTol>());
+					pass &= IntegerSignal::Testing::TestLogger::Report(F("Strength U32"), RunU32<MaxIterations, DummyTol>());
 
-					if (pass) Serial.println(F("Strength meta-filter tests PASSED."));
-					else      Serial.println(F("Strength meta-filter tests FAILED."));
+					IntegerSignal::Testing::TestLogger::PrintSuiteResult(F("Strength meta-filter tests"), pass);
 					return pass;
 				}
 			}

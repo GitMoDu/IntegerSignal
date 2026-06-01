@@ -661,7 +661,7 @@ namespace IntegerSignal
 							f.Set(inputs[i]); f.Step();
 							if (f.Get() != inputs[i]) { ok = false; break; }
 						}
-						if (!ok) Serial.println(F("LowPassI32<0> pass-through failed."));
+						if (!ok && IntegerSignal::Testing::TestLogger::Verbose()) Serial.println(F("LowPassI32<0> pass-through failed."));
 						pass &= ok;
 					}
 
@@ -672,17 +672,16 @@ namespace IntegerSignal
 				template<uint32_t MaxIterations = 50000, uint8_t LinearityTolerance = 0>
 				static bool RunTests()
 				{
-					Serial.println(F("Starting LowPass filter tests..."));
+					IntegerSignal::Testing::TestLogger::PrintSuite(F("LowPass filter tests"));
 					bool pass = true;
 
-					pass &= RunLowPassU8<MaxIterations, LinearityTolerance>();
-					pass &= RunLowPassI8<MaxIterations, LinearityTolerance>();
-					pass &= RunLowPassU16<MaxIterations, LinearityTolerance>();
-					pass &= RunLowPassU32<MaxIterations, LinearityTolerance>();
-					pass &= RunLowPassI32<MaxIterations, LinearityTolerance>();
+					pass &= IntegerSignal::Testing::TestLogger::Report(F("LowPass U8"), RunLowPassU8<MaxIterations, LinearityTolerance>());
+					pass &= IntegerSignal::Testing::TestLogger::Report(F("LowPass I8"), RunLowPassI8<MaxIterations, LinearityTolerance>());
+					pass &= IntegerSignal::Testing::TestLogger::Report(F("LowPass U16"), RunLowPassU16<MaxIterations, LinearityTolerance>());
+					pass &= IntegerSignal::Testing::TestLogger::Report(F("LowPass U32"), RunLowPassU32<MaxIterations, LinearityTolerance>());
+					pass &= IntegerSignal::Testing::TestLogger::Report(F("LowPass I32"), RunLowPassI32<MaxIterations, LinearityTolerance>());
 
-					if (pass) Serial.println(F("LowPass filter tests PASSED."));
-					else      Serial.println(F("LowPass filter tests FAILED."));
+					IntegerSignal::Testing::TestLogger::PrintSuiteResult(F("LowPass filter tests"), pass);
 
 					return pass;
 				}

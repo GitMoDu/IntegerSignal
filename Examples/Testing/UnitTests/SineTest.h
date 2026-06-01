@@ -224,9 +224,6 @@ namespace IntegerSignal
 				{
 					Serial.println(F("Integer Trigonometry Sine8"));
 
-
-					const angle_t angleRange = GetAngle(90);
-
 					Fraction8::scalar_t errorLargestI = 0;
 					double errorBottomF = 0;
 					double errorTopF = 0;
@@ -263,7 +260,6 @@ namespace IntegerSignal
 					}
 
 					const double errorAverageF = (double)errorSum / (double)ANGLE_RANGE;
-					const double errorAverageI = errorAverageF * (double)Fraction8::FRACTION_1X;
 
 					Serial.print(F("\tMax Error\t"));
 					Serial.println(errorLargestI);
@@ -282,8 +278,6 @@ namespace IntegerSignal
 				static void PrintErrorResults16()
 				{
 					Serial.println(F("Integer Trigonometry Sine16"));
-
-					const angle_t angleRange = GetAngle(90);
 
 					Fraction16::scalar_t errorLargestI = 0;
 					double errorBottomF = 0;
@@ -321,7 +315,6 @@ namespace IntegerSignal
 					}
 
 					const double errorAverageF = (double)errorSum / (double)ANGLE_RANGE;
-					const double errorAverageI = errorAverageF * (double)Fraction16::FRACTION_1X;
 
 					Serial.print(F("\tMax Error\t"));
 					Serial.println(errorLargestI);
@@ -340,8 +333,6 @@ namespace IntegerSignal
 				static void PrintErrorResults32()
 				{
 					Serial.println(F("Integer Trigonometry Sine32"));
-
-					const angle_t angleRange = GetAngle(90);
 
 					Fraction32::scalar_t errorLargestI = 0;
 					double errorBottomF = 0;
@@ -379,7 +370,6 @@ namespace IntegerSignal
 					}
 
 					const double errorAverageF = (double)errorSum / (double)ANGLE_RANGE;
-					const double errorAverageI = errorAverageF * (double)Fraction32::FRACTION_1X;
 
 					Serial.print(F("\tMax Error\t"));
 					Serial.println(errorLargestI);
@@ -410,6 +400,7 @@ namespace IntegerSignal
 					static constexpr uint8_t Error16Max = 3;
 					static constexpr uint32_t Error32Max = 111101;
 #endif
+
 					pass &= TestSine8Exhaustive<Error8Max>();
 					pass &= TestSine16Exhaustive<Error16Max>();
 					pass &= TestSine32Exhaustive<Error32Max>();

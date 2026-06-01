@@ -118,7 +118,6 @@ namespace IntegerSignal
 				// This isolates the Signed mapping: output must equal input for all values.
 				static bool TestI8PassThrough()
 				{
-					using U = uint8_t;
 					using S = int8_t;
 					using UFilter = IntegerSignal::Filters::LowPassU8<0>;
 					using SFilter = IntegerSignal::Filter::SignedI8<UFilter>;

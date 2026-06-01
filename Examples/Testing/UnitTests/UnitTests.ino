@@ -10,6 +10,7 @@
 #include <IntegerSignal.h>
 #include <IntegerTrigonometry16.h>
 #include <IntegerTrigonometry.h>
+#include <IntegerSignalTesting.h>
 
 #include "TypeTraitsTest.h"
 #include "OperationTest.h"
@@ -57,22 +58,24 @@ void setup()
 
 	pass &= IntegerSignal::TypeTraits::Test::RunTests();
 	pass &= IntegerSignal::Operation::Test::RunTests();
-	pass &= IntegerSignal::BitScale::Test::RunTests<MaxIterations>();
 	pass &= IntegerSignal::UIntSize::Test::RunTests();
-
+	pass &= IntegerSignal::BitScale::Test::RunTests<MaxIterations>();
 	pass &= IntegerSignal::SquareRoot::Test::RunTests<MaxIterations>();
+
+#if !defined(ARDUINO_ARCH_AVR) // AVR doesn't have enought flash for all tests at the same time, pick a few or run a better micro.
+	pass &= IntegerSignal::FixedPoint::ScalarFraction::Test::RunTests<MaxIterations>();
+	pass &= IntegerSignal::FixedPoint::FactorScale::Test::RunTests<MaxIterations>();
 
 	pass &= IntegerSignal::Trigonometry::Tangent::Test::RunTests<MaxIterations>();
 	pass &= IntegerSignal::Trigonometry::Sine::Test::RunTests<MaxIterations>();
-
-	pass &= IntegerSignal::FixedPoint::ScalarFraction::Test::RunTests<MaxIterations>();
-	pass &= IntegerSignal::FixedPoint::FactorScale::Test::RunTests<MaxIterations>();
 
 	pass &= IntegerSignal::Filters::LowPass::Test::RunTests<MaxIterations>();
 	pass &= IntegerSignal::Filters::Ema::Test::RunTests<MaxIterations>();
 	pass &= IntegerSignal::Filters::Dema::Test::RunTests<MaxIterations>();
 	pass &= IntegerSignal::Filters::Template::SignedTest::RunTests<MaxIterations>();
 	pass &= IntegerSignal::Filters::Template::StrengthTest::RunTests<MaxIterations>();
+#endif
+
 
 	if (pass)
 	{
@@ -121,8 +124,7 @@ void setup()
 }
 
 void loop()
-{
-}
+{}
 
 
 void PrintPlaform()
