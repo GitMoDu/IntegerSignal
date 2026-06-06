@@ -123,6 +123,64 @@ namespace IntegerSignal
 			struct disable_if<true, T> {};
 		}
 
+		namespace Evaluation
+		{
+			using ConstantEvaluatedType = TypeDispatch::TrueType;
+			using RuntimeEvaluatedType = TypeDispatch::FalseType;
+
+			template<bool IsConstant>
+			struct evaluation_tag { using type = RuntimeEvaluatedType; };
+
+			template<>
+			struct evaluation_tag<true> { using type = ConstantEvaluatedType; };
+
+			/// <summary>
+			/// Detects whether the current evaluation context is a constant-evaluated expression.
+			/// Uses the strongest compiler feature available and falls back to false when unsupported.
+			/// 
+			/// Intended targets include Arduino boards, such as Uno 328P (AVR), 
+			/// STM32 (ARM Cortex-M), RP2040/RP2350 (ARM Cortex-M, RISC-V), and other embedded platforms.
+			/// On newer embedded compilers, this can detect constant evaluation and enable constexpr-aware dispatch.
+			/// On older AVR-style toolchains that do not expose the required compiler support, it returns false so callers remain correct and simply skip constexpr-only dispatch.
+			/// 
+			/// Implementation notes:
+			/// - Uses if consteval when the compiler provides it.
+			/// - Uses __builtin_is_constant_evaluated when the compiler exposes it.
+			/// - Falls back to false when neither mechanism is available.
+			/// </summary>
+			static constexpr bool IsConstantEvaluated()
+			{
+#if defined(__cpp_if_consteval)
+				if consteval
+				{
+					return true;
+				}
+				return false;
+#elif defined(__has_builtin)
+#if __has_builtin(__builtin_is_constant_evaluated)
+				return __builtin_is_constant_evaluated();
+#else
+				return false;
+#endif
+#elif defined(_MSC_VER) && defined(__builtin_is_constant_evaluated)
+				return __builtin_is_constant_evaluated();
+#elif defined(__GNUC__) && (__GNUC__ >= 9)
+				return __builtin_is_constant_evaluated();
+#else
+				return false;
+#endif
+			}
+
+			/// <summary>
+			/// Returns a tag that can be used for compile-time dispatch between constant-evaluated and runtime paths.
+			/// This matches the library's existing tag-dispatch style used by other type traits helpers.
+			/// </summary>
+			static constexpr typename evaluation_tag<IsConstantEvaluated()>::type GetEvaluationTag()
+			{
+				return typename evaluation_tag<IsConstantEvaluated()>::type();
+			}
+		}
+
 		namespace TypeSign
 		{
 			/// <summary>
