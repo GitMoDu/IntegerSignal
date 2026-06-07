@@ -62,13 +62,12 @@ void setup()
 	pass &= IntegerSignal::Operation::Test::RunTests();
 	pass &= IntegerSignal::UIntSize::Test::RunTests();
 	pass &= IntegerSignal::BitScale::Test::RunTests<MaxIterations>();
-	pass &= IntegerSignal::Color::Test::RunTests();
 	pass &= IntegerSignal::SquareRoot::Test::RunTests<MaxIterations>();
-	pass &= IntegerSignal::Curves::LinearInterpolate::Test::RunTests();
+	pass &= IntegerSignal::Color::Test::RunTests();
 
 #if !defined(ARDUINO_ARCH_AVR) // AVR doesn't have enought flash for all tests at the same time, pick a few or run a better micro.
-	pass &= IntegerSignal::FixedPoint::ScalarFraction::Test::RunTests<MaxIterations>();
 	pass &= IntegerSignal::FixedPoint::FactorScale::Test::RunTests<MaxIterations>();
+	pass &= IntegerSignal::FixedPoint::ScalarFraction::Test::RunTests<MaxIterations>();
 
 	pass &= IntegerSignal::Trigonometry::Tangent::Test::RunTests<MaxIterations>();
 	pass &= IntegerSignal::Trigonometry::Sine::Test::RunTests<MaxIterations>();
@@ -78,6 +77,8 @@ void setup()
 	pass &= IntegerSignal::Filters::Dema::Test::RunTests<MaxIterations>();
 	pass &= IntegerSignal::Filters::Template::SignedTest::RunTests<MaxIterations>();
 	pass &= IntegerSignal::Filters::Template::StrengthTest::RunTests<MaxIterations>();
+
+	pass &= IntegerSignal::Curves::LinearInterpolate::Test::RunTests();
 #endif
 
 

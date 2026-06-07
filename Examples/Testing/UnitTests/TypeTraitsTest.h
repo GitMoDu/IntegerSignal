@@ -170,6 +170,18 @@ namespace IntegerSignal
 				return pass;
 			}
 
+			static inline bool RefEvaluation()
+			{
+				static_assert(TypeTraits::TypeDispatch::is_same<typename TypeTraits::Evaluation::evaluation_tag<true>::type, TypeTraits::Evaluation::ConstantEvaluatedType>::value, "evaluation_tag<true>");
+				static_assert(TypeTraits::TypeDispatch::is_same<typename TypeTraits::Evaluation::evaluation_tag<false>::type, TypeTraits::Evaluation::RuntimeEvaluatedType>::value, "evaluation_tag<false>");
+				static_assert(TypeTraits::TypeDispatch::is_same<decltype(TypeTraits::Evaluation::GetEvaluationTag()), typename TypeTraits::Evaluation::evaluation_tag<TypeTraits::Evaluation::IsConstantEvaluated()>::type>::value, "GetEvaluationTag return type");
+
+				bool pass = true;
+				pass &= TypeTraits::TypeDispatch::is_same<typename TypeTraits::Evaluation::evaluation_tag<true>::type, TypeTraits::Evaluation::ConstantEvaluatedType>::value;
+				pass &= TypeTraits::TypeDispatch::is_same<typename TypeTraits::Evaluation::evaluation_tag<false>::type, TypeTraits::Evaluation::RuntimeEvaluatedType>::value;
+				pass &= TypeTraits::TypeDispatch::is_same<decltype(TypeTraits::Evaluation::GetEvaluationTag()), typename TypeTraits::Evaluation::evaluation_tag<TypeTraits::Evaluation::IsConstantEvaluated()>::type>::value;
+				return pass;
+			}
 
 			// Reference functions for is_unsigned and is_signed
 			static inline bool RefSignTraits()
@@ -200,6 +212,35 @@ namespace IntegerSignal
 				pass &= (TypeTraits::TypeSign::is_signed<uint32_t>::value == false);
 				pass &= (TypeTraits::TypeSign::is_signed<int64_t>::value == true);
 				pass &= (TypeTraits::TypeSign::is_signed<uint64_t>::value == false);
+				return pass;
+			}
+
+			static inline bool RefFitsIn()
+			{
+				static_assert(TypeTraits::TypeLimits::FitsIn<uint8_t>(uint8_t(0)), "FitsIn<uint8_t>(0)");
+				static_assert(TypeTraits::TypeLimits::FitsIn<uint8_t>(uint8_t(255)), "FitsIn<uint8_t>(255)");
+				static_assert(!TypeTraits::TypeLimits::FitsIn<uint8_t>(uint16_t(256)), "FitsIn<uint8_t>(256) false");
+				static_assert(TypeTraits::TypeLimits::FitsIn<uint16_t>(int16_t(255)), "FitsIn<uint16_t>(255)");
+				static_assert(!TypeTraits::TypeLimits::FitsIn<uint16_t>(int32_t(-1)), "FitsIn<uint16_t>(-1) false");
+				static_assert(TypeTraits::TypeLimits::FitsIn<int8_t>(int8_t(-128)), "FitsIn<int8_t>(-128)");
+				static_assert(TypeTraits::TypeLimits::FitsIn<int8_t>(int8_t(127)), "FitsIn<int8_t>(127)");
+				static_assert(!TypeTraits::TypeLimits::FitsIn<int8_t>(int16_t(128)), "FitsIn<int8_t>(128) false");
+				static_assert(!TypeTraits::TypeLimits::FitsIn<int8_t>(int16_t(-129)), "FitsIn<int8_t>(-129) false");
+				static_assert(TypeTraits::TypeLimits::FitsIn<int16_t>(uint8_t(255)), "FitsIn<int16_t>(255)");
+				static_assert(!TypeTraits::TypeLimits::FitsIn<int16_t>(uint32_t(65536)), "FitsIn<int16_t>(65536) false");
+
+				bool pass = true;
+				pass &= TypeTraits::TypeLimits::FitsIn<uint8_t>(uint8_t(0));
+				pass &= TypeTraits::TypeLimits::FitsIn<uint8_t>(uint8_t(255));
+				pass &= !TypeTraits::TypeLimits::FitsIn<uint8_t>(uint16_t(256));
+				pass &= TypeTraits::TypeLimits::FitsIn<uint16_t>(int16_t(255));
+				pass &= !TypeTraits::TypeLimits::FitsIn<uint16_t>(int32_t(-1));
+				pass &= TypeTraits::TypeLimits::FitsIn<int8_t>(int8_t(-128));
+				pass &= TypeTraits::TypeLimits::FitsIn<int8_t>(int8_t(127));
+				pass &= !TypeTraits::TypeLimits::FitsIn<int8_t>(int16_t(128));
+				pass &= !TypeTraits::TypeLimits::FitsIn<int8_t>(int16_t(-129));
+				pass &= TypeTraits::TypeLimits::FitsIn<int16_t>(uint8_t(255));
+				pass &= !TypeTraits::TypeLimits::FitsIn<int16_t>(uint32_t(65536));
 				return pass;
 			}
 
@@ -269,7 +310,9 @@ namespace IntegerSignal
 				pass &= RefTypeDispatch();
 				pass &= RefTypeConditional();
 				pass &= RefTypeEnableIf();
+				pass &= RefEvaluation();
 				pass &= RefSignTraits();
+				pass &= RefFitsIn();
 				pass &= RefSignTransforms();
 
 				if (pass)

@@ -11,6 +11,42 @@ namespace IntegerSignal
 		{
 			namespace Test
 			{
+				static constexpr ufraction8_t ConstexprScalarU8 = Scalar::Constexpr::GetScalarU8<uint8_t>(1u, 2u);
+				static constexpr ufraction16_t ConstexprScalarU16 = Scalar::Constexpr::GetScalarU16<uint16_t>(1u, 2u);
+				static constexpr ufraction32_t ConstexprScalarU32 = Scalar::Constexpr::GetScalarU32<uint32_t>(1u, 2u);
+				static constexpr fraction8_t ConstexprScalarS8 = Scalar::Constexpr::GetScalarS8<int8_t>(1, 2);
+				static constexpr fraction16_t ConstexprScalarS16 = Scalar::Constexpr::GetScalarS16<int16_t>(1, 2);
+				static constexpr fraction32_t ConstexprScalarS32 = Scalar::Constexpr::GetScalarS32<int32_t>(1, 2);
+
+				static constexpr uint8_t ConstexprFractionU8 = ScalarFraction::Fraction(UFRACTION8_1X, uint8_t(7));
+				static constexpr uint16_t ConstexprFractionU16 = ScalarFraction::Fraction(UFRACTION16_1X, uint16_t(9));
+				static constexpr uint32_t ConstexprFractionU32 = ScalarFraction::Fraction(UFRACTION32_1X, uint32_t(11));
+				static constexpr int8_t ConstexprFractionS8 = ScalarFraction::Fraction(FRACTION8_1X, int8_t(7));
+				static constexpr int16_t ConstexprFractionS16 = ScalarFraction::Fraction(FRACTION16_1X, int16_t(9));
+				static constexpr int32_t ConstexprFractionS32 = ScalarFraction::Fraction(FRACTION32_1X, int32_t(11));
+
+				static constexpr uint8_t ConstexprInterpolateU8 = ScalarFraction::Interpolate(UFRACTION8_1X, uint8_t(3), uint8_t(9));
+				static constexpr uint16_t ConstexprInterpolateU16 = ScalarFraction::Interpolate(UFRACTION16_1X, uint16_t(5), uint16_t(13));
+				static constexpr uint32_t ConstexprInterpolateU32 = ScalarFraction::Interpolate(UFRACTION32_1X, uint32_t(7), uint32_t(17));
+
+				static_assert(ConstexprScalarU8 == UFraction8::Base::GetScalar(uint8_t(1), uint8_t(2)), "Scalar::Constexpr::GetScalarU8 must remain constexpr-capable.");
+				static_assert(ConstexprScalarU16 == UFraction16::Base::GetScalar(uint16_t(1), uint16_t(2)), "Scalar::Constexpr::GetScalarU16 must remain constexpr-capable.");
+				static_assert(ConstexprScalarU32 == UFraction32::Base::GetScalar(uint32_t(1), uint32_t(2)), "Scalar::Constexpr::GetScalarU32 must remain constexpr-capable.");
+				static_assert(ConstexprScalarS8 == QFormatSigned::Scalar::Constexpr::GetScalarS8<int8_t>(1, 2), "Scalar::Constexpr::GetScalarS8 must remain constexpr-capable.");
+				static_assert(ConstexprScalarS16 == QFormatSigned::Scalar::Constexpr::GetScalarS16<int16_t>(1, 2), "Scalar::Constexpr::GetScalarS16 must remain constexpr-capable.");
+				static_assert(ConstexprScalarS32 == QFormatSigned::Scalar::Constexpr::GetScalarS32<int32_t>(1, 2), "Scalar::Constexpr::GetScalarS32 must remain constexpr-capable.");
+
+				static_assert(ConstexprFractionU8 == uint8_t(7), "Fraction(UFRACTION8_1X, value) must remain constexpr-capable.");
+				static_assert(ConstexprFractionU16 == uint16_t(9), "Fraction(UFRACTION16_1X, value) must remain constexpr-capable.");
+				static_assert(ConstexprFractionU32 == uint32_t(11), "Fraction(UFRACTION32_1X, value) must remain constexpr-capable.");
+				static_assert(ConstexprFractionS8 == int8_t(7), "Fraction(FRACTION8_1X, value) must remain constexpr-capable.");
+				static_assert(ConstexprFractionS16 == int16_t(9), "Fraction(FRACTION16_1X, value) must remain constexpr-capable.");
+				static_assert(ConstexprFractionS32 == int32_t(11), "Fraction(FRACTION32_1X, value) must remain constexpr-capable.");
+
+				static_assert(ConstexprInterpolateU8 == uint8_t(9), "Interpolate(UFRACTION8_1X, from, to) must remain constexpr-capable.");
+				static_assert(ConstexprInterpolateU16 == uint16_t(13), "Interpolate(UFRACTION16_1X, from, to) must remain constexpr-capable.");
+				static_assert(ConstexprInterpolateU32 == uint32_t(17), "Interpolate(UFRACTION32_1X, from, to) must remain constexpr-capable.");
+
 				// Reference function for Fraction8::scalar_t (signed)
 				template<typename T>
 				static inline T RefFraction8(const T value, const Fraction8::scalar_t fraction) {
@@ -127,6 +163,612 @@ namespace IntegerSignal
 					}
 
 					return errorCount == 0;
+				}
+
+				static inline bool TestGetScalarU8ExhaustiveValidation()
+				{
+					Serial.println(F("Starting exhaustive GetScalarU8 tests..."));
+
+					uint32_t errorCount = 0;
+					for (uint16_t n = 0; n <= UINT8_MAX; n++)
+					{
+						for (uint16_t d = 1; d <= UINT8_MAX; d++)
+						{
+							const uint8_t numerator = (uint8_t)n;
+							const uint8_t denominator = (uint8_t)d;
+
+							const UFraction8::scalar_t result = GetScalarU8(numerator, denominator);
+							const UFraction8::scalar_t refResult = numerator >= denominator ? UFraction8::FRACTION_1X
+								: (UFraction8::scalar_t)(((uint16_t)numerator * UFraction8::FRACTION_1X) / denominator);
+
+							if (result != refResult)
+							{
+								Serial.print(F("GetScalarU8 error: numerator="));
+								Serial.print(numerator);
+								Serial.print(F(" denominator="));
+								Serial.print(denominator);
+								Serial.print(F(" result="));
+								Serial.print(result);
+								Serial.print(F(" ref="));
+								Serial.println(refResult);
+								errorCount++;
+							}
+						}
+
+						if ((n % 16) == 0)
+						{
+							Serial.print(F("GetScalarU8 progress: "));
+							Serial.print(n);
+							Serial.println(F(" numerators tested..."));
+						}
+					}
+
+					if (errorCount == 0)
+					{
+						Serial.println(F("All GetScalarU8 tests PASSED."));
+					}
+					else
+					{
+						Serial.print(F("GetScalarU8 tests FAILED. Errors: "));
+						Serial.println(errorCount);
+					}
+
+					return errorCount == 0;
+				}
+
+				static inline bool TestGetScalarU8SignedInputs()
+				{
+					Serial.println(F("Starting GetScalarU8 signed-input regression tests..."));
+
+					const int8_t numerators[] = { INT8_MIN, -1, 0, 1, 3, 7, 15, 31, 63, 127 };
+					const int8_t denominators[] = { INT8_MIN, -1, 0, 1, 2, 3, 5, 7, 63, 127 };
+					bool pass = true;
+
+					for (size_t n = 0; n < sizeof(numerators) / sizeof(numerators[0]); ++n)
+					{
+						for (size_t d = 0; d < sizeof(denominators) / sizeof(denominators[0]); ++d)
+						{
+							const int8_t numerator = numerators[n];
+							const int8_t denominator = denominators[d];
+
+							const UFraction8::scalar_t result = GetScalarU8(numerator, denominator);
+							const UFraction8::scalar_t refResult = numerator < 0 ? 0
+								: denominator <= 0 ? UFraction8::FRACTION_1X
+								: numerator >= denominator ? UFraction8::FRACTION_1X
+								: (UFraction8::scalar_t)(((uint16_t)numerator * UFraction8::FRACTION_1X) / (uint8_t)denominator);
+
+							if (result != refResult)
+							{
+								Serial.print(F("GetScalarU8 signed-input error: numerator="));
+								Serial.print((int)numerator);
+								Serial.print(F(" denominator="));
+								Serial.print((int)denominator);
+								Serial.print(F(" result="));
+								Serial.print(result);
+								Serial.print(F(" ref="));
+								Serial.println(refResult);
+								pass = false;
+							}
+						}
+					}
+
+					const int32_t wideUnsignedNumerators[] = { INT32_MIN, -65536, -1, 0, 1, 255, 256, 65535, 65536, INT32_MAX };
+					const int32_t wideUnsignedDenominators[] = { INT32_MIN, -65536, -1, 0, 1, 2, 255, 256, 65535, 65536, INT32_MAX };
+
+					for (size_t n = 0; n < sizeof(wideUnsignedNumerators) / sizeof(wideUnsignedNumerators[0]); ++n)
+					{
+						for (size_t d = 0; d < sizeof(wideUnsignedDenominators) / sizeof(wideUnsignedDenominators[0]); ++d)
+						{
+							const int32_t numerator = wideUnsignedNumerators[n];
+							const int32_t denominator = wideUnsignedDenominators[d];
+
+							const UFraction8::scalar_t aliasConstexpr8 = Scalar::Constexpr::GetScalarU8(numerator, denominator);
+							const UFraction8::scalar_t aliasRuntime8 = Scalar::Runtime::GetScalarU8(numerator, denominator);
+							const UFraction8::scalar_t aliasDefault8 = Scalar::GetScalarU8(numerator, denominator);
+							const UFraction8::scalar_t refAlias8 = UFraction8::Base::GetScalar(numerator, denominator);
+
+							if (aliasConstexpr8 != refAlias8 || aliasRuntime8 != refAlias8 || aliasDefault8 != refAlias8)
+							{
+								Serial.print(F("ScalarAliases U8 mismatch: n="));
+								Serial.print(numerator);
+								Serial.print(F(" d="));
+								Serial.print(denominator);
+								Serial.print(F(" constexpr="));
+								Serial.print(aliasConstexpr8);
+								Serial.print(F(" runtime="));
+								Serial.print(aliasRuntime8);
+								Serial.print(F(" default="));
+								Serial.print(aliasDefault8);
+								Serial.print(F(" ref="));
+								Serial.println(refAlias8);
+								pass = false;
+							}
+
+							const UFraction16::scalar_t aliasConstexpr16 = Scalar::Constexpr::GetScalarU16(numerator, denominator);
+							const UFraction16::scalar_t aliasRuntime16 = Scalar::Runtime::GetScalarU16(numerator, denominator);
+							const UFraction16::scalar_t aliasDefault16 = Scalar::GetScalarU16(numerator, denominator);
+							const UFraction16::scalar_t refAlias16 = UFraction16::Base::GetScalar(numerator, denominator);
+
+							if (aliasConstexpr16 != refAlias16 || aliasRuntime16 != refAlias16 || aliasDefault16 != refAlias16)
+							{
+								Serial.print(F("ScalarAliases U16 mismatch: n="));
+								Serial.print(numerator);
+								Serial.print(F(" d="));
+								Serial.print(denominator);
+								Serial.print(F(" constexpr="));
+								Serial.print(aliasConstexpr16);
+								Serial.print(F(" runtime="));
+								Serial.print(aliasRuntime16);
+								Serial.print(F(" default="));
+								Serial.print(aliasDefault16);
+								Serial.print(F(" ref="));
+								Serial.println(refAlias16);
+								pass = false;
+							}
+
+							const UFraction32::scalar_t aliasConstexpr32 = Scalar::Constexpr::GetScalarU32(numerator, denominator);
+							const UFraction32::scalar_t aliasRuntime32 = Scalar::Runtime::GetScalarU32(numerator, denominator);
+							const UFraction32::scalar_t aliasDefault32 = Scalar::GetScalarU32(numerator, denominator);
+							const UFraction32::scalar_t refAlias32 = UFraction32::Base::GetScalar(numerator, denominator);
+
+							if (aliasConstexpr32 != refAlias32 || aliasRuntime32 != refAlias32 || aliasDefault32 != refAlias32)
+							{
+								Serial.print(F("ScalarAliases U32 mismatch: n="));
+								Serial.print(numerator);
+								Serial.print(F(" d="));
+								Serial.print(denominator);
+								Serial.print(F(" constexpr="));
+								Serial.print(aliasConstexpr32);
+								Serial.print(F(" runtime="));
+								Serial.print(aliasRuntime32);
+								Serial.print(F(" default="));
+								Serial.print(aliasDefault32);
+								Serial.print(F(" ref="));
+								Serial.println(refAlias32);
+								pass = false;
+							}
+						}
+					}
+
+					if (pass)
+					{
+						Serial.println(F("GetScalarU8 signed-input regression tests PASSED."));
+					}
+					else
+					{
+						Serial.println(F("GetScalarU8 signed-input regression tests FAILED."));
+					}
+
+					return pass;
+				}
+
+				static inline bool TestSplitScalarApiConsistency()
+				{
+					Serial.println(F("Starting split scalar API consistency tests..."));
+					bool pass = true;
+
+					const uint16_t unsignedNumerators[] = { 0u, 1u, 3u, 7u, 15u, 31u, 63u, 127u, 255u, 256u, 1023u, 4095u, 16383u, 32767u, 65535u };
+					const uint16_t unsignedDenominators[] = { 0u, 1u, 2u, 3u, 5u, 7u, 11u, 127u, 255u, 256u, 1023u, 4095u, 16384u, 32768u, 65535u };
+
+					for (size_t n = 0; n < sizeof(unsignedNumerators) / sizeof(unsignedNumerators[0]); ++n)
+					{
+						for (size_t d = 0; d < sizeof(unsignedDenominators) / sizeof(unsignedDenominators[0]); ++d)
+						{
+							const uint16_t numerator = unsignedNumerators[n];
+							const uint16_t denominator = unsignedDenominators[d];
+
+							const uint8_t d8 = denominator > UINT8_MAX ? UINT8_MAX : (uint8_t)denominator;
+							const uint8_t n8 = numerator > UINT8_MAX ? UINT8_MAX : (uint8_t)numerator;
+							const UFraction8::scalar_t ref8 = QFormatUnsigned::Scalar::GetScalarU8(n8, d8);
+							const UFraction8::scalar_t runtime8 = QFormatUnsigned::Scalar::Runtime::GetScalarU8(n8, d8);
+							const UFraction8::scalar_t constexpr8 = QFormatUnsigned::Scalar::Constexpr::GetScalarU8(n8, d8);
+							const UFraction8::scalar_t auto8 = QFormatUnsigned::Scalar::GetScalarU8(n8, d8);
+
+							if (constexpr8 != QFormatUnsigned::Scalar::Constexpr::GetScalarU8(n8, d8))
+							{
+								Serial.print(F("Split U8 constexpr mismatch: n="));
+								Serial.print(n8);
+								Serial.print(F(" d="));
+								Serial.print(d8);
+								Serial.print(F(" constexpr="));
+								Serial.print(constexpr8);
+								Serial.print(F(" ref="));
+								Serial.println(QFormatUnsigned::Scalar::Constexpr::GetScalarU8(n8, d8));
+								pass = false;
+							}
+
+							if (runtime8 != ref8)
+							{
+								Serial.print(F("Split U8 runtime mismatch: n="));
+								Serial.print(n8);
+								Serial.print(F(" d="));
+								Serial.print(d8);
+								Serial.print(F(" runtime="));
+								Serial.print(runtime8);
+								Serial.print(F(" ref="));
+								Serial.println(ref8);
+								pass = false;
+							}
+							const UFraction8::scalar_t expectedAuto8 =
+#if defined(__AVR__)
+								runtime8;
+#else
+								constexpr8;
+#endif
+
+							if (auto8 != expectedAuto8)
+							{
+								Serial.print(F("Split U8 auto mismatch: n="));
+								Serial.print(n8);
+								Serial.print(F(" d="));
+								Serial.print(d8);
+								Serial.print(F(" auto="));
+								Serial.print(auto8);
+								Serial.print(F(" runtime="));
+								Serial.print(runtime8);
+								Serial.print(F(" constexpr="));
+								Serial.println(constexpr8);
+								pass = false;
+							}
+
+							const UFraction16::scalar_t ref16 = QFormatUnsigned::Scalar::GetScalarU16(numerator, denominator);
+							const UFraction16::scalar_t runtime16 = QFormatUnsigned::Scalar::Runtime::GetScalarU16(numerator, denominator);
+							const UFraction16::scalar_t constexpr16 = QFormatUnsigned::Scalar::Constexpr::GetScalarU16(numerator, denominator);
+							const UFraction16::scalar_t auto16 = QFormatUnsigned::Scalar::GetScalarU16(numerator, denominator);
+
+							if (constexpr16 != QFormatUnsigned::Scalar::Constexpr::GetScalarU16(numerator, denominator))
+							{
+								Serial.print(F("Split U16 constexpr mismatch: n="));
+								Serial.print(numerator);
+								Serial.print(F(" d="));
+								Serial.print(denominator);
+								Serial.print(F(" constexpr="));
+								Serial.print(constexpr16);
+								Serial.print(F(" ref="));
+								Serial.println(QFormatUnsigned::Scalar::Constexpr::GetScalarU16(numerator, denominator));
+								pass = false;
+							}
+
+							if (runtime16 != ref16)
+							{
+								Serial.print(F("Split U16 runtime mismatch: n="));
+								Serial.print(numerator);
+								Serial.print(F(" d="));
+								Serial.print(denominator);
+								Serial.print(F(" runtime="));
+								Serial.print(runtime16);
+								Serial.print(F(" ref="));
+								Serial.println(ref16);
+								pass = false;
+							}
+							const UFraction16::scalar_t expectedAuto16 =
+#if defined(__AVR__)
+								runtime16;
+#else
+								constexpr16;
+#endif
+
+							if (auto16 != expectedAuto16)
+							{
+								Serial.print(F("Split U16 auto mismatch: n="));
+								Serial.print(numerator);
+								Serial.print(F(" d="));
+								Serial.print(denominator);
+								Serial.print(F(" auto="));
+								Serial.print(auto16);
+								Serial.print(F(" runtime="));
+								Serial.print(runtime16);
+								Serial.print(F(" constexpr="));
+								Serial.println(constexpr16);
+								pass = false;
+							}
+
+							const uint32_t numerator32 = numerator;
+							const uint32_t denominator32 = denominator;
+							const UFraction32::scalar_t ref32 = QFormatUnsigned::Scalar::GetScalarU32(numerator32, denominator32);
+							const UFraction32::scalar_t runtime32 = QFormatUnsigned::Scalar::Runtime::GetScalarU32(numerator32, denominator32);
+							const UFraction32::scalar_t constexpr32 = QFormatUnsigned::Scalar::Constexpr::GetScalarU32(numerator32, denominator32);
+							const UFraction32::scalar_t auto32 = QFormatUnsigned::Scalar::GetScalarU32(numerator32, denominator32);
+
+							if (constexpr32 != QFormatUnsigned::Scalar::Constexpr::GetScalarU32(numerator32, denominator32))
+							{
+								Serial.print(F("Split U32 constexpr mismatch: n="));
+								Serial.print(numerator32);
+								Serial.print(F(" d="));
+								Serial.print(denominator32);
+								Serial.print(F(" constexpr="));
+								Serial.print(constexpr32);
+								Serial.print(F(" ref="));
+								Serial.println(QFormatUnsigned::Scalar::Constexpr::GetScalarU32(numerator32, denominator32));
+								pass = false;
+							}
+
+							if (runtime32 != ref32)
+							{
+								Serial.print(F("Split U32 runtime mismatch: n="));
+								Serial.print(numerator32);
+								Serial.print(F(" d="));
+								Serial.print(denominator32);
+								Serial.print(F(" runtime="));
+								Serial.print(runtime32);
+								Serial.print(F(" ref="));
+								Serial.println(ref32);
+								pass = false;
+							}
+
+							if (auto32 != constexpr32)
+							{
+								Serial.print(F("Split U32 auto->constexpr mismatch: n="));
+								Serial.print(numerator32);
+								Serial.print(F(" d="));
+								Serial.print(denominator32);
+								Serial.print(F(" auto="));
+								Serial.print(auto32);
+								Serial.print(F(" constexpr="));
+								Serial.println(constexpr32);
+								pass = false;
+							}
+						}
+					}
+
+					const int16_t signedNumerators[] = { INT16_MIN, -255, -1, 0, 1, 3, 7, 31, 127, 255, 1023, INT16_MAX };
+					const int16_t signedDenominators[] = { INT16_MIN, -255, -1, 0, 1, 2, 3, 7, 31, 127, 255, INT16_MAX };
+
+					for (size_t n = 0; n < sizeof(signedNumerators) / sizeof(signedNumerators[0]); ++n)
+					{
+						for (size_t d = 0; d < sizeof(signedDenominators) / sizeof(signedDenominators[0]); ++d)
+						{
+							const int16_t numerator = signedNumerators[n];
+							const int16_t denominator = signedDenominators[d];
+							const int8_t numerator8 = (int8_t)numerator;
+							const int8_t denominator8 = (int8_t)denominator;
+
+							const Fraction8::scalar_t runtime8 = QFormatSigned::Scalar::Runtime::GetScalarS8(numerator8, denominator8);
+							const Fraction8::scalar_t constexpr8 = QFormatSigned::Scalar::Constexpr::GetScalarS8(numerator8, denominator8);
+							const Fraction8::scalar_t auto8 = QFormatSigned::Scalar::GetScalarS8(numerator8, denominator8);
+
+							if (constexpr8 != QFormatSigned::Scalar::Constexpr::GetScalarS8(numerator8, denominator8))
+							{
+								Serial.print(F("Split S8 constexpr mismatch: n="));
+								Serial.print((int)numerator8);
+								Serial.print(F(" d="));
+								Serial.print((int)denominator8);
+								Serial.print(F(" constexpr="));
+								Serial.print(constexpr8);
+								Serial.print(F(" ref="));
+								Serial.println(QFormatSigned::Scalar::Constexpr::GetScalarS8(numerator8, denominator8));
+								pass = false;
+							}
+							const Fraction8::scalar_t expectedAutoS8 =
+#if defined(__AVR__)
+								((numerator8 >= 0 && denominator8 > 0) ? runtime8 : constexpr8);
+#else
+								constexpr8;
+#endif
+
+							if (auto8 != expectedAutoS8)
+							{
+								Serial.print(F("Split S8 auto mismatch: n="));
+								Serial.print((int)numerator8);
+								Serial.print(F(" d="));
+								Serial.print((int)denominator8);
+								Serial.print(F(" auto="));
+								Serial.print(auto8);
+								Serial.print(F(" runtime="));
+								Serial.print(runtime8);
+								Serial.print(F(" constexpr="));
+								Serial.println(constexpr8);
+								pass = false;
+							}
+
+							const Fraction16::scalar_t runtime16 = QFormatSigned::Scalar::Runtime::GetScalarS16(numerator, denominator);
+							const Fraction16::scalar_t constexpr16 = QFormatSigned::Scalar::Constexpr::GetScalarS16(numerator, denominator);
+							const Fraction16::scalar_t auto16 = QFormatSigned::Scalar::GetScalarS16(numerator, denominator);
+
+							if (constexpr16 != QFormatSigned::Scalar::Constexpr::GetScalarS16(numerator, denominator))
+							{
+								Serial.print(F("Split S16 constexpr mismatch: n="));
+								Serial.print(numerator);
+								Serial.print(F(" d="));
+								Serial.print(denominator);
+								Serial.print(F(" constexpr="));
+								Serial.print(constexpr16);
+								Serial.print(F(" ref="));
+								Serial.println(QFormatSigned::Scalar::Constexpr::GetScalarS16(numerator, denominator));
+								pass = false;
+							}
+							const Fraction16::scalar_t expectedAutoS16 =
+#if defined(__AVR__)
+								((numerator >= 0 && denominator > 0) ? runtime16 : constexpr16);
+#else
+								constexpr16;
+#endif
+
+							if (auto16 != expectedAutoS16)
+							{
+								Serial.print(F("Split S16 auto mismatch: n="));
+								Serial.print(numerator);
+								Serial.print(F(" d="));
+								Serial.print(denominator);
+								Serial.print(F(" auto="));
+								Serial.print(auto16);
+								Serial.print(F(" runtime="));
+								Serial.print(runtime16);
+								Serial.print(F(" constexpr="));
+								Serial.println(constexpr16);
+								pass = false;
+							}
+
+							const int32_t numerator32 = numerator;
+							const int32_t denominator32 = denominator;
+							const Fraction32::scalar_t ref32 = QFormatSigned::Scalar::GetScalarS32(numerator32, denominator32);
+							const Fraction32::scalar_t runtime32 = QFormatSigned::Scalar::Runtime::GetScalarS32(numerator32, denominator32);
+							const Fraction32::scalar_t constexpr32 = QFormatSigned::Scalar::Constexpr::GetScalarS32(numerator32, denominator32);
+							const Fraction32::scalar_t auto32 = QFormatSigned::Scalar::GetScalarS32(numerator32, denominator32);
+
+							if (constexpr32 != QFormatSigned::Scalar::Constexpr::GetScalarS32(numerator32, denominator32))
+							{
+								Serial.print(F("Split S32 constexpr mismatch: n="));
+								Serial.print(numerator32);
+								Serial.print(F(" d="));
+								Serial.print(denominator32);
+								Serial.print(F(" constexpr="));
+								Serial.print(constexpr32);
+								Serial.print(F(" ref="));
+								Serial.println(QFormatSigned::Scalar::Constexpr::GetScalarS32(numerator32, denominator32));
+								pass = false;
+							}
+
+							if (runtime32 != ref32)
+							{
+								Serial.print(F("Split S32 runtime mismatch: n="));
+								Serial.print(numerator32);
+								Serial.print(F(" d="));
+								Serial.print(denominator32);
+								Serial.print(F(" runtime="));
+								Serial.print(runtime32);
+								Serial.print(F(" ref="));
+								Serial.println(ref32);
+								pass = false;
+							}
+
+							if (auto32 != constexpr32)
+							{
+								Serial.print(F("Split S32 auto->constexpr mismatch: n="));
+								Serial.print(numerator32);
+								Serial.print(F(" d="));
+								Serial.print(denominator32);
+								Serial.print(F(" auto="));
+								Serial.print(auto32);
+								Serial.print(F(" constexpr="));
+								Serial.println(constexpr32);
+								pass = false;
+							}
+						}
+					}
+
+					if (pass)
+					{
+						Serial.println(F("Split scalar API consistency tests PASSED."));
+					}
+					else
+					{
+						Serial.println(F("Split scalar API consistency tests FAILED."));
+					}
+
+					return pass;
+				}
+
+				static inline bool TestGetScalarFastUnsignedRegression()
+				{
+					Serial.println(F("Starting fast unsigned GetScalar regression tests..."));
+					bool pass = true;
+
+					const uint16_t numerators16[] = { 0u, 1u, 3u, 7u, 15u, 31u, 63u, 127u, 255u, 256u, 1023u, 4095u, 16383u, 32767u };
+					const uint16_t denominators16[] = { 1u, 2u, 3u, 5u, 7u, 11u, 127u, 255u, 256u, 1023u, 4095u, 16384u, 32768u, 65535u };
+
+					for (size_t n = 0; n < sizeof(numerators16) / sizeof(numerators16[0]); ++n)
+					{
+						for (size_t d = 0; d < sizeof(denominators16) / sizeof(denominators16[0]); ++d)
+						{
+							const uint16_t numerator = numerators16[n];
+							const uint16_t denominator = denominators16[d];
+							const UFraction16::scalar_t result = QFormatUnsigned::Scalar::Runtime::GetScalarU16(numerator, denominator);
+							const UFraction16::scalar_t ref = QFormatUnsigned::Scalar::Constexpr::GetScalarU16(numerator, denominator);
+
+							if (result != ref)
+							{
+								Serial.print(F("GetScalarRuntimeU16 error: numerator="));
+								Serial.print(numerator);
+								Serial.print(F(" denominator="));
+								Serial.print(denominator);
+								Serial.print(F(" result="));
+								Serial.print(result);
+								Serial.print(F(" ref="));
+								Serial.println(ref);
+								pass = false;
+							}
+						}
+					}
+
+					const uint32_t numerators32[] = { 0u, 1u, 3u, 7u, 15u, 31u, 63u, 127u, 255u, 65535u, 65536u, 1048575u, 16777215u, 268435455u, 1073741823u, 2147483647u };
+					const uint32_t denominators32[] = { 1u, 2u, 3u, 5u, 7u, 11u, 127u, 255u, 65535u, 65536u, 1048576u, 16777216u, 268435456u, 1073741824u, 2147483648u, 4294967295u };
+
+					for (size_t n = 0; n < sizeof(numerators32) / sizeof(numerators32[0]); ++n)
+					{
+						for (size_t d = 0; d < sizeof(denominators32) / sizeof(denominators32[0]); ++d)
+						{
+							const uint32_t numerator = numerators32[n];
+							const uint32_t denominator = denominators32[d];
+							const UFraction32::scalar_t result = QFormatUnsigned::Scalar::Runtime::GetScalarU32(numerator, denominator);
+							const UFraction32::scalar_t ref = QFormatUnsigned::Scalar::Constexpr::GetScalarU32(numerator, denominator);
+
+							if (result != ref)
+							{
+								Serial.print(F("GetScalarRuntimeU32 error: numerator="));
+								Serial.print(numerator);
+								Serial.print(F(" denominator="));
+								Serial.print(denominator);
+								Serial.print(F(" result="));
+								Serial.print(result);
+								Serial.print(F(" ref="));
+								Serial.println(ref);
+								pass = false;
+							}
+						}
+					}
+
+					const int32_t signedNumerators[] = { INT32_MIN, -65536, -1, 0, 1, 3, 7, 127, 255, 65535, 65536, 1048575, INT32_MAX };
+					const int32_t signedDenominators[] = { INT32_MIN, -65536, -1, 0, 1, 2, 3, 7, 127, 255, 65535, 65536, INT32_MAX };
+
+					for (size_t n = 0; n < sizeof(signedNumerators) / sizeof(signedNumerators[0]); ++n)
+					{
+						for (size_t d = 0; d < sizeof(signedDenominators) / sizeof(signedDenominators[0]); ++d)
+						{
+							const int32_t numerator = signedNumerators[n];
+							const int32_t denominator = signedDenominators[d];
+
+							const UFraction16::scalar_t result16 = QFormatUnsigned::Scalar::Runtime::GetScalarU16(numerator, denominator);
+							const UFraction16::scalar_t ref16 = QFormatUnsigned::Scalar::Constexpr::GetScalarU16(numerator, denominator);
+							const UFraction32::scalar_t result32 = QFormatUnsigned::Scalar::Runtime::GetScalarU32(numerator, denominator);
+							const UFraction32::scalar_t ref32 = QFormatUnsigned::Scalar::Constexpr::GetScalarU32(numerator, denominator);
+
+							if (result16 != ref16 || result32 != ref32)
+							{
+								Serial.print(F("Signed fast GetScalar error: numerator="));
+								Serial.print(numerator);
+								Serial.print(F(" denominator="));
+								Serial.print(denominator);
+								if (result16 != ref16)
+								{
+									Serial.print(F(" u16="));
+									Serial.print(result16);
+									Serial.print(F(" ref16="));
+									Serial.print(ref16);
+								}
+								if (result32 != ref32)
+								{
+									Serial.print(F(" u32="));
+									Serial.print(result32);
+									Serial.print(F(" ref32="));
+									Serial.print(ref32);
+								}
+								Serial.println();
+								pass = false;
+							}
+						}
+					}
+
+					if (pass)
+					{
+						Serial.println(F("Runtime unsigned GetScalar regression tests PASSED."));
+					}
+					else
+					{
+						Serial.println(F("Runtime unsigned GetScalar regression tests FAILED."));
+					}
+
+					return pass;
 				}
 
 				// Exhaustive test for Fraction16::scalar_t
@@ -1090,6 +1732,10 @@ namespace IntegerSignal
 				{
 					bool pass = true;
 
+					pass &= TestGetScalarU8ExhaustiveValidation();
+					pass &= TestGetScalarU8SignedInputs();
+					pass &= TestGetScalarFastUnsignedRegression();
+					pass &= TestSplitScalarApiConsistency();
 					pass &= TestGetFraction8Exhaustive();
 					pass &= TestGetScalarWideIntermediateRegression();
 					pass &= TestUFraction8Types();
