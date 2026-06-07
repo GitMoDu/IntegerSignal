@@ -33,15 +33,12 @@ void setup()
 	Serial.println(F("Average Call Duration (ns)"));
 	Serial.println();
 
-	Serial.println(F("Resize"));
-	BenchmarkResize<>();
+	Serial.println(F("FactorScale"));
+	BenchmarkFactorScale<>();
 	Serial.println();
 
-	Serial.println(F("UFraction"));
+	Serial.println(F("ScalarFraction"));
 	BenchmarkUFraction<>();
-	Serial.println();
-
-	Serial.println(F("Fraction"));
 	BenchmarkFraction<>();
 	Serial.println();
 
