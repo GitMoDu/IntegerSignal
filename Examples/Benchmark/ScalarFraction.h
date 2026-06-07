@@ -29,8 +29,8 @@ void BenchmarkUFraction()
 
 	uint32_t DurationTotal = 0;
 
-	Serial.println(F("\tGet"));
-	Serial.print(F("\t(8 Bit Constexpr)\t"));
+	Serial.println(F("\tUQ0.7 GetScalar"));
+	Serial.print(F("\t(Constexpr)\t"));
 	uint8_t numeratorU8 = 0;
 	DurationTotal = micros();
 	for (benchmark_count_t i = 0; i < TestSize; i++)
@@ -46,12 +46,12 @@ void BenchmarkUFraction()
 	BenchmarkScalarGetPath::PrintSelectedMarker<selected_u8_path_t, BenchmarkScalarGetPath::ConstexprTag>();
 	Serial.println();
 
-	Serial.print(F("\t(8 Bit Runtime)\t\t"));
+	Serial.print(F("\t(Runtime)\t"));
 	numeratorU8 = 0;
 	DurationTotal = micros();
 	for (benchmark_count_t i = 0; i < TestSize; i++)
 	{
-		testU8 = ScalarFraction::Scalar::Fast::GetScalarU8<uint8_t>(numeratorU8, testSizeU8);
+		testU8 = ScalarFraction::Scalar::Runtime::GetScalarU8<uint8_t>(numeratorU8, testSizeU8);
 		numeratorU8++;
 		if (numeratorU8 >= testSizeU8)
 			numeratorU8 = 0;
@@ -62,7 +62,8 @@ void BenchmarkUFraction()
 	BenchmarkScalarGetPath::PrintSelectedMarker<selected_u8_path_t, BenchmarkScalarGetPath::RuntimeTag>();
 	Serial.println();
 
-	Serial.print(F("\t(16 Bit Constexpr)\t"));
+	Serial.println(F("\tUQ0.15 GetScalar"));
+	Serial.print(F("\t(Constexpr)\t"));
 	uint16_t numeratorU16 = 0;
 	DurationTotal = micros();
 	for (benchmark_count_t i = 0; i < TestSize; i++)
@@ -78,12 +79,12 @@ void BenchmarkUFraction()
 	BenchmarkScalarGetPath::PrintSelectedMarker<selected_u16_path_t, BenchmarkScalarGetPath::ConstexprTag>();
 	Serial.println();
 
-	Serial.print(F("\t(16 Bit Runtime)\t"));
+	Serial.print(F("\t(Runtime)\t"));
 	numeratorU16 = 0;
 	DurationTotal = micros();
 	for (benchmark_count_t i = 0; i < TestSize; i++)
 	{
-		testU16 = ScalarFraction::Scalar::Fast::GetScalarU16<uint16_t>(numeratorU16, testSizeU16);
+		testU16 = ScalarFraction::Scalar::Runtime::GetScalarU16<uint16_t>(numeratorU16, testSizeU16);
 		numeratorU16++;
 		if (numeratorU16 >= testSizeU16)
 			numeratorU16 = 0;
@@ -94,7 +95,8 @@ void BenchmarkUFraction()
 	BenchmarkScalarGetPath::PrintSelectedMarker<selected_u16_path_t, BenchmarkScalarGetPath::RuntimeTag>();
 	Serial.println();
 
-	Serial.print(F("\t(32 Bit Constexpr)\t"));
+	Serial.println(F("\tUQ0.31 GetScalar"));
+	Serial.print(F("\t(Constexpr)\t"));
 	uint32_t numeratorU32 = 0;
 	DurationTotal = micros();
 	for (benchmark_count_t i = 0; i < TestSize; i++)
@@ -110,12 +112,12 @@ void BenchmarkUFraction()
 	BenchmarkScalarGetPath::PrintSelectedMarker<selected_u32_path_t, BenchmarkScalarGetPath::ConstexprTag>();
 	Serial.println();
 
-	Serial.print(F("\t(32 Bit Runtime)\t"));
+	Serial.print(F("\t(Runtime)\t"));
 	numeratorU32 = 0;
 	DurationTotal = micros();
 	for (benchmark_count_t i = 0; i < TestSize; i++)
 	{
-		testU32 = ScalarFraction::Scalar::Fast::GetScalarU32<uint32_t>(numeratorU32, testSizeU32);
+		testU32 = ScalarFraction::Scalar::Runtime::GetScalarU32<uint32_t>(numeratorU32, testSizeU32);
 		numeratorU32++;
 		if (numeratorU32 >= testSizeU32)
 			numeratorU32 = 0;
@@ -126,8 +128,8 @@ void BenchmarkUFraction()
 	BenchmarkScalarGetPath::PrintSelectedMarker<selected_u32_path_t, BenchmarkScalarGetPath::RuntimeTag>();
 	Serial.println();
 
-	Serial.println(F("\tScale"));
-	Serial.print(F("\t(8 Bit)\t\t"));
+	Serial.print(F("\tUQ0.7 Apply\t"));
+	//Serial.print(F("\t(Apply)\t\t"));
 	DurationTotal = micros();
 	for (benchmark_count_t i = 0; i < TestSize; i++)
 	{
@@ -138,7 +140,8 @@ void BenchmarkUFraction()
 	Serial.print(F(" ns"));
 	Serial.println();
 
-	Serial.print(F("\t(16 Bit)\t"));
+	Serial.print(F("\tUQ0.15 Apply\t"));
+	//Serial.print(F("\t(Apply)\t"));
 	DurationTotal = micros();
 	for (benchmark_count_t i = 0; i < TestSize; i++)
 	{
@@ -149,7 +152,8 @@ void BenchmarkUFraction()
 	Serial.print(F(" ns"));
 	Serial.println();
 
-	Serial.print(F("\t(32 Bit)\t"));
+	Serial.print(F("\tUQ0.31 Apply\t"));
+	//Serial.print(F("\t(Apply)\t"));
 	DurationTotal = micros();
 	for (benchmark_count_t i = 0; i < TestSize; i++)
 	{
@@ -190,8 +194,8 @@ void BenchmarkFraction()
 
 	uint32_t DurationTotal = 0;
 
-	Serial.println(F("\tGet"));
-	Serial.print(F("\t(8 Bit Constexpr)\t"));
+	Serial.println(F("\tQ0.6 GetScalar"));
+	Serial.print(F("\t(Constexpr)\t"));
 	int8_t numeratorS8 = 0;
 	DurationTotal = micros();
 	for (benchmark_count_t i = 0; i < TestSize; i++)
@@ -207,12 +211,12 @@ void BenchmarkFraction()
 	BenchmarkScalarGetPath::PrintSelectedMarker<selected_s8_path_t, BenchmarkScalarGetPath::ConstexprTag>();
 	Serial.println();
 
-	Serial.print(F("\t(8 Bit Runtime)\t\t"));
+	Serial.print(F("\t(Runtime)\t"));
 	numeratorS8 = 0;
 	DurationTotal = micros();
 	for (benchmark_count_t i = 0; i < TestSize; i++)
 	{
-		testU8 = ScalarFraction::Scalar::Fast::GetScalarS8<int8_t>(numeratorS8, testSizeS8);
+		testU8 = ScalarFraction::Scalar::Runtime::GetScalarS8<int8_t>(numeratorS8, testSizeS8);
 		numeratorS8++;
 		if (numeratorS8 >= testSizeS8)
 			numeratorS8 = 0;
@@ -223,7 +227,8 @@ void BenchmarkFraction()
 	BenchmarkScalarGetPath::PrintSelectedMarker<selected_s8_path_t, BenchmarkScalarGetPath::RuntimeTag>();
 	Serial.println();
 
-	Serial.print(F("\t(16 Bit Constexpr)\t"));
+	Serial.println(F("\tQ0.14 GetScalar"));
+	Serial.print(F("\t(Constexpr)\t"));
 	int16_t numeratorS16 = 0;
 	DurationTotal = micros();
 	for (benchmark_count_t i = 0; i < TestSize; i++)
@@ -239,12 +244,12 @@ void BenchmarkFraction()
 	BenchmarkScalarGetPath::PrintSelectedMarker<selected_s16_path_t, BenchmarkScalarGetPath::ConstexprTag>();
 	Serial.println();
 
-	Serial.print(F("\t(16 Bit Runtime)\t"));
+	Serial.print(F("\t(Runtime)\t"));
 	numeratorS16 = 0;
 	DurationTotal = micros();
 	for (benchmark_count_t i = 0; i < TestSize; i++)
 	{
-		testU16 = ScalarFraction::Scalar::Fast::GetScalarS16<int16_t>(numeratorS16, testSizeS16);
+		testU16 = ScalarFraction::Scalar::Runtime::GetScalarS16<int16_t>(numeratorS16, testSizeS16);
 		numeratorS16++;
 		if (numeratorS16 >= testSizeS16)
 			numeratorS16 = 0;
@@ -255,7 +260,8 @@ void BenchmarkFraction()
 	BenchmarkScalarGetPath::PrintSelectedMarker<selected_s16_path_t, BenchmarkScalarGetPath::RuntimeTag>();
 	Serial.println();
 
-	Serial.print(F("\t(32 Bit Constexpr)\t"));
+	Serial.println(F("\tQ0.30 GetScalar"));
+	Serial.print(F("\t(Constexpr)\t"));
 	int32_t numeratorS32 = 0;
 	DurationTotal = micros();
 	for (benchmark_count_t i = 0; i < TestSize; i++)
@@ -271,12 +277,12 @@ void BenchmarkFraction()
 	BenchmarkScalarGetPath::PrintSelectedMarker<selected_s32_path_t, BenchmarkScalarGetPath::ConstexprTag>();
 	Serial.println();
 
-	Serial.print(F("\t(32 Bit Runtime)\t"));
+	Serial.print(F("\t(Runtime)\t"));
 	numeratorS32 = 0;
 	DurationTotal = micros();
 	for (benchmark_count_t i = 0; i < TestSize; i++)
 	{
-		testU32 = ScalarFraction::Scalar::Fast::GetScalarS32<int32_t>(numeratorS32, testSizeS32);
+		testU32 = ScalarFraction::Scalar::Runtime::GetScalarS32<int32_t>(numeratorS32, testSizeS32);
 		numeratorS32++;
 		if (numeratorS32 >= testSizeS32)
 			numeratorS32 = 0;
@@ -287,8 +293,7 @@ void BenchmarkFraction()
 	BenchmarkScalarGetPath::PrintSelectedMarker<selected_s32_path_t, BenchmarkScalarGetPath::RuntimeTag>();
 	Serial.println();
 
-	Serial.println(F("\tScale"));
-	Serial.print(F("\t(8 Bit)\t\t"));
+	Serial.print(F("\tQ0.6 Apply\t"));
 	DurationTotal = micros();
 	for (benchmark_count_t i = 0; i < TestSize; i++)
 	{
@@ -298,7 +303,7 @@ void BenchmarkFraction()
 	PrintAverageNanoseconds(DurationTotal, TestSize);
 	Serial.println(F(" ns"));
 
-	Serial.print(F("\t(16 Bit)\t"));
+	Serial.print(F("\tQ0.14 Apply\t"));
 	DurationTotal = micros();
 	for (benchmark_count_t i = 0; i < TestSize; i++)
 	{
@@ -308,7 +313,7 @@ void BenchmarkFraction()
 	PrintAverageNanoseconds(DurationTotal, TestSize);
 	Serial.println(F(" ns"));
 
-	Serial.print(F("\t(32 Bit)\t"));
+	Serial.print(F("\tQ0.30 Apply\t"));
 	DurationTotal = micros();
 	for (benchmark_count_t i = 0; i < TestSize; i++)
 	{

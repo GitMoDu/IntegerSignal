@@ -92,51 +92,137 @@ namespace IntegerSignal
 			/// </summary>
 			namespace ScaleAliases
 			{
+				namespace Constexpr
+				{
+					template<typename T>
+					static constexpr T Scale(const scale8_t factor, const T value)
+					{
+						return FactorScaleUnsigned::Implementation::Constexpr::Scale(factor, value);
+					}
+
+					template<typename T>
+					static constexpr T Scale(const scale16_t factor, const T value)
+					{
+						return FactorScaleUnsigned::Implementation::Constexpr::Scale(factor, value);
+					}
+
+					template<typename T>
+					static constexpr T Scale(const scale32_t factor, const T value)
+					{
+						return FactorScaleUnsigned::Implementation::Constexpr::Scale(factor, value);
+					}
+				}
+
+				namespace Runtime
+				{
+					template<typename T>
+					static constexpr T Scale(const scale8_t factor, const T value)
+					{
+						return FactorScaleUnsigned::Implementation::Runtime::Scale(factor, value);
+					}
+
+					template<typename T>
+					static constexpr T Scale(const scale16_t factor, const T value)
+					{
+						return FactorScaleUnsigned::Implementation::Runtime::Scale(factor, value);
+					}
+
+					template<typename T>
+					static constexpr T Scale(const scale32_t factor, const T value)
+					{
+						return FactorScaleUnsigned::Implementation::Runtime::Scale(factor, value);
+					}
+				}
+
 				template<typename T>
 				static constexpr T Scale(const scale8_t factor, const T value)
 				{
-					return Scale8::Base::Scale(factor, value);
+					return FactorScaleUnsigned::Implementation::Policy::Scale(factor, value);
 				}
 
 				template<typename T>
 				static constexpr T Scale(const scale16_t factor, const T value)
 				{
-					return Scale16::Base::Scale(factor, value);
+					return FactorScaleUnsigned::Implementation::Policy::Scale(factor, value);
 				}
 
 				template<typename T>
 				static constexpr T Scale(const scale32_t factor, const T value)
 				{
-					return Scale32::Base::Scale(factor, value);
+					return FactorScaleUnsigned::Implementation::Policy::Scale(factor, value);
 				}
 			}
+
 			using namespace ScaleAliases;
 
 			/// <summary>
 			/// Helpers to compute a scale factor from numerator/denominator.
 			/// Forwards to Base::GetFactor for each width.
 			/// </summary>
-			namespace FactorAliases
+			namespace Factor
 			{
+				namespace Constexpr
+				{
+					template<typename T>
+					static constexpr scale8_t GetFactor8(const T numerator, const T denominator)
+					{
+						return FactorScaleUnsigned::Implementation::Constexpr::GetFactor<scale8_t>(numerator, denominator);
+					}
+
+					template<typename T>
+					static constexpr scale16_t GetFactor16(const T numerator, const T denominator)
+					{
+						return FactorScaleUnsigned::Implementation::Constexpr::GetFactor<scale16_t>(numerator, denominator);
+					}
+
+					template<typename T>
+					static constexpr scale32_t GetFactor32(const T numerator, const T denominator)
+					{
+						return FactorScaleUnsigned::Implementation::Constexpr::GetFactor<scale32_t>(numerator, denominator);
+					}
+				}
+
+				namespace Runtime
+				{
+					template<typename T>
+					inline scale8_t GetFactor8(const T numerator, const T denominator)
+					{
+						return FactorScaleUnsigned::Implementation::Runtime::GetFactor8(numerator, denominator);
+					}
+
+					template<typename T>
+					inline scale16_t GetFactor16(const T numerator, const T denominator)
+					{
+						return FactorScaleUnsigned::Implementation::Runtime::GetFactor16(numerator, denominator);
+					}
+
+					template<typename T>
+					inline scale32_t GetFactor32(const T numerator, const T denominator)
+					{
+						return FactorScaleUnsigned::Implementation::Runtime::GetFactor32(numerator, denominator);
+					}
+				}
+
 				template<typename T>
 				static constexpr scale8_t GetFactor8(const T numerator, const T denominator)
 				{
-					return Scale8::Base::GetFactor(numerator, denominator);
+					return FactorScaleUnsigned::Implementation::Policy::GetFactor8(numerator, denominator, TypeTraits::Evaluation::GetEvaluationTag());
 				}
 
 				template<typename T>
 				static constexpr scale16_t GetFactor16(const T numerator, const T denominator)
 				{
-					return Scale16::Base::GetFactor(numerator, denominator);
+					return FactorScaleUnsigned::Implementation::Policy::GetFactor16(numerator, denominator, TypeTraits::Evaluation::GetEvaluationTag());
 				}
 
 				template<typename T>
 				static constexpr scale32_t GetFactor32(const T numerator, const T denominator)
 				{
-					return Scale32::Base::GetFactor(numerator, denominator);
+					return FactorScaleUnsigned::Implementation::Policy::GetFactor32(numerator, denominator, TypeTraits::Evaluation::GetEvaluationTag());
 				}
 			}
-			using namespace FactorAliases;
+
+			using namespace Factor;
 		}
 	}
 }

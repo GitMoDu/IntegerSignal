@@ -902,13 +902,295 @@ namespace IntegerSignal
 					return pass;
 				}
 
+				static inline bool TestGetFactorRuntimeUnsignedRegression()
+				{
+					Serial.println(F("Starting GetFactor runtime unsigned regression tests..."));
+					bool pass = true;
+
+					const uint16_t numerators16[] = { 0u, 1u, 3u, 7u, 15u, 31u, 63u, 127u, 255u, 256u, 1023u, 4095u, 16383u, 32767u };
+					const uint16_t denominators16[] = { 1u, 2u, 3u, 5u, 7u, 11u, 127u, 255u, 256u, 1023u, 4095u, 16384u, 32768u, 65535u };
+
+					for (size_t n = 0; n < sizeof(numerators16) / sizeof(numerators16[0]); ++n)
+					{
+						for (size_t d = 0; d < sizeof(denominators16) / sizeof(denominators16[0]); ++d)
+						{
+							const uint16_t numerator = numerators16[n];
+							const uint16_t denominator = denominators16[d];
+							const Scale16::factor_t runtime = Factor::Runtime::GetFactor16(numerator, denominator);
+							const Scale16::factor_t reference = Factor::Constexpr::GetFactor16(numerator, denominator);
+
+							if (runtime != reference)
+							{
+								Serial.print(F("GetFactor Runtime16 mismatch: n="));
+								Serial.print(numerator);
+								Serial.print(F(" d="));
+								Serial.print(denominator);
+								Serial.print(F(" runtime="));
+								Serial.print(runtime);
+								Serial.print(F(" ref="));
+								Serial.println(reference);
+								pass = false;
+							}
+						}
+					}
+
+					const uint32_t numerators32[] = { 0u, 1u, 3u, 7u, 15u, 31u, 63u, 127u, 255u, 65535u, 65536u, 1048575u, 16777215u, 268435455u };
+					const uint32_t denominators32[] = { 1u, 2u, 3u, 5u, 7u, 11u, 127u, 255u, 65535u, 65536u, 1048576u, 16777216u, 268435456u };
+
+					for (size_t n = 0; n < sizeof(numerators32) / sizeof(numerators32[0]); ++n)
+					{
+						for (size_t d = 0; d < sizeof(denominators32) / sizeof(denominators32[0]); ++d)
+						{
+							const uint32_t numerator = numerators32[n];
+							const uint32_t denominator = denominators32[d];
+							const Scale32::factor_t runtime = Factor::Runtime::GetFactor32(numerator, denominator);
+							const Scale32::factor_t reference = Factor::Constexpr::GetFactor32(numerator, denominator);
+
+							if (runtime != reference)
+							{
+								Serial.print(F("GetFactor Runtime32 mismatch: n="));
+								Serial.print(numerator);
+								Serial.print(F(" d="));
+								Serial.print(denominator);
+								Serial.print(F(" runtime="));
+								Serial.print(runtime);
+								Serial.print(F(" ref="));
+								Serial.println(reference);
+								pass = false;
+							}
+						}
+					}
+
+					if (pass)
+					{
+						Serial.println(F("GetFactor runtime unsigned regression tests PASSED."));
+					}
+					else
+					{
+						Serial.println(F("GetFactor runtime unsigned regression tests FAILED."));
+					}
+
+					return pass;
+				}
+
+				static inline bool TestSplitFactorScaleApiConsistency()
+				{
+					Serial.println(F("Starting split FactorScale API consistency tests..."));
+
+					bool pass = true;
+					const int16_t numerators[] = { -1, 0, 1, 3, 7, 15, 31, 63, 127, 255 };
+					const int16_t denominators[] = { -1, 0, 1, 2, 3, 5, 7, 11, 63, 127, 255 };
+					const int16_t values[] = { INT8_MIN, -64, -1, 0, 1, 64, INT8_MAX, 255 };
+
+					for (size_t n = 0; n < sizeof(numerators) / sizeof(numerators[0]); ++n)
+					{
+						for (size_t d = 0; d < sizeof(denominators) / sizeof(denominators[0]); ++d)
+						{
+							const int16_t numerator = numerators[n];
+							const int16_t denominator = denominators[d];
+
+							const Scale8::factor_t constexpr8 = Factor::Constexpr::GetFactor8(numerator, denominator);
+							const Scale8::factor_t runtime8 = Factor::Runtime::GetFactor8(numerator, denominator);
+							const Scale8::factor_t auto8 = Factor::GetFactor8(numerator, denominator);
+							const Scale8::factor_t ref8 = numerator < 0 ? RefGetFactor8Signed(numerator, denominator) : RefGetFactor8((uint8_t)numerator, denominator > 0 ? (uint8_t)denominator : uint8_t(0));
+
+							if (constexpr8 != ref8)
+							{
+								Serial.print(F("Split Scale8 constexpr mismatch: n="));
+								Serial.print(numerator);
+								Serial.print(F(" d="));
+								Serial.print(denominator);
+								Serial.print(F(" constexpr="));
+								Serial.print(constexpr8);
+								Serial.print(F(" ref="));
+								Serial.println(ref8);
+								pass = false;
+							}
+
+							if (runtime8 != ref8)
+							{
+								Serial.print(F("Split Scale8 runtime mismatch: n="));
+								Serial.print(numerator);
+								Serial.print(F(" d="));
+								Serial.print(denominator);
+								Serial.print(F(" runtime="));
+								Serial.print(runtime8);
+								Serial.print(F(" ref="));
+								Serial.println(ref8);
+								pass = false;
+							}
+
+							const Scale8::factor_t expectedAuto8 =
+#if defined(__AVR__) || (INTPTR_MAX == INT32_MAX)
+								runtime8;
+#else
+								constexpr8;
+#endif
+
+							if (auto8 != expectedAuto8)
+							{
+								Serial.print(F("Split Scale8 auto mismatch: n="));
+								Serial.print(numerator);
+								Serial.print(F(" d="));
+								Serial.print(denominator);
+								Serial.print(F(" auto="));
+								Serial.print(auto8);
+								Serial.print(F(" constexpr="));
+								Serial.println(constexpr8);
+								pass = false;
+							}
+
+							const Scale16::factor_t constexpr16 = Factor::Constexpr::GetFactor16(numerator, denominator);
+							const Scale16::factor_t runtime16 = Factor::Runtime::GetFactor16(numerator, denominator);
+							const Scale16::factor_t auto16 = Factor::GetFactor16(numerator, denominator);
+							const Scale16::factor_t ref16 = RefGetFactor16Signed(numerator, denominator);
+
+							const Scale16::factor_t expectedAuto16 =
+#if defined(__AVR__)
+								runtime16;
+#else
+								constexpr16;
+#endif
+
+							if (constexpr16 != ref16 || runtime16 != ref16 || auto16 != expectedAuto16)
+							{
+								Serial.print(F("Split Scale16 factor mismatch: n="));
+								Serial.print(numerator);
+								Serial.print(F(" d="));
+								Serial.print(denominator);
+								Serial.print(F(" constexpr="));
+								Serial.print(constexpr16);
+								Serial.print(F(" runtime="));
+								Serial.print(runtime16);
+								Serial.print(F(" auto="));
+								Serial.print(auto16);
+								Serial.print(F(" ref="));
+								Serial.println(ref16);
+								pass = false;
+							}
+
+							const Scale32::factor_t constexpr32 = Factor::Constexpr::GetFactor32(numerator, denominator);
+							const Scale32::factor_t runtime32 = Factor::Runtime::GetFactor32(numerator, denominator);
+							const Scale32::factor_t auto32 = Factor::GetFactor32(numerator, denominator);
+							const Scale32::factor_t ref32 = RefGetFactor32Signed(numerator, denominator);
+
+							const Scale32::factor_t expectedAuto32 =
+#if (INTPTR_MAX == INT32_MAX)
+								runtime32;
+#else
+								constexpr32;
+#endif
+
+							if (constexpr32 != ref32 || runtime32 != ref32 || auto32 != expectedAuto32)
+							{
+								Serial.print(F("Split Scale32 factor mismatch: n="));
+								Serial.print(numerator);
+								Serial.print(F(" d="));
+								Serial.print(denominator);
+								Serial.print(F(" constexpr="));
+								Serial.print(constexpr32);
+								Serial.print(F(" runtime="));
+								Serial.print(runtime32);
+								Serial.print(F(" auto="));
+								Serial.print(auto32);
+								Serial.print(F(" ref="));
+								Serial.println(ref32);
+								pass = false;
+							}
+						}
+					}
+
+					const Scale8::factor_t scale8 = Scale8::SCALE_1X;
+					const Scale16::factor_t scale16 = Scale16::SCALE_1X;
+					const Scale32::factor_t scale32 = Scale32::SCALE_1X;
+
+					for (size_t i = 0; i < sizeof(values) / sizeof(values[0]); ++i)
+					{
+						const int16_t value = values[i];
+
+						const int16_t constexprScale8 = ScaleAliases::Constexpr::Scale(scale8, value);
+						const int16_t runtimeScale8 = ScaleAliases::Runtime::Scale(scale8, value);
+						const int16_t autoScale8 = ScaleAliases::Scale(scale8, value);
+						const int16_t refScale8 = RefScale8((int16_t)value, scale8);
+
+						if (constexprScale8 != refScale8 || runtimeScale8 != refScale8 || autoScale8 != constexprScale8)
+						{
+							Serial.print(F("Split Scale8 apply mismatch: value="));
+							Serial.print(value);
+							Serial.print(F(" constexpr="));
+							Serial.print(constexprScale8);
+							Serial.print(F(" runtime="));
+							Serial.print(runtimeScale8);
+							Serial.print(F(" auto="));
+							Serial.print(autoScale8);
+							Serial.print(F(" ref="));
+							Serial.println(refScale8);
+							pass = false;
+						}
+
+						const int16_t constexprScale16 = ScaleAliases::Constexpr::Scale(scale16, value);
+						const int16_t runtimeScale16 = ScaleAliases::Runtime::Scale(scale16, value);
+						const int16_t autoScale16 = ScaleAliases::Scale(scale16, value);
+						const int16_t refScale16 = RefScale16((int16_t)value, scale16);
+
+						if (constexprScale16 != refScale16 || runtimeScale16 != refScale16 || autoScale16 != constexprScale16)
+						{
+							Serial.print(F("Split Scale16 apply mismatch: value="));
+							Serial.print(value);
+							Serial.print(F(" constexpr="));
+							Serial.print(constexprScale16);
+							Serial.print(F(" runtime="));
+							Serial.print(runtimeScale16);
+							Serial.print(F(" auto="));
+							Serial.print(autoScale16);
+							Serial.print(F(" ref="));
+							Serial.println(refScale16);
+							pass = false;
+						}
+
+						const int32_t value32 = value;
+						const int32_t constexprScale32 = ScaleAliases::Constexpr::Scale(scale32, value32);
+						const int32_t runtimeScale32 = ScaleAliases::Runtime::Scale(scale32, value32);
+						const int32_t autoScale32 = ScaleAliases::Scale(scale32, value32);
+						const int32_t refScale32 = RefScale32(value32, scale32);
+
+						if (constexprScale32 != refScale32 || runtimeScale32 != refScale32 || autoScale32 != constexprScale32)
+						{
+							Serial.print(F("Split Scale32 apply mismatch: value="));
+							Serial.print(value32);
+							Serial.print(F(" constexpr="));
+							Serial.print(constexprScale32);
+							Serial.print(F(" runtime="));
+							Serial.print(runtimeScale32);
+							Serial.print(F(" auto="));
+							Serial.print(autoScale32);
+							Serial.print(F(" ref="));
+							Serial.println(refScale32);
+							pass = false;
+						}
+					}
+
+					if (pass)
+					{
+						Serial.println(F("Split FactorScale API consistency tests PASSED."));
+					}
+					else
+					{
+						Serial.println(F("Split FactorScale API consistency tests FAILED."));
+					}
+
+					return pass;
+				}
+
 				template<uint32_t MaxIterations = 50000>
 				static inline bool RunTests()
 				{
 					bool pass = true;
 
+					pass &= TestSplitFactorScaleApiConsistency();
 					pass &= TestGetFactorExhaustive8();
 					pass &= TestGetFactorWideIntermediateRegression();
+					pass &= TestGetFactorRuntimeUnsignedRegression();
 
 					pass &= TestScale8Exhaustive8();
 					pass &= TestScale16Exhaustive8();
