@@ -168,19 +168,19 @@ namespace IntegerSignal
 					template<typename T>
 					static constexpr ufraction8_t GetScalarU8(const T numerator, const T denominator)
 					{
-						return UFraction8::Base::GetScalar(numerator, denominator);
+						return QFormatUnsigned::Scalar::Constexpr::GetScalarU8(numerator, denominator);
 					}
 
 					template<typename T>
 					static constexpr ufraction16_t GetScalarU16(const T numerator, const T denominator)
 					{
-						return UFraction16::Base::GetScalar(numerator, denominator);
+						return QFormatUnsigned::Scalar::Constexpr::GetScalarU16(numerator, denominator);
 					}
 
 					template<typename T>
 					static constexpr ufraction32_t GetScalarU32(const T numerator, const T denominator)
 					{
-						return UFraction32::Base::GetScalar(numerator, denominator);
+						return QFormatUnsigned::Scalar::Constexpr::GetScalarU32(numerator, denominator);
 					}
 
 					template<typename T>
@@ -207,29 +207,19 @@ namespace IntegerSignal
 					template<typename T>
 					inline ufraction8_t GetScalarU8(const T numerator, const T denominator)
 					{
-
-						return numerator < 0 ? ufraction8_t(0) : denominator <= 0 ? UFraction8::FRACTION_1X : numerator >= denominator ? UFraction8::FRACTION_1X
-							: !TypeTraits::TypeLimits::FitsIn<uint8_t>(numerator) ? UFraction8::Base::GetScalar(numerator, denominator)
-							: !TypeTraits::TypeLimits::FitsIn<uint8_t>(denominator) ? UFraction8::Base::GetScalar(numerator, denominator)
-							: QFormatUnsigned::Scalar::Runtime::GetScalarU8((uint8_t)numerator, (uint8_t)denominator);
+						return QFormatUnsigned::Scalar::Runtime::GetScalarU8(numerator, denominator);
 					}
 
 					template<typename T>
 					inline ufraction16_t GetScalarU16(const T numerator, const T denominator)
 					{
-						return numerator < 0 ? ufraction16_t(0) : denominator <= 0 ? UFraction16::FRACTION_1X : numerator >= denominator ? UFraction16::FRACTION_1X
-							: !TypeTraits::TypeLimits::FitsIn<uint16_t>(numerator) ? UFraction16::Base::GetScalar(numerator, denominator)
-							: !TypeTraits::TypeLimits::FitsIn<uint16_t>(denominator) ? UFraction16::Base::GetScalar(numerator, denominator)
-							: QFormatUnsigned::Scalar::Runtime::GetScalarU16((uint16_t)numerator, (uint16_t)denominator);
+						return QFormatUnsigned::Scalar::Runtime::GetScalarU16(numerator, denominator);
 					}
 
 					template<typename T>
 					inline ufraction32_t GetScalarU32(const T numerator, const T denominator)
 					{
-						return numerator < 0 ? ufraction32_t(0) : denominator <= 0 ? UFraction32::FRACTION_1X : numerator >= denominator ? UFraction32::FRACTION_1X
-							: !TypeTraits::TypeLimits::FitsIn<uint32_t>(numerator) ? UFraction32::Base::GetScalar(numerator, denominator)
-							: !TypeTraits::TypeLimits::FitsIn<uint32_t>(denominator) ? UFraction32::Base::GetScalar(numerator, denominator)
-							: QFormatUnsigned::Scalar::Runtime::GetScalarU32((uint32_t)numerator, (uint32_t)denominator);
+						return QFormatUnsigned::Scalar::Runtime::GetScalarU32(numerator, denominator);
 					}
 
 					template<typename T>
@@ -256,28 +246,19 @@ namespace IntegerSignal
 				template<typename T>
 				static constexpr ufraction8_t GetScalarU8(const T numerator, const T denominator)
 				{
-					return numerator < 0 ? ufraction8_t(0) : denominator <= 0 ? UFraction8::FRACTION_1X : numerator >= denominator ? UFraction8::FRACTION_1X
-						: !TypeTraits::TypeLimits::FitsIn<uint8_t>(numerator) ? UFraction8::Base::GetScalar(numerator, denominator)
-						: !TypeTraits::TypeLimits::FitsIn<uint8_t>(denominator) ? UFraction8::Base::GetScalar(numerator, denominator)
-						: QFormatUnsigned::Scalar::GetScalarU8((uint8_t)numerator, (uint8_t)denominator);
+					return QFormatUnsigned::Scalar::GetScalarU8(numerator, denominator);
 				}
 
 				template<typename T>
 				static constexpr ufraction16_t GetScalarU16(const T numerator, const T denominator)
 				{
-					return numerator < 0 ? ufraction16_t(0) : denominator <= 0 ? UFraction16::FRACTION_1X : numerator >= denominator ? UFraction16::FRACTION_1X
-						: !TypeTraits::TypeLimits::FitsIn<uint16_t>(numerator) ? UFraction16::Base::GetScalar(numerator, denominator)
-						: !TypeTraits::TypeLimits::FitsIn<uint16_t>(denominator) ? UFraction16::Base::GetScalar(numerator, denominator)
-						: QFormatUnsigned::Scalar::GetScalarU16((uint16_t)numerator, (uint16_t)denominator);
+					return QFormatUnsigned::Scalar::GetScalarU16(numerator, denominator);
 				}
 
 				template<typename T>
 				static constexpr ufraction32_t GetScalarU32(const T numerator, const T denominator)
 				{
-					return numerator < 0 ? ufraction32_t(0) : denominator <= 0 ? UFraction32::FRACTION_1X : numerator >= denominator ? UFraction32::FRACTION_1X
-						: !TypeTraits::TypeLimits::FitsIn<uint32_t>(numerator) ? UFraction32::Base::GetScalar(numerator, denominator)
-						: !TypeTraits::TypeLimits::FitsIn<uint32_t>(denominator) ? UFraction32::Base::GetScalar(numerator, denominator)
-						: QFormatUnsigned::Scalar::GetScalarU32((uint32_t)numerator, (uint32_t)denominator);
+					return QFormatUnsigned::Scalar::GetScalarU32(numerator, denominator);
 				}
 
 				// Signed fractions: Q0.6, Q0.14, Q0.30

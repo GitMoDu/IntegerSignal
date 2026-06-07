@@ -99,6 +99,10 @@ namespace IntegerSignal
 		{
 			namespace Implementation
 			{
+				/// <summary>
+				/// Q-format owns signed scalar-generation dispatch, including the fixed-width constexpr, runtime, and policy-selected entry points.
+				/// Public facades such as FixedPoint::ScalarFraction forward here so behavior and explicit path selection remain centralized.
+				/// </summary>
 				namespace Constexpr
 				{
 					template<typename T>
@@ -311,10 +315,65 @@ namespace IntegerSignal
 #endif
 					}
 				}
+
+				template<typename T>
+				static constexpr int8_t GetScalarS8Constexpr(const T numerator, const T denominator)
+				{
+					return TemplateFormat<int8_t>::GetScalar(numerator, denominator);
+				}
+
+				template<typename T>
+				static constexpr int16_t GetScalarS16Constexpr(const T numerator, const T denominator)
+				{
+					return TemplateFormat<int16_t>::GetScalar(numerator, denominator);
+				}
+
+				template<typename T>
+				static constexpr int32_t GetScalarS32Constexpr(const T numerator, const T denominator)
+				{
+					return TemplateFormat<int32_t>::GetScalar(numerator, denominator);
+				}
+
+				template<typename T>
+				static inline int8_t GetScalarS8Runtime(const T numerator, const T denominator)
+				{
+					return Runtime::GetScalarS8(numerator, denominator);
+				}
+
+				template<typename T>
+				static inline int16_t GetScalarS16Runtime(const T numerator, const T denominator)
+				{
+					return Runtime::GetScalarS16(numerator, denominator);
+				}
+
+				template<typename T>
+				static inline int32_t GetScalarS32Runtime(const T numerator, const T denominator)
+				{
+					return Runtime::GetScalarS32(numerator, denominator);
+				}
+
+				template<typename T>
+				static inline int8_t GetScalarS8(const T numerator, const T denominator)
+				{
+					return Policy::GetScalarS8(numerator, denominator);
+				}
+
+				template<typename T>
+				static inline int16_t GetScalarS16(const T numerator, const T denominator)
+				{
+					return Policy::GetScalarS16(numerator, denominator);
+				}
+
+				template<typename T>
+				static inline int32_t GetScalarS32(const T numerator, const T denominator)
+				{
+					return Policy::GetScalarS32(numerator, denominator);
+				}
 			}
 
 			/// <summary>
 			/// Explicit runtime-optimized versions of GetScalar for specific types and platforms.
+			/// Q-format owns these entry points; higher-level fixed-point facades only forward to them.
 			/// </summary>
 			namespace Runtime
 			{
@@ -325,9 +384,21 @@ namespace IntegerSignal
 				}
 
 				template<typename T>
+				inline int8_t GetScalarS8Explicit(const T numerator, const T denominator)
+				{
+					return Implementation::GetScalarS8Runtime(numerator, denominator);
+				}
+
+				template<typename T>
 				inline int16_t GetScalarS16(const T numerator, const T denominator)
 				{
 					return Implementation::Runtime::GetScalarS16(numerator, denominator);
+				}
+
+				template<typename T>
+				inline int16_t GetScalarS16Explicit(const T numerator, const T denominator)
+				{
+					return Implementation::GetScalarS16Runtime(numerator, denominator);
 				}
 
 				template<typename T>
@@ -335,10 +406,17 @@ namespace IntegerSignal
 				{
 					return Implementation::Runtime::GetScalarS32(numerator, denominator);
 				}
+
+				template<typename T>
+				inline int32_t GetScalarS32Explicit(const T numerator, const T denominator)
+				{
+					return Implementation::GetScalarS32Runtime(numerator, denominator);
+				}
 			}
 
 			/// <summary>
 			/// Explicit constexpr versions of GetScalar for compile-time evaluation.
+			/// Q-format owns these entry points; higher-level fixed-point facades only forward to them.
 			/// </summary>
 			namespace Constexpr
 			{
@@ -349,15 +427,33 @@ namespace IntegerSignal
 				}
 
 				template<typename T>
+				static constexpr int8_t GetScalarS8Explicit(const T numerator, const T denominator)
+				{
+					return Implementation::GetScalarS8Constexpr(numerator, denominator);
+				}
+
+				template<typename T>
 				static constexpr int16_t GetScalarS16(const T numerator, const T denominator)
 				{
 					return Implementation::Constexpr::GetScalarS16(numerator, denominator);
 				}
 
 				template<typename T>
+				static constexpr int16_t GetScalarS16Explicit(const T numerator, const T denominator)
+				{
+					return Implementation::GetScalarS16Constexpr(numerator, denominator);
+				}
+
+				template<typename T>
 				static constexpr int32_t GetScalarS32(const T numerator, const T denominator)
 				{
 					return Implementation::Constexpr::GetScalarS32(numerator, denominator);
+				}
+
+				template<typename T>
+				static constexpr int32_t GetScalarS32Explicit(const T numerator, const T denominator)
+				{
+					return Implementation::GetScalarS32Constexpr(numerator, denominator);
 				}
 			}
 
@@ -368,15 +464,33 @@ namespace IntegerSignal
 			}
 
 			template<typename T>
+			inline int8_t GetScalarS8Explicit(const T numerator, const T denominator)
+			{
+				return Implementation::GetScalarS8(numerator, denominator);
+			}
+
+			template<typename T>
 			inline int16_t GetScalarS16(const T numerator, const T denominator)
 			{
 				return Implementation::Policy::GetScalarS16(numerator, denominator);
 			}
 
 			template<typename T>
+			inline int16_t GetScalarS16Explicit(const T numerator, const T denominator)
+			{
+				return Implementation::GetScalarS16(numerator, denominator);
+			}
+
+			template<typename T>
 			inline int32_t GetScalarS32(const T numerator, const T denominator)
 			{
 				return Implementation::Policy::GetScalarS32(numerator, denominator);
+			}
+
+			template<typename T>
+			inline int32_t GetScalarS32Explicit(const T numerator, const T denominator)
+			{
+				return Implementation::GetScalarS32(numerator, denominator);
 			}
 		}
 	}

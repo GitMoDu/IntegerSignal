@@ -143,6 +143,10 @@ namespace IntegerSignal
 			namespace Implementation
 			{
 				/// <summary>
+				/// Q-format owns unsigned scalar-generation dispatch, including the fixed-width constexpr, runtime, and policy-selected entry points.
+				/// Public facades such as FixedPoint::ScalarFraction forward here so behavior and explicit path selection remain centralized.
+				/// </summary>
+				/// <summary>
 				/// Reference implementation of GetScalar for unsigned types, constexpr-capable but not necessarily optimized for all platforms.
 				/// </summary>
 				namespace Constexpr
@@ -323,6 +327,78 @@ namespace IntegerSignal
 #endif
 					}
 				}
+
+				template<typename T>
+				static constexpr uint8_t GetScalarU8Constexpr(const T numerator, const T denominator)
+				{
+					return TemplateFormat<uint8_t>::GetScalar(numerator, denominator);
+				}
+
+				template<typename T>
+				static constexpr uint16_t GetScalarU16Constexpr(const T numerator, const T denominator)
+				{
+					return TemplateFormat<uint16_t>::GetScalar(numerator, denominator);
+				}
+
+				template<typename T>
+				static constexpr uint32_t GetScalarU32Constexpr(const T numerator, const T denominator)
+				{
+					return TemplateFormat<uint32_t>::GetScalar(numerator, denominator);
+				}
+
+				template<typename T>
+				static inline uint8_t GetScalarU8Runtime(const T numerator, const T denominator)
+				{
+					return numerator < 0 ? uint8_t(0) : denominator <= 0 ? TemplateFormat<uint8_t>::SCALAR_UNIT : numerator >= denominator ? TemplateFormat<uint8_t>::SCALAR_UNIT
+						: !FitsIn<uint8_t>(numerator) ? TemplateFormat<uint8_t>::GetScalar(numerator, denominator)
+						: !FitsIn<uint8_t>(denominator) ? TemplateFormat<uint8_t>::GetScalar(numerator, denominator)
+						: Runtime::GetScalarU8(static_cast<uint8_t>(numerator), static_cast<uint8_t>(denominator));
+				}
+
+				template<typename T>
+				static inline uint16_t GetScalarU16Runtime(const T numerator, const T denominator)
+				{
+					return numerator < 0 ? uint16_t(0) : denominator <= 0 ? TemplateFormat<uint16_t>::SCALAR_UNIT : numerator >= denominator ? TemplateFormat<uint16_t>::SCALAR_UNIT
+						: !FitsIn<uint16_t>(numerator) ? TemplateFormat<uint16_t>::GetScalar(numerator, denominator)
+						: !FitsIn<uint16_t>(denominator) ? TemplateFormat<uint16_t>::GetScalar(numerator, denominator)
+						: Runtime::GetScalarU16(static_cast<uint16_t>(numerator), static_cast<uint16_t>(denominator));
+				}
+
+				template<typename T>
+				static inline uint32_t GetScalarU32Runtime(const T numerator, const T denominator)
+				{
+					return numerator < 0 ? uint32_t(0) : denominator <= 0 ? TemplateFormat<uint32_t>::SCALAR_UNIT : numerator >= denominator ? TemplateFormat<uint32_t>::SCALAR_UNIT
+						: !FitsIn<uint32_t>(numerator) ? TemplateFormat<uint32_t>::GetScalar(numerator, denominator)
+						: !FitsIn<uint32_t>(denominator) ? TemplateFormat<uint32_t>::GetScalar(numerator, denominator)
+						: Runtime::GetScalarU32(static_cast<uint32_t>(numerator), static_cast<uint32_t>(denominator));
+				}
+
+				template<typename T>
+				static inline uint8_t GetScalarU8(const T numerator, const T denominator)
+				{
+					return numerator < 0 ? uint8_t(0) : denominator <= 0 ? TemplateFormat<uint8_t>::SCALAR_UNIT : numerator >= denominator ? TemplateFormat<uint8_t>::SCALAR_UNIT
+						: !FitsIn<uint8_t>(numerator) ? TemplateFormat<uint8_t>::GetScalar(numerator, denominator)
+						: !FitsIn<uint8_t>(denominator) ? TemplateFormat<uint8_t>::GetScalar(numerator, denominator)
+						: Policy::GetScalarU8(static_cast<uint8_t>(numerator), static_cast<uint8_t>(denominator));
+				}
+
+				template<typename T>
+				static inline uint16_t GetScalarU16(const T numerator, const T denominator)
+				{
+					return numerator < 0 ? uint16_t(0) : denominator <= 0 ? TemplateFormat<uint16_t>::SCALAR_UNIT : numerator >= denominator ? TemplateFormat<uint16_t>::SCALAR_UNIT
+						: !FitsIn<uint16_t>(numerator) ? TemplateFormat<uint16_t>::GetScalar(numerator, denominator)
+						: !FitsIn<uint16_t>(denominator) ? TemplateFormat<uint16_t>::GetScalar(numerator, denominator)
+						: Policy::GetScalarU16(static_cast<uint16_t>(numerator), static_cast<uint16_t>(denominator));
+				}
+
+				template<typename T>
+				static inline uint32_t GetScalarU32(const T numerator, const T denominator)
+				{
+					return numerator < 0 ? uint32_t(0) : denominator <= 0 ? TemplateFormat<uint32_t>::SCALAR_UNIT : numerator >= denominator ? TemplateFormat<uint32_t>::SCALAR_UNIT
+						: !FitsIn<uint32_t>(numerator) ? TemplateFormat<uint32_t>::GetScalar(numerator, denominator)
+						: !FitsIn<uint32_t>(denominator) ? TemplateFormat<uint32_t>::GetScalar(numerator, denominator)
+						: Policy::GetScalarU32(static_cast<uint32_t>(numerator), static_cast<uint32_t>(denominator));
+				}
 			}
 
 			/// <summary>
@@ -335,19 +411,38 @@ namespace IntegerSignal
 					return Implementation::Runtime::GetScalarU8(numerator, denominator);
 				}
 
+				template<typename T>
+				inline uint8_t GetScalarU8(const T numerator, const T denominator)
+				{
+					return Implementation::GetScalarU8Runtime(numerator, denominator);
+				}
+
 				inline uint16_t GetScalarU16(const uint16_t numerator, const uint16_t denominator)
 				{
 					return Implementation::Runtime::GetScalarU16(numerator, denominator);
+				}
+
+				template<typename T>
+				inline uint16_t GetScalarU16(const T numerator, const T denominator)
+				{
+					return Implementation::GetScalarU16Runtime(numerator, denominator);
 				}
 
 				inline uint32_t GetScalarU32(const uint32_t numerator, const uint32_t denominator)
 				{
 					return Implementation::Runtime::GetScalarU32(numerator, denominator);
 				}
+
+				template<typename T>
+				inline uint32_t GetScalarU32(const T numerator, const T denominator)
+				{
+					return Implementation::GetScalarU32Runtime(numerator, denominator);
+				}
 			}
 
 			/// <summary>
 			/// Explicit constexpr versions of GetScalar for compile-time evaluation.
+			/// Q-format owns these entry points; higher-level fixed-point facades only forward to them.
 			/// </summary>
 			namespace Constexpr
 			{
@@ -356,14 +451,32 @@ namespace IntegerSignal
 					return Implementation::Constexpr::GetScalarU8(numerator, denominator);
 				}
 
+				template<typename T>
+				static constexpr uint8_t GetScalarU8(const T numerator, const T denominator)
+				{
+					return Implementation::GetScalarU8Constexpr(numerator, denominator);
+				}
+
 				static constexpr uint16_t GetScalarU16(const uint16_t numerator, const uint16_t denominator)
 				{
 					return Implementation::Constexpr::GetScalarU16(numerator, denominator);
 				}
 
+				template<typename T>
+				static constexpr uint16_t GetScalarU16(const T numerator, const T denominator)
+				{
+					return Implementation::GetScalarU16Constexpr(numerator, denominator);
+				}
+
 				static constexpr uint32_t GetScalarU32(const uint32_t numerator, const uint32_t denominator)
 				{
 					return Implementation::Constexpr::GetScalarU32(numerator, denominator);
+				}
+
+				template<typename T>
+				static constexpr uint32_t GetScalarU32(const T numerator, const T denominator)
+				{
+					return Implementation::GetScalarU32Constexpr(numerator, denominator);
 				}
 			}
 
@@ -372,14 +485,32 @@ namespace IntegerSignal
 				return Implementation::Policy::GetScalarU8(numerator, denominator);
 			}
 
+			template<typename T>
+			inline uint8_t GetScalarU8(const T numerator, const T denominator)
+			{
+				return Implementation::GetScalarU8(numerator, denominator);
+			}
+
 			inline uint16_t GetScalarU16(const uint16_t numerator, const uint16_t denominator)
 			{
 				return Implementation::Policy::GetScalarU16(numerator, denominator);
 			}
 
+			template<typename T>
+			inline uint16_t GetScalarU16(const T numerator, const T denominator)
+			{
+				return Implementation::GetScalarU16(numerator, denominator);
+			}
+
 			inline uint32_t GetScalarU32(const uint32_t numerator, const uint32_t denominator)
 			{
 				return Implementation::Policy::GetScalarU32(numerator, denominator);
+			}
+
+			template<typename T>
+			inline uint32_t GetScalarU32(const T numerator, const T denominator)
+			{
+				return Implementation::GetScalarU32(numerator, denominator);
 			}
 		}
 	}
