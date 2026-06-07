@@ -240,6 +240,62 @@ namespace IntegerSignal
 			template<> struct make_signed<int32_t> { using type = int32_t; };
 			template<> struct make_signed<int64_t> { using type = int64_t; };
 		}
+
+		namespace TypeLimits
+		{
+			namespace Implementation
+			{
+				template<typename limit_t, typename T>
+				inline bool FitsIn(const T value, TypeDispatch::TrueType, TypeDispatch::TrueType)
+				{
+					using compare_t = typename TypeConditional::larger_type<T, limit_t>::type;
+
+					return static_cast<compare_t>(value) <= static_cast<compare_t>(TypeLimits::type_limits<limit_t>::Max());
+				}
+
+				template<typename limit_t, typename T>
+				inline bool FitsIn(const T value, TypeDispatch::FalseType, TypeDispatch::FalseType)
+				{
+					using larger_t = typename TypeConditional::larger_type<T, limit_t>::type;
+					using compare_t = typename TypeNext::next_int_type<larger_t>::type;
+
+					return
+						static_cast<compare_t>(value) >= static_cast<compare_t>(TypeLimits::type_limits<limit_t>::Min()) &&
+						static_cast<compare_t>(value) <= static_cast<compare_t>(TypeLimits::type_limits<limit_t>::Max());
+				}
+
+				template<typename limit_t, typename T>
+				inline bool FitsIn(const T value, TypeDispatch::TrueType, TypeDispatch::FalseType)
+				{
+					// destination unsigned, source signed
+					using larger_t = typename TypeConditional::larger_type<T, limit_t>::type;
+					using compare_t = typename TypeNext::next_int_type<larger_t>::type;
+
+					return
+						static_cast<compare_t>(value) >= 0 &&
+						static_cast<compare_t>(value) <= static_cast<compare_t>(TypeLimits::type_limits<limit_t>::Max());
+				}
+
+				template<typename limit_t, typename T>
+				inline bool FitsIn(const T value, TypeDispatch::FalseType, TypeDispatch::TrueType)
+				{
+					// destination signed, source unsigned
+					using larger_t = typename TypeConditional::larger_type<T, limit_t>::type;
+					using compare_t = typename TypeNext::next_int_type<larger_t>::type;
+
+					return static_cast<compare_t>(value) <= static_cast<compare_t>(TypeLimits::type_limits<limit_t>::Max());
+				}
+			}
+
+			template<typename limit_t, typename T>
+			inline bool FitsIn(const T value)
+			{
+				using limit_sign_t = typename TypeSign::IsUnsignedType<limit_t>::type;
+				using value_sign_t = typename TypeSign::IsUnsignedType<T>::type;
+
+				return Implementation::FitsIn<limit_t>(value, limit_sign_t(), value_sign_t());
+			}
+		}
 	}
 }
 #endif
