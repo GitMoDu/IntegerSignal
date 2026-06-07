@@ -6,15 +6,6 @@
 #include "Base/TypeTraits.h"
 #include "Base/BitSize.h"
 
-// Configure strict compile-time checks.
-// Default: disabled on AVR and older GCC to avoid non-constant-expression issues.
-#ifndef INTEGER_SIGNAL_QFORMAT_STRICT_CHECKS
-#  if defined(__AVR__) || (defined(__GNUC__) && (__GNUC__ < 7))
-#  else
-#    define INTEGER_SIGNAL_QFORMAT_STRICT_CHECKS 1
-#  endif
-#endif
-
 namespace IntegerSignal
 {
 	namespace QFormatSigned
@@ -67,11 +58,6 @@ namespace IntegerSignal
 			static_assert(BIT_SHIFTS == IntegerSignal::GetBitShifts(static_cast<int64_t>(SCALAR_UNIT)),
 				"TemplateSignedQFormat: BIT_SHIFTS must equal log2(SCALAR_UNIT).");
 
-#if defined(INTEGER_SIGNAL_QFORMAT_STRICT_CHECKS)
-			// Optional sanity checks (won't evaluate at runtime)
-			static_assert(static_cast<int32_t>(SCALAR_UNIT) == (1 << BIT_SHIFTS),
-				"TemplateSignedQFormat: SCALAR_UNIT != (1 << BIT_SHIFTS).");
-#endif
 		public:
 			/// <summary>
 			/// Checks if a scalar value is valid.
@@ -100,7 +86,7 @@ namespace IntegerSignal
 			/// Fractions a value by a given Q-format scalar.
 			/// </summary>
 			template<typename T>
-			static constexpr T Fraction(const scalar_t scalarValue, const T value)
+			inline static constexpr T Fraction(const scalar_t scalarValue, const T value)
 			{
 				using larger_t = typename larger_type<T, scalar_t>::type;
 				using intermediate_t = typename next_int_type<larger_t>::type;
@@ -108,6 +94,291 @@ namespace IntegerSignal
 				return static_cast<T>(SignedRightShift(static_cast<intermediate_t>(value) * scalarValue, BIT_SHIFTS));
 			}
 		};
+
+		namespace Scalar
+		{
+			namespace Implementation
+			{
+				namespace Constexpr
+				{
+					template<typename T>
+					static constexpr int8_t GetScalarS8(const T numerator, const T denominator)
+					{
+						return TemplateFormat<int8_t>::GetScalar(numerator, denominator);
+					}
+
+					template<typename T>
+					static constexpr int16_t GetScalarS16(const T numerator, const T denominator)
+					{
+						return TemplateFormat<int16_t>::GetScalar(numerator, denominator);
+					}
+
+					template<typename T>
+					static constexpr int32_t GetScalarS32(const T numerator, const T denominator)
+					{
+						return TemplateFormat<int32_t>::GetScalar(numerator, denominator);
+					}
+				}
+
+				/// <summary>
+				/// Runtime-only implementation of GetScalar for signed types, optimized for platforms without fast division or where the denominator is small.
+				/// </summary>
+				namespace Runtime
+				{
+					inline int8_t GetScalarS8(const int8_t numerator, const int8_t denominator)
+					{
+#if defined(INTEGER_SIGNAL_DISABLE_ACCELERATION)
+						return Constexpr::GetScalarS8(numerator, denominator);
+#else
+						if (numerator >= denominator)
+							return TemplateFormat<int8_t>::SCALAR_UNIT;
+
+						uint8_t scalar = 0;
+						uint16_t remainder = static_cast<uint8_t>(numerator);
+						const uint16_t denominator16 = static_cast<uint8_t>(denominator);
+
+						remainder <<= 1;
+						if (remainder >= denominator16)
+						{
+							remainder -= denominator16;
+							scalar |= 0x20;
+						}
+
+						remainder <<= 1;
+						if (remainder >= denominator16)
+						{
+							remainder -= denominator16;
+							scalar |= 0x10;
+						}
+
+						remainder <<= 1;
+						if (remainder >= denominator16)
+						{
+							remainder -= denominator16;
+							scalar |= 0x08;
+						}
+
+						remainder <<= 1;
+						if (remainder >= denominator16)
+						{
+							remainder -= denominator16;
+							scalar |= 0x04;
+						}
+
+						remainder <<= 1;
+						if (remainder >= denominator16)
+						{
+							remainder -= denominator16;
+							scalar |= 0x02;
+						}
+
+						remainder <<= 1;
+						if (remainder >= denominator16)
+						{
+							scalar |= 0x01;
+						}
+
+						return static_cast<int8_t>(scalar);
+#endif
+					}
+
+					template<typename T>
+					inline int8_t GetScalarS8(const T numerator, const T denominator)
+					{
+#if defined(INTEGER_SIGNAL_DISABLE_ACCELERATION)
+						return Constexpr::GetScalarS8(numerator, denominator);
+#else
+						return denominator == 0 ? (numerator >= 0 ? TemplateFormat<int8_t>::SCALAR_UNIT : TemplateFormat<int8_t>::SCALAR_UNIT_NEGATIVE)
+							: numerator <= -denominator ? TemplateFormat<int8_t>::SCALAR_UNIT_NEGATIVE
+							: numerator >= denominator ? TemplateFormat<int8_t>::SCALAR_UNIT
+							: !FitsIn<int8_t>(denominator) ? TemplateFormat<int8_t>::GetScalar(numerator, denominator)
+							: !FitsIn<int8_t>(numerator) ? TemplateFormat<int8_t>::GetScalar(numerator, denominator)
+							: GetScalarS8(static_cast<int8_t>(numerator), static_cast<int8_t>(denominator));
+#endif
+					}
+
+					inline int16_t GetScalarS16(const int16_t numerator, const int16_t denominator)
+					{
+#if defined(INTEGER_SIGNAL_DISABLE_ACCELERATION)
+						return Constexpr::GetScalarS16(numerator, denominator);
+#else
+						int16_t scalar = 0;
+						int32_t remainder = numerator;
+
+						for (int16_t bit = TemplateFormat<int16_t>::SCALAR_UNIT >> 1; bit != 0; bit >>= 1)
+						{
+							remainder <<= 1;
+							if (remainder >= denominator)
+							{
+								remainder -= denominator;
+								scalar |= bit;
+							}
+						}
+
+						return scalar;
+#endif
+					}
+
+					template<typename T>
+					inline int16_t GetScalarS16(const T numerator, const T denominator)
+					{
+#if defined(INTEGER_SIGNAL_DISABLE_ACCELERATION)
+						return Constexpr::GetScalarS16(numerator, denominator);
+#else
+						return denominator == 0 ? (numerator >= 0 ? TemplateFormat<int16_t>::SCALAR_UNIT : TemplateFormat<int16_t>::SCALAR_UNIT_NEGATIVE)
+							: numerator <= -denominator ? TemplateFormat<int16_t>::SCALAR_UNIT_NEGATIVE
+							: numerator >= denominator ? TemplateFormat<int16_t>::SCALAR_UNIT
+							: !FitsIn<int16_t>(denominator) ? TemplateFormat<int16_t>::GetScalar(numerator, denominator)
+							: !FitsIn<int16_t>(numerator) ? TemplateFormat<int16_t>::GetScalar(numerator, denominator)
+							: GetScalarS16(static_cast<int16_t>(numerator), static_cast<int16_t>(denominator));
+#endif
+					}
+
+					template<typename T>
+					inline int32_t GetScalarS32(const T numerator, const T denominator)
+					{
+#if defined(INTEGER_SIGNAL_DISABLE_ACCELERATION)
+						return Constexpr::GetScalarS32(numerator, denominator);
+#else
+						static constexpr uint8_t ScalarBits = IntegerSignal::GetBitShifts(TemplateFormat<int32_t>::SCALAR_UNIT);
+						static constexpr uint8_t ScalarLoBits = sizeof(uint16_t) * 8;
+						static constexpr uint8_t ScalarHiBits = ScalarBits - ScalarLoBits;
+
+						if ((denominator <= 0 || denominator > INT16_MAX)
+							|| (numerator <= -denominator || numerator >= denominator))
+						{
+							return Constexpr::GetScalarS32(numerator, denominator);
+						}
+						else
+						{
+							const bool isNegative = numerator < 0;
+							const uint32_t absNumerator = isNegative ? static_cast<uint32_t>(-numerator) : static_cast<uint32_t>(numerator);
+							const uint32_t absDenominator = static_cast<uint32_t>(denominator);
+							const uint32_t scalarHi = (absNumerator << ScalarHiBits) / absDenominator;
+							const uint32_t remainder = (absNumerator << ScalarHiBits) - (scalarHi * absDenominator);
+							const uint32_t scalarLo = (remainder << ScalarLoBits) / absDenominator;
+							const int32_t scalar = static_cast<int32_t>((scalarHi << ScalarLoBits) | scalarLo);
+
+							return isNegative ? -scalar : scalar;
+						}
+#endif
+					}
+				}
+
+				/// <summary>
+				/// Policy-based selection of the appropriate GetScalar implementation for signed types.
+				/// Chooses between runtime-optimized and constexpr implementations based on platform and configuration.
+				/// AVR covers 8-bit MCUs basically, we use the fast runtime version for 8-bit and 16-bit scalars.
+				/// For ARM, RISC-V and Extensa, 32-bit MCUs use only the 32 runtime-optimized scalar.
+				/// </summary>
+				namespace Policy
+				{
+					template<typename T>
+					inline int8_t GetScalarS8(const T numerator, const T denominator)
+					{
+#if defined(__AVR__)
+						return (denominator > 0 && numerator >= 0
+							&& TypeTraits::TypeLimits::FitsIn<int8_t>(denominator)
+							&& TypeTraits::TypeLimits::FitsIn<int8_t>(numerator))
+							? Runtime::GetScalarS8(numerator, denominator)
+							: Constexpr::GetScalarS8(numerator, denominator);
+#else
+						return Constexpr::GetScalarS8(numerator, denominator);
+#endif
+					}
+
+					template<typename T>
+					inline int16_t GetScalarS16(const T numerator, const T denominator)
+					{
+#if defined(__AVR__)
+						return (denominator > 0 && numerator >= 0
+							&& TypeTraits::TypeLimits::FitsIn<int16_t>(denominator)
+							&& TypeTraits::TypeLimits::FitsIn<int16_t>(numerator))
+							? Runtime::GetScalarS16(numerator, denominator)
+							: Constexpr::GetScalarS16(numerator, denominator);
+#else
+						return Constexpr::GetScalarS16(numerator, denominator);
+#endif
+					}
+
+					template<typename T>
+					inline int32_t GetScalarS32(const T numerator, const T denominator)
+					{
+#if (INTPTR_MAX == INT32_MAX)
+						return Runtime::GetScalarS32(numerator, denominator);
+#else
+						return Constexpr::GetScalarS32(numerator, denominator);
+#endif
+					}
+				}
+			}
+
+			/// <summary>
+			/// Explicit runtime-optimized versions of GetScalar for specific types and platforms.
+			/// </summary>
+			namespace Runtime
+			{
+				template<typename T>
+				inline int8_t GetScalarS8(const T numerator, const T denominator)
+				{
+					return Implementation::Runtime::GetScalarS8(numerator, denominator);
+				}
+
+				template<typename T>
+				inline int16_t GetScalarS16(const T numerator, const T denominator)
+				{
+					return Implementation::Runtime::GetScalarS16(numerator, denominator);
+				}
+
+				template<typename T>
+				inline int32_t GetScalarS32(const T numerator, const T denominator)
+				{
+					return Implementation::Runtime::GetScalarS32(numerator, denominator);
+				}
+			}
+
+			/// <summary>
+			/// Explicit constexpr versions of GetScalar for compile-time evaluation.
+			/// </summary>
+			namespace Constexpr
+			{
+				template<typename T>
+				static constexpr int8_t GetScalarS8(const T numerator, const T denominator)
+				{
+					return Implementation::Constexpr::GetScalarS8(numerator, denominator);
+				}
+
+				template<typename T>
+				static constexpr int16_t GetScalarS16(const T numerator, const T denominator)
+				{
+					return Implementation::Constexpr::GetScalarS16(numerator, denominator);
+				}
+
+				template<typename T>
+				static constexpr int32_t GetScalarS32(const T numerator, const T denominator)
+				{
+					return Implementation::Constexpr::GetScalarS32(numerator, denominator);
+				}
+			}
+
+			template<typename T>
+			inline int8_t GetScalarS8(const T numerator, const T denominator)
+			{
+				return Implementation::Policy::GetScalarS8(numerator, denominator);
+			}
+
+			template<typename T>
+			inline int16_t GetScalarS16(const T numerator, const T denominator)
+			{
+				return Implementation::Policy::GetScalarS16(numerator, denominator);
+			}
+
+			template<typename T>
+			inline int32_t GetScalarS32(const T numerator, const T denominator)
+			{
+				return Implementation::Policy::GetScalarS32(numerator, denominator);
+			}
+		}
 	}
 }
 
