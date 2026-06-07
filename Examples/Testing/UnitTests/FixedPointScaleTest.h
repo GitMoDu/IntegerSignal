@@ -12,117 +12,117 @@ namespace IntegerSignal
 			namespace Test
 			{
 				// Reference function for Scale8 (unsigned)
-				static uint8_t RefScale8(const uint8_t value, const Scale8::factor_t factor)
+				static inline uint8_t RefScale8(const uint8_t value, const Scale8::factor_t factor)
 				{
 					return min((uint16_t)UINT8_MAX, (uint16_t)(((uint16_t)value * factor) / Scale8::SCALE_1X));
 				}
 
-				static uint16_t RefScale8(const uint16_t value, const Scale8::factor_t factor)
+				static inline uint16_t RefScale8(const uint16_t value, const Scale8::factor_t factor)
 				{
 					return min((uint32_t)UINT16_MAX, (uint32_t)(((uint32_t)value * factor) / Scale8::SCALE_1X));
 				}
 
-				static uint32_t RefScale8(const uint32_t value, const Scale8::factor_t factor)
+				static inline uint32_t RefScale8(const uint32_t value, const Scale8::factor_t factor)
 				{
 					return min((uint64_t)UINT32_MAX, (uint64_t)(((uint64_t)value * factor) / Scale8::SCALE_1X));
 				}
 
 				// Reference function for Scale8 (signed)
-				static int8_t RefScale8(const int8_t value, const Scale8::factor_t factor)
+				static inline int8_t RefScale8(const int8_t value, const Scale8::factor_t factor)
 				{
 					return constrain((int16_t)(((int32_t)value * (int32_t)factor) / (int32_t)Scale8::SCALE_1X), (int16_t)INT8_MIN, (int16_t)INT8_MAX);
 				}
 
-				static int16_t RefScale8(const int16_t value, const Scale8::factor_t factor)
+				static inline int16_t RefScale8(const int16_t value, const Scale8::factor_t factor)
 				{
 					return constrain((int32_t)(((int32_t)value * (int32_t)factor) / (int32_t)Scale8::SCALE_1X), (int32_t)INT16_MIN, (int32_t)INT16_MAX);
 				}
 
-				static int32_t RefScale8(const int32_t value, const Scale8::factor_t factor)
+				static inline int32_t RefScale8(const int32_t value, const Scale8::factor_t factor)
 				{
 					return constrain((int64_t)(((int64_t)value * (int64_t)factor) / (int64_t)Scale8::SCALE_1X), (int64_t)INT32_MIN, (int64_t)INT32_MAX);
 				}
 
 				// Reference function for Scale16 (unsigned)
-				static uint8_t RefScale16(const uint8_t value, const Scale16::factor_t factor)
+				static inline uint8_t RefScale16(const uint8_t value, const Scale16::factor_t factor)
 				{
 					return min((uint32_t)UINT8_MAX, (uint32_t)(((uint32_t)value * factor) / Scale16::SCALE_1X));
 				}
 
-				static uint16_t RefScale16(const uint16_t value, const Scale16::factor_t factor)
+				static inline uint16_t RefScale16(const uint16_t value, const Scale16::factor_t factor)
 				{
 					return min((uint32_t)UINT16_MAX, (uint32_t)(((uint32_t)value * factor) / Scale16::SCALE_1X));
 				}
 
-				static uint32_t RefScale16(const uint32_t value, const Scale16::factor_t factor)
+				static inline uint32_t RefScale16(const uint32_t value, const Scale16::factor_t factor)
 				{
 					return min((uint64_t)UINT32_MAX, (uint64_t)(((uint64_t)value * factor) / Scale16::SCALE_1X));
 				}
 
 				// Reference function for Scale16 (signed)
-				static int8_t RefScale16(const int8_t value, const Scale16::factor_t factor)
+				static inline int8_t RefScale16(const int8_t value, const Scale16::factor_t factor)
 				{
 					return constrain((int16_t)(((int32_t)value * (int32_t)factor) / (int32_t)Scale16::SCALE_1X), (int16_t)INT8_MIN, (int16_t)INT8_MAX);
 				}
 
-				static int16_t RefScale16(const int16_t value, const Scale16::factor_t factor)
+				static inline int16_t RefScale16(const int16_t value, const Scale16::factor_t factor)
 				{
 					return constrain((int32_t)(((int32_t)value * (int32_t)factor) / (int32_t)Scale16::SCALE_1X), (int32_t)INT16_MIN, (int32_t)INT16_MAX);
 				}
 
-				static int32_t RefScale16(const int32_t value, const Scale16::factor_t factor)
+				static inline int32_t RefScale16(const int32_t value, const Scale16::factor_t factor)
 				{
 					return constrain((int64_t)(((int64_t)value * (int64_t)factor) / (int64_t)Scale16::SCALE_1X), (int64_t)INT32_MIN, (int64_t)INT32_MAX);
 				}
 
 				// Reference function for Scale32 (unsigned)
-				static uint8_t RefScale32(const uint8_t value, const Scale32::factor_t factor)
+				static inline uint8_t RefScale32(const uint8_t value, const Scale32::factor_t factor)
 				{
 					return min((uint16_t)UINT8_MAX, (uint16_t)(((uint64_t)value * (uint64_t)factor) / (uint64_t)Scale32::SCALE_1X));
 				}
 
-				static uint16_t RefScale32(const uint16_t value, const Scale32::factor_t factor)
+				static inline uint16_t RefScale32(const uint16_t value, const Scale32::factor_t factor)
 				{
 					return min((uint32_t)UINT16_MAX, (uint32_t)(((uint64_t)value * (uint64_t)factor) / (uint64_t)Scale32::SCALE_1X));
 				}
 
-				static uint32_t RefScale32(const uint32_t value, const Scale32::factor_t factor)
+				static inline uint32_t RefScale32(const uint32_t value, const Scale32::factor_t factor)
 				{
 					return min((uint64_t)UINT32_MAX, (uint64_t)(((uint64_t)value * factor) / Scale32::SCALE_1X));
 				}
 
 				// Reference function for Scale32 (signed)
-				static int8_t RefScale32(const int8_t value, const Scale32::factor_t factor)
+				static inline int8_t RefScale32(const int8_t value, const Scale32::factor_t factor)
 				{
 					return constrain((int16_t)(((int32_t)value * (int64_t)factor) / (int64_t)Scale32::SCALE_1X), (int16_t)INT8_MIN, (int16_t)INT8_MAX);
 				}
 
-				static int16_t RefScale32(const int16_t value, const Scale32::factor_t factor)
+				static inline int16_t RefScale32(const int16_t value, const Scale32::factor_t factor)
 				{
 					return constrain((int32_t)(((int64_t)value * (int64_t)factor) / (int64_t)Scale32::SCALE_1X), (int32_t)INT16_MIN, (int32_t)INT16_MAX);
 				}
 
-				static int32_t RefScale32(const int32_t value, const Scale32::factor_t factor)
+				static inline int32_t RefScale32(const int32_t value, const Scale32::factor_t factor)
 				{
 					return constrain((int64_t)(((int64_t)value * (int64_t)factor) / (int64_t)Scale32::SCALE_1X), (int64_t)INT32_MIN, (int64_t)INT32_MAX);
 				}
 
 				// Reference function for GetFactor (unsigned semantics)
-				static Scale8::factor_t RefGetFactor8(uint8_t numerator, uint8_t denominator)
+				static inline Scale8::factor_t RefGetFactor8(uint8_t numerator, uint8_t denominator)
 				{
 					return (denominator == 0) ? Scale8::SCALE_1X
 						: (numerator > denominator) ? Scale8::SCALE_1X
 						: (Scale8::factor_t)(((uint16_t)numerator * Scale8::SCALE_1X) / denominator);
 				}
 
-				static Scale16::factor_t RefGetFactor16(uint8_t numerator, uint8_t denominator)
+				static inline Scale16::factor_t RefGetFactor16(uint8_t numerator, uint8_t denominator)
 				{
 					return (denominator == 0) ? Scale16::SCALE_1X
 						: (numerator > denominator) ? Scale16::SCALE_1X
 						: (Scale16::factor_t)(((uint32_t)numerator * Scale16::SCALE_1X) / denominator);
 				}
 
-				static Scale32::factor_t RefGetFactor32(uint8_t numerator, uint8_t denominator)
+				static inline Scale32::factor_t RefGetFactor32(uint8_t numerator, uint8_t denominator)
 				{
 					return (denominator == 0) ? Scale32::SCALE_1X
 						: (numerator > denominator) ? Scale32::SCALE_1X
@@ -130,7 +130,7 @@ namespace IntegerSignal
 				}
 
 				// Reference function for GetFactor (signed semantics)
-				static Scale8::factor_t RefGetFactor8Signed(int32_t numerator, int32_t denominator)
+				static inline Scale8::factor_t RefGetFactor8Signed(int32_t numerator, int32_t denominator)
 				{
 					if (numerator < 0) return Scale8::SCALE_MIN;
 					if (denominator <= 0) return Scale8::SCALE_1X;
@@ -138,7 +138,7 @@ namespace IntegerSignal
 					return (Scale8::factor_t)(((int32_t)numerator * (int32_t)Scale8::SCALE_1X) / (int32_t)denominator);
 				}
 
-				static Scale16::factor_t RefGetFactor16Signed(int32_t numerator, int32_t denominator)
+				static inline Scale16::factor_t RefGetFactor16Signed(int32_t numerator, int32_t denominator)
 				{
 					if (numerator < 0) return Scale16::SCALE_MIN;
 					if (denominator <= 0) return Scale16::SCALE_1X;
@@ -146,7 +146,7 @@ namespace IntegerSignal
 					return (Scale16::factor_t)(((int64_t)numerator * (int64_t)Scale16::SCALE_1X) / (int64_t)denominator);
 				}
 
-				static Scale32::factor_t RefGetFactor32Signed(int32_t numerator, int32_t denominator)
+				static inline Scale32::factor_t RefGetFactor32Signed(int32_t numerator, int32_t denominator)
 				{
 					if (numerator < 0) return Scale32::SCALE_MIN;
 					if (denominator <= 0) return Scale32::SCALE_1X;
@@ -155,7 +155,7 @@ namespace IntegerSignal
 				}
 
 				// Exhaustive test for Scale8::factor_t with uint8_t values
-				static bool TestScale8Exhaustive8()
+				static inline bool TestScale8Exhaustive8()
 				{
 					Serial.println(F("Starting exhaustive Scale8 (8-bit value) tests..."));
 
@@ -202,7 +202,7 @@ namespace IntegerSignal
 				}
 
 				// Exhaustive test for Scale16::factor_t with uint8_t values
-				static bool TestScale16Exhaustive8()
+				static inline bool TestScale16Exhaustive8()
 				{
 					Serial.println(F("Starting exhaustive Scale16 (8-bit value) tests..."));
 
@@ -249,7 +249,7 @@ namespace IntegerSignal
 				}
 
 				// Signed tests ported from Test2: Scale8
-				static bool TestScale8SignedValues()
+				static inline bool TestScale8SignedValues()
 				{
 					Serial.println(F("Testing Scale8 with signed values..."));
 
@@ -290,7 +290,7 @@ namespace IntegerSignal
 				}
 
 				// Signed tests ported from Test2: Scale16
-				static bool TestScale16SignedSample()
+				static inline bool TestScale16SignedSample()
 				{
 					Serial.println(F("Testing Scale16 with signed values..."));
 
@@ -333,7 +333,7 @@ namespace IntegerSignal
 
 				// Sampled test for Scale8 with uint8_t, uint16_t and uint32_t values
 				template<uint32_t MaxIterations = 50000>
-				static bool TestScale8Sample()
+				static inline bool TestScale8Sample()
 				{
 					const uint32_t iterations = min(MaxIterations, (uint32_t)UINT16_MAX);
 
@@ -415,7 +415,7 @@ namespace IntegerSignal
 
 				// Sampled test for Scale16 with uint8_t, uint16_t, and uint32_t values
 				template<uint32_t MaxIterations = 50000>
-				static bool TestScale16Sample()
+				static inline bool TestScale16Sample()
 				{
 					const uint32_t iterations = min(MaxIterations, (uint32_t)UINT16_MAX);
 
@@ -495,7 +495,7 @@ namespace IntegerSignal
 
 				// Sampled tests for Scale32 (unsigned and signed) - ported from Test2
 				template<uint32_t MaxIterations = 1000>
-				static bool TestScale32Sample()
+				static inline bool TestScale32Sample()
 				{
 					const uint32_t iterations = min(MaxIterations, (uint32_t)1000);
 					Serial.println(F("Starting sampled Scale32 tests..."));
@@ -589,7 +589,7 @@ namespace IntegerSignal
 				}
 
 				// GetFactor tests with signed semantics (ported)
-				static bool TestScale8GetFactorSigned()
+				static inline bool TestScale8GetFactorSigned()
 				{
 					Serial.println(F("Testing Scale8 GetFactor (signed inputs)..."));
 					uint32_t errorCount = 0;
@@ -623,7 +623,7 @@ namespace IntegerSignal
 					return errorCount == 0;
 				}
 
-				static bool TestScale16GetFactorSigned()
+				static inline bool TestScale16GetFactorSigned()
 				{
 					Serial.println(F("Testing Scale16 GetFactor (signed inputs)..."));
 					uint32_t errorCount = 0;
@@ -657,7 +657,7 @@ namespace IntegerSignal
 					return errorCount == 0;
 				}
 
-				static bool TestScale32GetFactor()
+				static inline bool TestScale32GetFactor()
 				{
 					Serial.println(F("Testing Scale32 GetFactor (signed inputs)..."));
 					uint32_t errorCount = 0;
@@ -692,7 +692,7 @@ namespace IntegerSignal
 				}
 
 				// Edge cases for Scale32 (ported)
-				static bool TestScale32EdgeCases()
+				static inline bool TestScale32EdgeCases()
 				{
 					Serial.println(F("Testing Scale32 edge cases..."));
 
@@ -729,7 +729,7 @@ namespace IntegerSignal
 				}
 
 				// Exhaustive test for GetFactor for all 255*255 combinations of numerator/denominator.
-				static bool TestGetFactorExhaustive8()
+				static inline bool TestGetFactorExhaustive8()
 				{
 					Serial.println(F("Starting exhaustive GetFactor (8-bit inputs) tests..."));
 
@@ -802,7 +802,7 @@ namespace IntegerSignal
 					return errorCount == 0;
 				}
 
-				static bool TestGetFactorWideIntermediateRegression()
+				static inline bool TestGetFactorWideIntermediateRegression()
 				{
 					Serial.println(F("Starting GetFactor wide-intermediate regression tests..."));
 
@@ -903,7 +903,7 @@ namespace IntegerSignal
 				}
 
 				template<uint32_t MaxIterations = 50000>
-				static bool RunTests()
+				static inline bool RunTests()
 				{
 					bool pass = true;
 

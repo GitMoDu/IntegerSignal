@@ -22,7 +22,7 @@ namespace IntegerSignal
 	/// </summary>
 	/// <param name="value">[0 ; UINT32_MAX]</param>
 	/// <returns>[0 ; UINT16_MAX].</returns>
-	static uint16_t SquareRoot32(const uint32_t value)
+	inline uint16_t SquareRoot32(const uint32_t value)
 	{
 		if (value == 0)
 			return 0;
@@ -53,7 +53,7 @@ namespace IntegerSignal
 	/// </summary>
 	/// <param name="value">[0 ; UINT16_MAX]</param>
 	/// <returns>[0 ; UINT8_MAX].</returns>
-	static uint8_t SquareRoot16(const uint16_t value)
+	inline uint8_t SquareRoot16(const uint16_t value)
 	{
 		if (value == 0)
 			return 0;
@@ -83,7 +83,7 @@ namespace IntegerSignal
 	/// </summary>
 	/// <param name="value">[0 ; UINT64_MAX]</param>
 	/// <returns>[0 ; UINT32_MAX].</returns>
-	static uint32_t SquareRoot64(const uint64_t value)
+	inline uint32_t SquareRoot64(const uint64_t value)
 	{
 		if (value == 0)
 		{
@@ -119,7 +119,7 @@ namespace IntegerSignal
 	/// <summary>
 	/// Square root of uint32_t value (x86 optimized).
 	/// </summary>
-	static uint16_t SquareRoot32(const uint32_t value)
+	inline uint16_t SquareRoot32(const uint32_t value)
 	{
 		if (value == 0)
 			return 0;
@@ -149,7 +149,7 @@ namespace IntegerSignal
 	/// <summary>
 	/// Square root of uint16_t value (x86 optimized).
 	/// </summary>
-	static uint8_t SquareRoot16(const uint16_t value)
+	inline uint8_t SquareRoot16(const uint16_t value)
 	{
 		if (value == 0)
 			return 0;
@@ -178,7 +178,7 @@ namespace IntegerSignal
 	/// <summary>
 	/// Square root of uint64_t value (x86 optimized).
 	/// </summary>
-	static uint32_t SquareRoot64(const uint64_t value)
+	inline uint32_t SquareRoot64(const uint64_t value)
 	{
 		if (value == 0)
 			return 0;
@@ -215,7 +215,7 @@ namespace IntegerSignal
 	/// </summary>
 	/// <param name="value">[0 ; UINT16_MAX]</param>
 	/// <returns>[0 ; UINT8_MAX].</returns>
-	static uint8_t SquareRoot16(const uint16_t value)
+	inline uint8_t SquareRoot16(const uint16_t value)
 	{
 		uint16_t op = value;
 		uint16_t result = 0;
@@ -250,7 +250,7 @@ namespace IntegerSignal
 	/// </summary>
 	/// <param name="value">[0 ; UINT32_MAX]</param>
 	/// <returns>[0 ; UINT16_MAX].</returns>
-	static uint16_t SquareRoot32(const uint32_t value)
+	inline uint16_t SquareRoot32(const uint32_t value)
 	{
 		uint32_t op = value;
 
@@ -286,7 +286,7 @@ namespace IntegerSignal
 	/// </summary>
 	/// <param name="value">[0 ; UINT64_MAX]</param>
 	/// <returns>[0 ; UINT32_MAX].</returns>
-	static uint32_t SquareRoot64(const uint64_t value)
+	inline uint32_t SquareRoot64(const uint64_t value)
 	{
 		uint64_t op = value;
 

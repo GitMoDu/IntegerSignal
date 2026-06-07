@@ -13,38 +13,38 @@ namespace IntegerSignal
 			{
 				// Reference function for Fraction8::scalar_t (signed)
 				template<typename T>
-				static T RefFraction8(const T value, const Fraction8::scalar_t fraction) {
+				static inline T RefFraction8(const T value, const Fraction8::scalar_t fraction) {
 					return (static_cast<int64_t>(value) * fraction) / Fraction8::FRACTION_1X;
 				}
 
 				template<typename T>
-				static T RefFraction16(const T value, const Fraction16::scalar_t fraction) {
+				static inline T RefFraction16(const T value, const Fraction16::scalar_t fraction) {
 					return (static_cast<int64_t>(value) * fraction) / Fraction16::FRACTION_1X;
 				}
 
 				template<typename T>
-				static T RefFraction32(const T value, const Fraction32::scalar_t fraction) {
+				static inline T RefFraction32(const T value, const Fraction32::scalar_t fraction) {
 					return (static_cast<int64_t>(value) * fraction) / Fraction32::FRACTION_1X;
 				}
 
 				// Reference function for UFractionX::scalar_t (unsigned)
 				template<typename T>
-				static T RefUFraction8(const T value, const UFraction8::scalar_t fraction) {
+				static inline T RefUFraction8(const T value, const UFraction8::scalar_t fraction) {
 					return (static_cast<uint64_t>(value) * fraction) / UFraction8::FRACTION_1X;
 				}
 
 				template<typename T>
-				static T RefUFraction16(const T value, const UFraction16::scalar_t fraction) {
+				static inline T RefUFraction16(const T value, const UFraction16::scalar_t fraction) {
 					return (static_cast<uint64_t>(value) * fraction) / UFraction16::FRACTION_1X;
 				}
 
 				template<typename T>
-				static T RefUFraction32(const T value, const UFraction32::scalar_t fraction) {
+				static inline T RefUFraction32(const T value, const UFraction32::scalar_t fraction) {
 					return (static_cast<uint64_t>(value) * fraction) / UFraction32::FRACTION_1X;
 				}
 
 				// Reference function for GetScalar (signed Fraction8)
-				static Fraction8::scalar_t RefGetFraction8(uint8_t numerator, uint8_t denominator)
+				static inline Fraction8::scalar_t RefGetFraction8(uint8_t numerator, uint8_t denominator)
 				{
 					const int16_t scaled = (denominator == 0) ? 0
 						: (int16_t)(((int16_t)numerator * Fraction8::FRACTION_1X) / denominator);
@@ -54,7 +54,7 @@ namespace IntegerSignal
 				}
 
 				// Reference function for GetScalar (signed Fraction16)
-				static Fraction16::scalar_t RefGetFraction16(uint8_t numerator, uint8_t denominator)
+				static inline Fraction16::scalar_t RefGetFraction16(uint8_t numerator, uint8_t denominator)
 				{
 					const int32_t scaled = (denominator == 0) ? 0
 						: (int32_t)(((int32_t)numerator * Fraction16::FRACTION_1X) / denominator);
@@ -64,7 +64,7 @@ namespace IntegerSignal
 				}
 
 				// Reference function for GetScalar (signed Fraction32)
-				static Fraction32::scalar_t RefGetFraction32(uint8_t numerator, uint8_t denominator)
+				static inline Fraction32::scalar_t RefGetFraction32(uint8_t numerator, uint8_t denominator)
 				{
 					const int64_t scaled = (denominator == 0) ? 0
 						: (int64_t)(((int64_t)numerator * Fraction32::FRACTION_1X) / denominator);
@@ -75,7 +75,7 @@ namespace IntegerSignal
 
 				// Reference interpolation functions
 				template<typename T>
-				static T RefUInterpolate8(const T from, const T to, const uint8_t scalar)
+				static inline T RefUInterpolate8(const T from, const T to, const uint8_t scalar)
 				{
 					constexpr uint8_t SCALE_UNIT = 128;
 					return (static_cast<uint64_t>(from) * (SCALE_UNIT - scalar) +
@@ -83,7 +83,7 @@ namespace IntegerSignal
 				}
 
 				// Exhaustive test for Fraction8::scalar_t
-				static bool TestFraction8Exhaustive()
+				static inline bool TestFraction8Exhaustive()
 				{
 					Serial.println(F("Starting exhaustive fraction8_t tests..."));
 
@@ -130,7 +130,7 @@ namespace IntegerSignal
 				}
 
 				// Exhaustive test for Fraction16::scalar_t
-				static bool TestFraction16Exhaustive()
+				static inline bool TestFraction16Exhaustive()
 				{
 					Serial.println(F("Starting exhaustive fraction16_t tests..."));
 
@@ -178,9 +178,9 @@ namespace IntegerSignal
 
 				// Sampled test for Fraction16 for uint8_t, uint16_t, and uint32_t.
 				template<uint32_t MaxIterations = 50000>
-				static bool TestFraction16Sample()
+				static inline bool TestFraction16Sample()
 				{
-					const uint32_t iterations = MinValue<uint32_t>(MaxIterations, (uint32_t)UINT16_MAX);
+					constexpr uint32_t iterations = MinValue<uint32_t>(MaxIterations, (uint32_t)UINT16_MAX);
 					const uint32_t fracSamples = MinValue<uint32_t>(iterations, 1024u);
 					const uint32_t fracStep = MaxValue<uint32_t>(1u, (uint32_t)UINT16_MAX / fracSamples);
 					const uint32_t valStep = MaxValue<uint32_t>(1u, iterations / 256u);
@@ -240,7 +240,7 @@ namespace IntegerSignal
 
 				// Sampled test for UFraction16 for uint8_t, uint16_t, and uint32_t.
 				template<uint32_t MaxIterations = 50000>
-				static bool TestUFraction16Sample()
+				static inline bool TestUFraction16Sample()
 				{
 					const uint32_t iterations = MinValue<uint32_t>(MaxIterations, (uint32_t)UINT16_MAX);
 					const uint32_t fracSamples = MinValue<uint32_t>(iterations, 1024u);
@@ -301,7 +301,7 @@ namespace IntegerSignal
 
 				// Sampled test for Fraction32 for uint8_t, uint16_t, and uint32_t.
 				template<uint32_t MaxIterations = 50000>
-				static bool TestFraction32Sample()
+				static inline bool TestFraction32Sample()
 				{
 					const uint32_t iterations = MaxIterations; // already a 32-bit domain
 					const uint32_t fracSamples = MinValue<uint32_t>(iterations, 4096u);
@@ -365,7 +365,7 @@ namespace IntegerSignal
 
 				// Sampled test for Fraction8 for uint8_t, uint16_t, and uint32_t.
 				template<uint32_t MaxIterations = 50000>
-				static bool TestFraction8Sample()
+				static inline bool TestFraction8Sample()
 				{
 					const uint32_t iterations = min(MaxIterations, (uint32_t)UINT16_MAX);
 
@@ -450,7 +450,7 @@ namespace IntegerSignal
 
 				// Sampled test for UFraction8 for uint8_t, uint16_t, and uint32_t.
 				template<uint32_t MaxIterations = 50000>
-				static bool TestUFraction8Sample()
+				static inline bool TestUFraction8Sample()
 				{
 					const uint32_t iterations = min(MaxIterations, (uint32_t)UINT16_MAX);
 
@@ -532,7 +532,7 @@ namespace IntegerSignal
 				}
 
 				// Exhaustive test for UFraction8::scalar_t (expanded full coverage, no clamp to 1x)
-				static bool TestUFraction8Exhaustive()
+				static inline bool TestUFraction8Exhaustive()
 				{
 					Serial.println(F("Starting exhaustive ufraction8_t tests..."));
 
@@ -579,7 +579,7 @@ namespace IntegerSignal
 				}
 
 				// Exhaustive test for UFraction16::scalar_t
-				static bool TestUFraction16Exhaustive()
+				static inline bool TestUFraction16Exhaustive()
 				{
 					Serial.println(F("Starting exhaustive ufraction16_t tests..."));
 
@@ -626,7 +626,7 @@ namespace IntegerSignal
 				}
 
 				// Added: explicit UFraction16 edge tests around 1x boundaries
-				static bool TestUFraction16Edges()
+				static inline bool TestUFraction16Edges()
 				{
 					Serial.println(F("Starting ufraction16_t edge tests..."));
 					uint32_t errorCount = 0;
@@ -667,9 +667,8 @@ namespace IntegerSignal
 
 				// Sampled test for UFraction32 (edge cases + large prime stepping).
 				template<uint32_t MaxIterations = 50000>
-				static bool TestUFraction32Sample()
+				static inline bool TestUFraction32Sample()
 				{
-					const uint32_t iterations = min(MaxIterations, (uint32_t)UINT16_MAX);
 					Serial.println(F("Starting sampled UFraction32 tests..."));
 					uint32_t errorCount = 0;
 
@@ -762,7 +761,7 @@ namespace IntegerSignal
 				}
 
 				// Exhaustive test for GetScalar (signed Fraction8/16/32) for all 255*255 combinations of numerator/denominator.
-				static bool TestGetFraction8Exhaustive()
+				static inline bool TestGetFraction8Exhaustive()
 				{
 					Serial.println(F("Starting exhaustive GetFraction8 tests..."));
 
@@ -837,7 +836,7 @@ namespace IntegerSignal
 				}
 
 				// Test SFraction8 with key edge cases
-				static bool TestSFraction8EdgeCases()
+				static inline bool TestSFraction8EdgeCases()
 				{
 					Serial.println(F("Testing SFraction8 edge cases..."));
 					uint32_t errorCount = 0;
@@ -878,7 +877,7 @@ namespace IntegerSignal
 				}
 
 				// Test UInterpolate8 with systematic samples
-				static bool TestUInterpolate8()
+				static inline bool TestUInterpolate8()
 				{
 					Serial.println(F("Starting UFraction8 interpolation tests..."));
 					uint32_t errorCount = 0;
@@ -924,7 +923,7 @@ namespace IntegerSignal
 				}
 
 				// Test UFraction8 with different input types
-				static bool TestUFraction8Types()
+				static inline bool TestUFraction8Types()
 				{
 					Serial.println(F("Testing UFraction8 with different input types..."));
 					uint32_t errorCount = 0;
@@ -978,7 +977,7 @@ namespace IntegerSignal
 					return errorCount == 0;
 				}
 
-				static bool TestGetScalarWideIntermediateRegression()
+				static inline bool TestGetScalarWideIntermediateRegression()
 				{
 					Serial.println(F("Starting GetScalar wide-intermediate regression tests..."));
 					bool pass = true;
@@ -1087,7 +1086,7 @@ namespace IntegerSignal
 
 
 				template<uint32_t MaxIterations = 50000, uint8_t maxError32 = 0>
-				static bool RunTests()
+				static inline bool RunTests()
 				{
 					bool pass = true;
 
@@ -1120,7 +1119,7 @@ namespace IntegerSignal
 					return pass;
 				}
 
-				static bool RunExhaustive()
+				static inline bool RunExhaustive()
 				{
 					bool pass = true;
 					pass &= TestFraction16Exhaustive();

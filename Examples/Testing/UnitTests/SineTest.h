@@ -12,21 +12,21 @@ namespace IntegerSignal
 			namespace Test
 			{
 				// Reference function for sine calculation using floating-point math for Sine32
-				static uint32_t RefSine32(const angle_t angle)
+				static inline uint32_t RefSine32(const angle_t angle)
 				{
 					double radians = ((double)angle * M_PI) / (2.0 * (double)ANGLE_90);
 					return round(sin(radians) * (double)Fraction32::FRACTION_1X);
 				}
 
 				// Reference function for sine calculation using floating-point math
-				static uint16_t RefSine16(const angle_t angle)
+				static inline uint16_t RefSine16(const angle_t angle)
 				{
 					double radians = ((double)angle * M_PI) / (2.0 * (double)ANGLE_90);
 					return round(sin(radians) * (double)Fraction16::FRACTION_1X);
 				}
 
 				// Reference function for sine calculation using floating-point math for Sine8
-				static uint8_t RefSine8(const angle_t angle)
+				static inline uint8_t RefSine8(const angle_t angle)
 				{
 					double radians = ((double)angle * M_PI) / (2.0 * (double)ANGLE_90);
 					return round(sin(radians) * (double)Fraction8::FRACTION_1X);
@@ -38,7 +38,7 @@ namespace IntegerSignal
 
 				// Exhaustive test for GetInterpolated function for Sine32
 				template<uint32_t ErrorTolerance>
-				static bool TestSine32Exhaustive()
+				static inline bool TestSine32Exhaustive()
 				{
 					Serial.println(F("Starting exhaustive GetInterpolated tests for Sine32..."));
 
@@ -86,7 +86,7 @@ namespace IntegerSignal
 
 				// Exhaustive test for GetInterpolated function for Sine16
 				template<uint8_t ErrorTolerance>
-				static bool TestSine16Exhaustive()
+				static inline bool TestSine16Exhaustive()
 				{
 					Serial.println(F("Starting exhaustive GetInterpolated tests for Sine16..."));
 
@@ -98,7 +98,7 @@ namespace IntegerSignal
 
 						maxError = max((int32_t)maxError, abs((int32_t)result - (int32_t)refResult));
 
-						if (abs((int32_t)result - (int32_t)refResult) > maxError)
+						if (abs((int32_t)result - (int32_t)refResult) > int32_t(maxError))
 						{
 							Serial.print(F("GetInterpolated error: angle="));
 							Serial.print(angle);
@@ -132,7 +132,7 @@ namespace IntegerSignal
 
 				// Exhaustive test for GetInterpolated function for Sine8
 				template<uint8_t ErrorTolerance>
-				static bool TestSine8Exhaustive()
+				static inline bool TestSine8Exhaustive()
 				{
 					Serial.println(F("Starting exhaustive GetInterpolated tests for Sine8..."));
 
@@ -180,7 +180,7 @@ namespace IntegerSignal
 
 				// Sampled test for GetInterpolated function for Sine8
 				template<uint32_t MaxIterations = 50000, uint8_t maxError>
-				static bool TestGetInterpolatedSampleSine8()
+				static inline bool TestGetInterpolatedSampleSine8()
 				{
 					Serial.println(F("Starting sampled GetInterpolated tests for Sine8..."));
 
@@ -220,7 +220,7 @@ namespace IntegerSignal
 					return errorCount == 0;
 				}
 
-				static void PrintErrorResults8()
+				static inline void PrintErrorResults8()
 				{
 					Serial.println(F("Integer Trigonometry Sine8"));
 
@@ -275,7 +275,7 @@ namespace IntegerSignal
 					Serial.println();
 				}
 
-				static void PrintErrorResults16()
+				static inline void PrintErrorResults16()
 				{
 					Serial.println(F("Integer Trigonometry Sine16"));
 
@@ -330,7 +330,7 @@ namespace IntegerSignal
 					Serial.println();
 				}
 
-				static void PrintErrorResults32()
+				static inline void PrintErrorResults32()
 				{
 					Serial.println(F("Integer Trigonometry Sine32"));
 
@@ -387,7 +387,7 @@ namespace IntegerSignal
 
 
 				template<uint32_t MaxIterations = 50000>
-				static bool RunTests()
+				static inline bool RunTests()
 				{
 					bool pass = true;
 

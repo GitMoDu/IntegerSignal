@@ -18,7 +18,7 @@ namespace IntegerSignal
 		/// </summary>
 		/// <param name="angle">Modular angle_t in [0; ANGLE_RANGE].</param>
 		/// <returns>Signed Q-format fraction.</returns>
-		static Fraction32::scalar_t Tangent32(const angle_t angle)
+		inline Fraction32::scalar_t Tangent32(const angle_t angle)
 		{
 			if (angle == 0)
 			{
@@ -77,7 +77,7 @@ namespace IntegerSignal
 		/// </summary>
 		/// <param name="angle">Modular angle_t in [0; ANGLE_RANGE].</param>
 		/// <returns>Signed Q-format fraction.</returns>
-		static Fraction32::scalar_t Cotangent32(const angle_t angle)
+		inline Fraction32::scalar_t Cotangent32(const angle_t angle)
 		{
 			const Fraction32::scalar_t tanValue = Tangent32(angle);
 			if (tanValue == 0)

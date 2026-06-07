@@ -9,7 +9,7 @@ namespace IntegerSignal
 	{
 		namespace Test
 		{
-			static bool TestMinValue()
+			static inline bool TestMinValue()
 			{
 				bool pass = true;
 				pass &= (MinValue(5, 10) == 5);
@@ -19,7 +19,7 @@ namespace IntegerSignal
 				return pass;
 			}
 
-			static bool TestMaxValue()
+			static inline bool TestMaxValue()
 			{
 				bool pass = true;
 				pass &= (MaxValue(5, 10) == 10);
@@ -29,7 +29,7 @@ namespace IntegerSignal
 				return pass;
 			}
 
-			static bool TestLimitValue()
+			static inline bool TestLimitValue()
 			{
 				bool pass = true;
 				pass &= (LimitValue(5, 0, 10) == 5);
@@ -40,7 +40,7 @@ namespace IntegerSignal
 				return pass;
 			}
 
-			static bool TestAbsValue()
+			static inline bool TestAbsValue()
 			{
 				bool pass = true;
 				pass &= (AbsValue(5) == 5);
@@ -50,7 +50,7 @@ namespace IntegerSignal
 				return pass;
 			}
 
-			static bool TestGetBitShifts()
+			static inline bool TestGetBitShifts()
 			{
 				bool pass = true;
 				pass &= (GetBitShifts(0) == 0);
@@ -61,7 +61,7 @@ namespace IntegerSignal
 				return pass;
 			}
 
-			static bool TestSignedRightShift()
+			static inline bool TestSignedRightShift()
 			{
 				bool pass = true;
 				pass &= (SignedRightShift(8, 1) == 4);
@@ -72,7 +72,7 @@ namespace IntegerSignal
 				return pass;
 			}
 
-			static bool TestSignedRightShiftTemplate()
+			static inline bool TestSignedRightShiftTemplate()
 			{
 				bool pass = true;
 				pass &= (SignedRightShift<int16_t, 2>(8) == 2);
@@ -84,7 +84,7 @@ namespace IntegerSignal
 
 			// Reference helpers that compute expected SignedLeftShift results using unsigned-domain arithmetic.
 			template<typename T>
-			static T ExpectedSignedLeftShiftRuntime(const T value, const uint8_t shifts)
+			static inline T ExpectedSignedLeftShiftRuntime(const T value, const uint8_t shifts)
 			{
 				using U = typename TypeTraits::TypeSign::make_unsigned<T>::type;
 
@@ -100,7 +100,7 @@ namespace IntegerSignal
 			}
 
 			template<typename T, uint8_t shifts>
-			static T ExpectedSignedLeftShiftTemplate(const T value)
+			static inline T ExpectedSignedLeftShiftTemplate(const T value)
 			{
 				using U = typename TypeTraits::TypeSign::make_unsigned<T>::type;
 
@@ -115,7 +115,7 @@ namespace IntegerSignal
 			}
 
 			// Expanded runtime tests for SignedLeftShift across multiple types, values and shift counts.
-			static bool TestSignedLeftShift()
+			static inline bool TestSignedLeftShift()
 			{
 				Serial.println(F("Starting expanded SignedLeftShift runtime tests..."));
 				bool pass = true;
@@ -239,7 +239,7 @@ namespace IntegerSignal
 			}
 
 			// Expanded template (compile-time shifts) tests.
-			static bool TestSignedLeftShiftTemplate()
+			static inline bool TestSignedLeftShiftTemplate()
 			{
 				Serial.println(F("Starting expanded SignedLeftShift template tests..."));
 				bool pass = true;
@@ -267,7 +267,7 @@ namespace IntegerSignal
 				return pass;
 			}
 
-			static bool RunTests()
+			static inline bool RunTests()
 			{
 				Serial.println(F("Starting Operation tests..."));
 				bool pass = true;

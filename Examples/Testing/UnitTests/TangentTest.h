@@ -12,21 +12,21 @@ namespace IntegerSignal
 			namespace Test
 			{
 				// Reference function for tangent calculation using floating-point math for Tangent32
-				static uint32_t RefTangent32(const angle_t angle)
+				static inline uint32_t RefTangent32(const angle_t angle)
 				{
 					double radians = (angle * M_PI) / (2.0 * (double)ANGLE_90);
 					return round(tan(radians) * (double)Fraction32::FRACTION_1X);
 				}
 
 				// Reference function for tangent calculation using floating-point math for Tangent16
-				static uint16_t RefTangent16(const angle_t angle)
+				static inline uint16_t RefTangent16(const angle_t angle)
 				{
 					double radians = (angle * M_PI) / (2.0 * (double)ANGLE_90);
 					return round(tan(radians) * (double)Fraction16::FRACTION_1X);
 				}
 
 				// Reference function for tangent calculation using floating-point math for Tangent8
-				static uint8_t RefTangent8(const angle_t angle)
+				static inline uint8_t RefTangent8(const angle_t angle)
 				{
 					double radians = (angle * M_PI) / (2.0 * (double)ANGLE_90);
 					return round(tan(radians) * (double)Fraction8::FRACTION_1X);
@@ -38,7 +38,7 @@ namespace IntegerSignal
 
 				// Exhaustive test for GetInterpolated function for Tangent8
 				template<uint8_t ErrorTolerance>
-				static bool TestTangent8Exhaustive(const double degreesRange)
+				static inline bool TestTangent8Exhaustive(const double degreesRange)
 				{
 					Serial.println(F("Starting exhaustive GetInterpolated tests for Tangent8..."));
 
@@ -88,7 +88,7 @@ namespace IntegerSignal
 
 				// Exhaustive test for GetInterpolated function for Tangent16
 				template<uint8_t ErrorTolerance>
-				static bool TestTangent16Exhaustive(const double degreesRange)
+				static inline bool TestTangent16Exhaustive(const double degreesRange)
 				{
 					Serial.println(F("Starting exhaustive GetInterpolated tests for Tangent16..."));
 
@@ -138,7 +138,7 @@ namespace IntegerSignal
 
 				// Exhaustive test for GetInterpolated function for Tangent32
 				template<uint32_t ErrorTolerance>
-				static bool TestTangent32Exhaustive(const double degreesRange)
+				static inline bool TestTangent32Exhaustive(const double degreesRange)
 				{
 					Serial.println(F("Starting exhaustive GetInterpolated tests for Tangent32..."));
 
@@ -186,7 +186,7 @@ namespace IntegerSignal
 					return errorCount == 0;
 				}
 
-				static void PrintErrorResults8(double degreesRange)
+				static inline void PrintErrorResults8(double degreesRange)
 				{
 					Serial.println(F("Integer Trigonometry Tangent8"));
 
@@ -242,7 +242,7 @@ namespace IntegerSignal
 					Serial.println();
 				}
 
-				static void PrintErrorResults16(const double degreesRange)
+				static inline void PrintErrorResults16(const double degreesRange)
 				{
 					Serial.println(F("Integer Trigonometry Tangent16"));
 
@@ -298,7 +298,7 @@ namespace IntegerSignal
 					Serial.println();
 				}
 
-				static void PrintErrorResults32(const double degreesRange)
+				static inline void PrintErrorResults32(const double degreesRange)
 				{
 					Serial.println(F("Integer Trigonometry Tangent32"));
 					const angle_t angleRange = (degreesRange * double(ANGLE_RANGE)) / 360.0;
@@ -360,7 +360,7 @@ namespace IntegerSignal
 				}
 
 				template<uint32_t MaxIterations = 50000>
-				static bool RunTests()
+				static inline bool RunTests()
 				{
 					bool pass = true;
 

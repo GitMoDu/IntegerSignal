@@ -13,7 +13,7 @@ namespace IntegerSignal
 			namespace Test
 			{
 				template<typename value_t>
-				static bool ExpectEqual(const value_t actual, const value_t expected, const __FlashStringHelper* testName)
+				static inline bool ExpectEqual(const value_t actual, const value_t expected, const __FlashStringHelper* testName)
 				{
 					if (actual == expected)
 					{
@@ -28,7 +28,7 @@ namespace IntegerSignal
 					return false;
 				}
 
-				static bool TestEmptyValuePairsU8()
+				static inline bool TestEmptyValuePairsU8()
 				{
 					LinearInterpolateTemplateU8<> curve;
 					const uint8_t input = 42;
@@ -37,7 +37,7 @@ namespace IntegerSignal
 					return ExpectEqual(output, input, F("LinearInterpolateU8 empty value-pair pass-through"));
 				}
 
-				static bool TestSingleValuePairU16()
+				static inline bool TestSingleValuePairU16()
 				{
 					LinearInterpolateTemplateU16<100, 1234> curve;
 					bool pass = true;
@@ -49,7 +49,7 @@ namespace IntegerSignal
 					return pass;
 				}
 
-				static bool TestAllLowValuePairsU8()
+				static inline bool TestAllLowValuePairsU8()
 				{
 					LinearInterpolateTemplateU8<0, 0, 10, 0, UINT8_MAX, 0> curve;
 					bool pass = true;
@@ -61,7 +61,7 @@ namespace IntegerSignal
 					return pass;
 				}
 
-				static bool TestAllHighValuePairsU8()
+				static inline bool TestAllHighValuePairsU8()
 				{
 					LinearInterpolateTemplateU8<0, UINT8_MAX, 10, UINT8_MAX, UINT8_MAX, UINT8_MAX> curve;
 					bool pass = true;
@@ -73,7 +73,7 @@ namespace IntegerSignal
 					return pass;
 				}
 
-				static bool TestFullIdentityValuePairsU8()
+				static inline bool TestFullIdentityValuePairsU8()
 				{
 					LinearInterpolateTemplateU8<0, 0, UINT8_MAX, UINT8_MAX> curve;
 					bool pass = true;
@@ -86,7 +86,7 @@ namespace IntegerSignal
 					return pass;
 				}
 
-				static bool TestUnsignedValuePairsU8()
+				static inline bool TestUnsignedValuePairsU8()
 				{
 					using CurveU8 = LinearInterpolateTemplateU8<0, 0, 10, 100, 20, 200>;
 					CurveU8 curve;
@@ -109,7 +109,7 @@ namespace IntegerSignal
 					return pass;
 				}
 
-				static bool TestDescendingValuePairsU8()
+				static inline bool TestDescendingValuePairsU8()
 				{
 					LinearInterpolateTemplateU8<0, 200, 10, 100, 20, 0> curve;
 					bool pass = true;
@@ -123,7 +123,7 @@ namespace IntegerSignal
 					return pass;
 				}
 
-				static bool TestSignedValuePairsI16()
+				static inline bool TestSignedValuePairsI16()
 				{
 					LinearInterpolateTemplateI16<-10, -100, 0, 0, 10, 100> curve;
 					bool pass = true;
@@ -142,7 +142,7 @@ namespace IntegerSignal
 					return pass;
 				}
 
-				static bool TestSignedDescendingValuePairsI8()
+				static inline bool TestSignedDescendingValuePairsI8()
 				{
 					LinearInterpolateTemplateI8<-10, 100, 0, 0, 10, -100> curve;
 					bool pass = true;
@@ -155,7 +155,7 @@ namespace IntegerSignal
 					return pass;
 				}
 
-				static bool TestUnsignedValuePairsU32()
+				static inline bool TestUnsignedValuePairsU32()
 				{
 					LinearInterpolateTemplateU32<0UL, 0UL, 1000UL, 100000UL, 2000UL, 200000UL> curve;
 					bool pass = true;
@@ -167,7 +167,7 @@ namespace IntegerSignal
 					return pass;
 				}
 
-				static bool TestRuntimeEmptyU8()
+				static inline bool TestRuntimeEmptyU8()
 				{
 					LinearInterpolateRuntimeU8 curve;
 					const uint8_t input = 42;
@@ -175,7 +175,7 @@ namespace IntegerSignal
 					return ExpectEqual<uint8_t>(curve.Get(input), input, F("LinearInterpolateRuntimeU8 empty pass-through"));
 				}
 
-				static bool TestRuntimeUnsignedU8()
+				static inline bool TestRuntimeUnsignedU8()
 				{
 					const upoint8_t points[] =
 					{
@@ -195,7 +195,7 @@ namespace IntegerSignal
 					return pass;
 				}
 
-				static bool TestRuntimeSignedDescendingI16()
+				static inline bool TestRuntimeSignedDescendingI16()
 				{
 					const ipoint16_t points[] =
 					{
@@ -215,7 +215,7 @@ namespace IntegerSignal
 					return pass;
 				}
 
-				static bool TestRuntimeValidityU8()
+				static inline bool TestRuntimeValidityU8()
 				{
 					const upoint8_t validPoints[] =
 					{
@@ -243,7 +243,7 @@ namespace IntegerSignal
 					return pass;
 				}
 
-				static bool TestRuntimeSetCurvePointsU8()
+				static inline bool TestRuntimeSetCurvePointsU8()
 				{
 					const upoint8_t lowPoints[] =
 					{
@@ -267,7 +267,7 @@ namespace IntegerSignal
 					return pass;
 				}
 
-				static bool RunTests()
+				static inline bool RunTests()
 				{
 					Serial.println(F("Starting LinearInterpolate value-pair tests..."));
 

@@ -12,7 +12,7 @@ namespace IntegerSignal
 		{
 			using namespace FixedPoint::ScalarFraction;
 
-			static bool ExpectEqualU32(const uint32_t actual, const uint32_t expected, const __FlashStringHelper* testName)
+			static inline bool ExpectEqualU32(const uint32_t actual, const uint32_t expected, const __FlashStringHelper* testName)
 			{
 				if (actual == expected)
 				{
@@ -27,7 +27,7 @@ namespace IntegerSignal
 				return false;
 			}
 
-			static bool ExpectRgb8Components(const Rgb8::color_t actual,
+			static inline bool ExpectRgb8Components(const Rgb8::color_t actual,
 				const uint8_t expectedRed,
 				const uint8_t expectedGreen,
 				const uint8_t expectedBlue,
@@ -63,7 +63,7 @@ namespace IntegerSignal
 				return false;
 			}
 
-			static bool ExpectEqualU16(const uint16_t actual, const uint16_t expected, const __FlashStringHelper* testName)
+			static inline bool ExpectEqualU16(const uint16_t actual, const uint16_t expected, const __FlashStringHelper* testName)
 			{
 				if (actual == expected)
 				{
@@ -92,7 +92,7 @@ namespace IntegerSignal
 				return pass;
 			}
 
-			static bool TestRgb10Packing()
+			static inline bool TestRgb10Packing()
 			{
 				const Rgb10::color_t color = Rgb10::Color(2, 0x155, 0x2AA, 0x3FF);
 				bool pass = true;
@@ -105,7 +105,7 @@ namespace IntegerSignal
 				return pass;
 			}
 
-			static bool TestRgbFraction16Color8()
+			static inline bool TestRgbFraction16Color8()
 			{
 				const RgbFraction16::color_t color = RgbFraction16::Color8(255, 128, 0);
 				bool pass = true;
@@ -117,7 +117,7 @@ namespace IntegerSignal
 				return pass;
 			}
 
-			static bool TestHsvGrayRegression()
+			static inline bool TestHsvGrayRegression()
 			{
 				const ufraction16_t half = UFraction16::FRACTION_1X / 2;
 				bool pass = true;
@@ -136,7 +136,7 @@ namespace IntegerSignal
 				return pass;
 			}
 
-			static bool TestHsvPrimaryRegression()
+			static inline bool TestHsvPrimaryRegression()
 			{
 				const ufraction16_t unit = UFraction16::FRACTION_1X;
 				const ufraction16_t hueGreen = unit / 3;
@@ -150,7 +150,7 @@ namespace IntegerSignal
 				return pass;
 			}
 
-			static bool TestHsvWrapRegression()
+			static inline bool TestHsvWrapRegression()
 			{
 				const ufraction16_t unit = UFraction16::FRACTION_1X;
 				bool pass = true;
@@ -166,7 +166,7 @@ namespace IntegerSignal
 				return pass;
 			}
 
-			static bool TestHsvBlackWhiteRegression()
+			static inline bool TestHsvBlackWhiteRegression()
 			{
 				const ufraction16_t unit = UFraction16::FRACTION_1X;
 				bool pass = true;
@@ -182,7 +182,7 @@ namespace IntegerSignal
 				return pass;
 			}
 
-			static bool RunTests()
+			static inline bool RunTests()
 			{
 				Serial.println(F("Starting color tests..."));
 

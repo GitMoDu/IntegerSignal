@@ -17,7 +17,7 @@ namespace IntegerSignal::Trigonometry::Lut::Generator
 		return degrees * (double)(M_PI) / 180.0;
 	}
 
-	static uint16_t GetTangentUnit16(const double angle)
+	inline uint16_t GetTangentUnit16(const double angle)
 	{
 		// tan(45)=1.0 -> UINT16_MAX
 		const double v = tan(DegreesToRadians(angle));
@@ -29,12 +29,12 @@ namespace IntegerSignal::Trigonometry::Lut::Generator
 		return (uint16_t)(scaled + 0.5);
 	}
 
-	static uint16_t GetSineUnit16(const double angle)
+	inline uint16_t GetSineUnit16(const double angle)
 	{
 		return sin((double)DegreesToRadians(angle)) * (double)(UINT16_MAX - 0);
 	}
 
-	static uint8_t GetSineUnit8(const double angle)
+	static inline uint8_t GetSineUnit8(const double angle)
 	{
 		// Runtime does: (lut + 2) >> 2 into Q0.6 where 1.0 == 64.
 		// LUT should therefore be in ~[0..256], stored in uint8_t (clamped to 255).
@@ -47,7 +47,7 @@ namespace IntegerSignal::Trigonometry::Lut::Generator
 		return (uint8_t)(scaled);
 	}
 
-	static void PrintQuarterTableSine16(const uint16_t tableSize)
+	static inline void PrintQuarterTableSine16(const uint16_t tableSize)
 	{
 		Serial.println(F("16 bit Sin Table"));
 		Serial.println();
@@ -89,7 +89,7 @@ namespace IntegerSignal::Trigonometry::Lut::Generator
 		Serial.println(F("};"));
 	}
 
-	static void PrintQuarterTableSine8(const uint8_t tableSize)
+	static inline void PrintQuarterTableSine8(const uint8_t tableSize)
 	{
 		Serial.println(F("8 bit Sin Table"));
 		Serial.println();
@@ -131,7 +131,7 @@ namespace IntegerSignal::Trigonometry::Lut::Generator
 		Serial.println(F("};"));
 	}
 
-	static void PrintQuarterTableTangent16(const uint16_t tableSize)
+	static inline void PrintQuarterTableTangent16(const uint16_t tableSize)
 	{
 		Serial.println(F("16 bit Tan Table"));
 		Serial.println();

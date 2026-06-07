@@ -36,7 +36,7 @@ namespace IntegerSignal
 			};
 
 			// Reference functions for type_limits
-			static bool RefTypeLimits()
+			static inline bool RefTypeLimits()
 			{
 				static_assert(TypeTraits::TypeLimits::type_limits<uint8_t>::Max() == UINT8_MAX, "type_limits<uint8_t>::Max()");
 				static_assert(TypeTraits::TypeLimits::type_limits<uint8_t>::Min() == 0, "type_limits<uint8_t>::Min()");
@@ -79,7 +79,7 @@ namespace IntegerSignal
 			}
 
 			// Reference functions for next_uint_type
-			static bool RefNextUintType()
+			static inline bool RefNextUintType()
 			{
 				static_assert(TypeTraits::TypeDispatch::is_same<typename TypeTraits::TypeNext::next_uint_type<uint8_t>::type, uint16_t>::value, "next_uint_type<uint8_t>");
 				static_assert(TypeTraits::TypeDispatch::is_same<typename TypeTraits::TypeNext::next_uint_type<uint16_t>::type, uint32_t>::value, "next_uint_type<uint16_t>");
@@ -104,7 +104,7 @@ namespace IntegerSignal
 			}
 
 			// Reference functions for next_int_type
-			static bool RefNextIntType()
+			static inline bool RefNextIntType()
 			{
 				static_assert(TypeTraits::TypeDispatch::is_same<typename TypeTraits::TypeNext::next_int_type<uint8_t>::type, int16_t>::value, "next_int_type<uint8_t>");
 				static_assert(TypeTraits::TypeDispatch::is_same<typename TypeTraits::TypeNext::next_int_type<uint16_t>::type, int32_t>::value, "next_int_type<uint16_t>");
@@ -127,7 +127,7 @@ namespace IntegerSignal
 				return pass;
 			}
 
-			static bool RefTypeDispatch()
+			static inline bool RefTypeDispatch()
 			{
 				static_assert(TypeTraits::TypeDispatch::is_same<uint8_t, uint8_t>::value, "is_same true");
 				static_assert(!TypeTraits::TypeDispatch::is_same<uint8_t, int8_t>::value, "is_same false");
@@ -140,7 +140,7 @@ namespace IntegerSignal
 				return pass;
 			}
 
-			static bool RefTypeConditional()
+			static inline bool RefTypeConditional()
 			{
 				static_assert(TypeTraits::TypeDispatch::is_same<typename TypeTraits::TypeConditional::conditional_type<uint8_t, uint16_t, true>::type, uint8_t>::value, "conditional_type true");
 				static_assert(TypeTraits::TypeDispatch::is_same<typename TypeTraits::TypeConditional::conditional_type<uint8_t, uint16_t, false>::type, uint16_t>::value, "conditional_type false");
@@ -155,7 +155,7 @@ namespace IntegerSignal
 				return pass;
 			}
 
-			static bool RefTypeEnableIf()
+			static inline bool RefTypeEnableIf()
 			{
 				static_assert(TypeTraits::TypeDispatch::is_same<typename TypeTraits::TypeEnableIf::enable_if<true, uint8_t>::type, uint8_t>::value, "enable_if true");
 				static_assert(TypeTraits::TypeDispatch::is_same<typename TypeTraits::TypeEnableIf::disable_if<false, uint16_t>::type, uint16_t>::value, "disable_if false");
@@ -170,8 +170,9 @@ namespace IntegerSignal
 				return pass;
 			}
 
+
 			// Reference functions for is_unsigned and is_signed
-			static bool RefSignTraits()
+			static inline bool RefSignTraits()
 			{
 				static_assert(TypeTraits::TypeSign::is_unsigned<uint8_t>::value == true, "is_unsigned<uint8_t>");
 				static_assert(TypeTraits::TypeSign::is_unsigned<uint16_t>::value == true, "is_unsigned<uint16_t>");
@@ -203,7 +204,7 @@ namespace IntegerSignal
 			}
 
 			// Reference functions for IsUnsignedType, make_unsigned, and make_signed
-			static bool RefSignTransforms()
+			static inline bool RefSignTransforms()
 			{
 				static_assert(TypeTraits::TypeDispatch::is_same<typename TypeTraits::TypeSign::make_unsigned<uint8_t>::type, uint8_t>::value, "make_unsigned<uint8_t>");
 				static_assert(TypeTraits::TypeDispatch::is_same<typename TypeTraits::TypeSign::make_unsigned<uint16_t>::type, uint16_t>::value, "make_unsigned<uint16_t>");
@@ -257,7 +258,7 @@ namespace IntegerSignal
 				return pass;
 			}
 
-			static bool RunTests()
+			static inline bool RunTests()
 			{
 				Serial.println(F("Starting TypeTraits tests..."));
 				bool pass = true;

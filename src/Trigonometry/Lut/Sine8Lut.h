@@ -33,7 +33,7 @@ namespace IntegerSignal
 
 				static constexpr uint16_t LutSize = sizeof(Table) / sizeof(Table[0]);
 
-				static uint8_t GetInterpolated(const angle_t angle)
+				static inline uint8_t GetInterpolated(const angle_t angle)
 				{
 					static constexpr auto StepError = (ANGLE_90 / LutSize);
 

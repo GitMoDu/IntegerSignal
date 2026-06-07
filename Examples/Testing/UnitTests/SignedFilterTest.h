@@ -78,7 +78,7 @@ namespace IntegerSignal
 
 				// Simple monotonic step behavior for signed wrapper.
 				template<typename SignedFilter, typename SignedT>
-				static bool TestSignedMonotonic(const SignedT start, const SignedT target, const uint32_t steps, const bool expectIncrease)
+				static inline bool TestSignedMonotonic(const SignedT start, const SignedT target, const uint32_t steps, const bool expectIncrease)
 				{
 					SignedFilter f;
 					f.Clear();
@@ -116,7 +116,7 @@ namespace IntegerSignal
 
 				// Exhaustive mapping test on 8-bit with pass-through LowPass<0>.
 				// This isolates the Signed mapping: output must equal input for all values.
-				static bool TestI8PassThrough()
+				static inline bool TestI8PassThrough()
 				{
 					using S = int8_t;
 					using UFilter = IntegerSignal::Filters::LowPassU8<0>;
@@ -144,7 +144,7 @@ namespace IntegerSignal
 				}
 
 				// U8 equivalence tests with a smoothing filter (LowPass<4>, Ema<4>, Dema<2>)
-				static bool TestI8Equivalence()
+				static inline bool TestI8Equivalence()
 				{
 					bool pass = true;
 
@@ -186,7 +186,7 @@ namespace IntegerSignal
 
 				// U16 sampled equivalence (LowPass<8>, Ema<8>, Dema<8>)
 				template<uint32_t MaxIterations = 10000>
-				static bool TestI16Equivalence()
+				static inline bool TestI16Equivalence()
 				{
 					bool pass = true;
 
@@ -230,7 +230,7 @@ namespace IntegerSignal
 
 				// U32 sampled equivalence (LowPass<8>, Ema<8>, Dema<8>)
 				template<uint32_t MaxIterations = 5000>
-				static bool TestI32Equivalence()
+				static inline bool TestI32Equivalence()
 				{
 					bool pass = true;
 
@@ -273,21 +273,21 @@ namespace IntegerSignal
 				}
 
 				// Simple signed monotonic checks with a smoothing filter (LowPass).
-				static bool TestSignedMonotonicI8()
+				static inline bool TestSignedMonotonicI8()
 				{
 					using SFilter = IntegerSignal::Filter::SignedI8<IntegerSignal::Filters::LowPassU8<4>>;
 					return TestSignedMonotonic<SFilter, int8_t>(-64, 64, 1024, true)
 						&& TestSignedMonotonic<SFilter, int8_t>(64, -64, 1024, false);
 				}
 
-				static bool TestSignedMonotonicI16()
+				static inline bool TestSignedMonotonicI16()
 				{
 					using SFilter = IntegerSignal::Filter::SignedI16<IntegerSignal::Filters::LowPassU16<8>>;
 					return TestSignedMonotonic<SFilter, int16_t>(-10000, 10000, 4096, true)
 						&& TestSignedMonotonic<SFilter, int16_t>(10000, -10000, 4096, false);
 				}
 
-				static bool TestSignedMonotonicI32()
+				static inline bool TestSignedMonotonicI32()
 				{
 					using SFilter = IntegerSignal::Filter::SignedI32<IntegerSignal::Filters::LowPassU32<8>>;
 					return TestSignedMonotonic<SFilter, int32_t>(-1000000000, 1000000000, 8192, true)
@@ -296,7 +296,7 @@ namespace IntegerSignal
 
 				// Templated main entry to match other suites.
 				template<uint32_t MaxIterations = 50000>
-				static bool RunTests()
+				static inline bool RunTests()
 				{
 					Serial.println(F("Starting Signed meta-filter tests..."));
 					bool pass = true;

@@ -25,7 +25,7 @@ namespace IntegerSignal
 			}
 
 			// Exhaustive test for 16-bit inputs (0..65535)
-			static bool TestSqrt16Exhaustive()
+			static inline bool TestSqrt16Exhaustive()
 			{
 				Serial.println(F("Starting exhaustive 16-bit sqrt tests..."));
 
@@ -64,7 +64,7 @@ namespace IntegerSignal
 				return errorCount == 0;
 			}
 
-			static bool TestSqrt32Exhaustive()
+			static inline bool TestSqrt32Exhaustive()
 			{
 				Serial.println(F("Starting Exhaustive 32-bit sqrt tests..."));
 
@@ -105,7 +105,7 @@ namespace IntegerSignal
 			}
 
 			template<uint32_t MaxIterations>
-			static bool TestSqrt32Sample()
+			static inline bool TestSqrt32Sample()
 			{
 				Serial.println(F("Starting sampled 32-bit sqrt tests..."));
 
@@ -149,7 +149,7 @@ namespace IntegerSignal
 
 			// Sampled test for 64-bit inputs. Tests 50K values distributed over the 64-bit range.
 			template<uint32_t MaxIterations>
-			static bool TestSqrt64Sample()
+			static inline bool TestSqrt64Sample()
 			{
 				Serial.println(F("Starting sampled 64-bit sqrt tests..."));
 
@@ -194,7 +194,7 @@ namespace IntegerSignal
 			}
 
 			template<uint32_t MaxIterations = 50000>
-			static bool RunTests()
+			static inline bool RunTests()
 			{
 				bool pass = true;
 
@@ -210,7 +210,7 @@ namespace IntegerSignal
 				return pass;
 			}
 
-			static bool RunExhaustive()
+			static inline bool RunExhaustive()
 			{
 				bool pass = true;
 

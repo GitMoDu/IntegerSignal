@@ -246,7 +246,7 @@ namespace IntegerSignal
 			namespace Implementation
 			{
 				template<typename limit_t, typename T>
-				inline bool FitsIn(const T value, TypeDispatch::TrueType, TypeDispatch::TrueType)
+				static constexpr bool FitsIn(const T value, TypeDispatch::TrueType, TypeDispatch::TrueType)
 				{
 					using compare_t = typename TypeConditional::larger_type<T, limit_t>::type;
 
@@ -254,7 +254,7 @@ namespace IntegerSignal
 				}
 
 				template<typename limit_t, typename T>
-				inline bool FitsIn(const T value, TypeDispatch::FalseType, TypeDispatch::FalseType)
+				static constexpr bool FitsIn(const T value, TypeDispatch::FalseType, TypeDispatch::FalseType)
 				{
 					using larger_t = typename TypeConditional::larger_type<T, limit_t>::type;
 					using compare_t = typename TypeNext::next_int_type<larger_t>::type;
@@ -265,7 +265,7 @@ namespace IntegerSignal
 				}
 
 				template<typename limit_t, typename T>
-				inline bool FitsIn(const T value, TypeDispatch::TrueType, TypeDispatch::FalseType)
+				static constexpr bool FitsIn(const T value, TypeDispatch::TrueType, TypeDispatch::FalseType)
 				{
 					// destination unsigned, source signed
 					using larger_t = typename TypeConditional::larger_type<T, limit_t>::type;
@@ -277,7 +277,7 @@ namespace IntegerSignal
 				}
 
 				template<typename limit_t, typename T>
-				inline bool FitsIn(const T value, TypeDispatch::FalseType, TypeDispatch::TrueType)
+				static constexpr bool FitsIn(const T value, TypeDispatch::FalseType, TypeDispatch::TrueType)
 				{
 					// destination signed, source unsigned
 					using larger_t = typename TypeConditional::larger_type<T, limit_t>::type;
@@ -288,7 +288,7 @@ namespace IntegerSignal
 			}
 
 			template<typename limit_t, typename T>
-			inline bool FitsIn(const T value)
+			static constexpr bool FitsIn(const T value)
 			{
 				using limit_sign_t = typename TypeSign::IsUnsignedType<limit_t>::type;
 				using value_sign_t = typename TypeSign::IsUnsignedType<T>::type;

@@ -14,7 +14,7 @@ namespace IntegerSignal
 		namespace Test
 		{
 			// Helper to print a compact error message
-			static void PrintTypeError(const char* test, uint64_t value, const char* expected)
+			static inline void PrintTypeError(const char* test, uint64_t value, const char* expected)
 			{
 				Serial.print(F("TypeErr:"));
 				Serial.print(test);
@@ -24,7 +24,7 @@ namespace IntegerSignal
 				Serial.println(expected);
 			}
 
-			static bool Test_uint_type_points()
+			static inline bool Test_uint_type_points()
 			{
 				const char* test = "uint_type";
 				uint32_t errorCount = 0;
@@ -73,7 +73,7 @@ namespace IntegerSignal
 				return errorCount == 0;
 			}
 
-			static bool Test_uint_least_type_points()
+			static inline bool Test_uint_least_type_points()
 			{
 				const char* test = "uint_least_type";
 				uint32_t errorCount = 0;
@@ -122,7 +122,7 @@ namespace IntegerSignal
 				return errorCount == 0;
 			}
 
-			static bool Test_uint_fast_type_points()
+			static inline bool Test_uint_fast_type_points()
 			{
 				const char* test = "uint_fast_type";
 				uint32_t errorCount = 0;
@@ -171,7 +171,7 @@ namespace IntegerSignal
 				return errorCount == 0;
 			}
 
-			static bool RunTests()
+			static inline bool RunTests()
 			{
 				bool pass = true;
 				pass &= Test_uint_type_points();

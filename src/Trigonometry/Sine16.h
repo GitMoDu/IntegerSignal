@@ -18,7 +18,7 @@ namespace IntegerSignal
 		/// </summary>
 		/// <param name="angle">Modular angle_t in [0; ANGLE_RANGE] (wrap-around at ANGLE_RANGE+1).</param>
 		/// <returns>Signed Q-format fraction in [-Fraction16::FRACTION_1X; +Fraction16::FRACTION_1X].</returns>
-		static fraction16_t Sine16(const angle_t angle)
+		inline fraction16_t Sine16(const angle_t angle)
 		{
 			if (angle == 0)
 			{
@@ -49,7 +49,7 @@ namespace IntegerSignal
 		/// </summary>
 		/// <param name="angle">Modular angle_t in [0; ANGLE_RANGE].</param>
 		/// <returns>Signed Q-format fraction in [-Fraction16::FRACTION_1X; +Fraction16::FRACTION_1X].</returns>
-		static fraction16_t Cosine16(const angle_t angle)
+		inline fraction16_t Cosine16(const angle_t angle)
 		{
 			return Sine16(angle + ANGLE_90);
 		}

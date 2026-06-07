@@ -13,79 +13,79 @@ namespace IntegerSignal
 			// Super Accurate Reference Calculators
 			/////////////////////////////////////////////////////////////////////////////
 			// Downscaling functions:
-			static uint32_t Ref_U64ToU32(uint64_t value)
+			static inline uint32_t Ref_U64ToU32(uint64_t value)
 			{
 				// Exactly divide by 2^32
 				return (uint32_t)(value / 4294967296ULL);
 			}
 
-			static uint16_t Ref_U32ToU16(uint32_t value)
+			static inline uint16_t Ref_U32ToU16(uint32_t value)
 			{
 				// Divide by 2^16.
 				return (uint16_t)(value / 65536UL);
 			}
 
-			static uint8_t Ref_U16ToU8(uint16_t value)
+			static inline uint8_t Ref_U16ToU8(uint16_t value)
 			{
 				// Divide by 2^8.
 				return (uint8_t)(value / 256U);
 			}
 
-			static uint16_t Ref_U64ToU16(uint64_t value)
+			static inline uint16_t Ref_U64ToU16(uint64_t value)
 			{
 				// U64ToU16 is equivalent to shifting right by 48 bits.
 				return (uint16_t)(value / 281474976710656ULL);  // 2^48
 			}
 
-			static uint8_t Ref_U64ToU8(uint64_t value)
+			static inline uint8_t Ref_U64ToU8(uint64_t value)
 			{
 				// U64ToU8 is equivalent to shifting right by 56 bits.
 				return (uint8_t)(value / 72057594037927936ULL); // 2^56
 			}
 
-			static uint8_t Ref_U32ToU8(uint32_t value)
+			static inline uint8_t Ref_U32ToU8(uint32_t value)
 			{
 				// U32ToU8 is equivalent to shifting right by 24 bits.
 				return (uint8_t)(value / 16777216UL); // 2^24
 			}
 
 			// Upscaling (expansion) functions:
-			static uint16_t Ref_U8ToU16(uint8_t value)
+			static inline uint16_t Ref_U8ToU16(uint8_t value)
 			{
 				// Duplicates the 8-bit value into the high and low bytes.
 				// (v << 8) | v = v * 257.
 				return (uint16_t)value * 257;
 			}
 
-			static uint32_t Ref_U16ToU32(uint16_t value)
+			static inline uint32_t Ref_U16ToU32(uint16_t value)
 			{
 				// (v << 16) | v = v * 65537.
 				return (uint32_t)value * 65537;
 			}
 
-			static uint64_t Ref_U32ToU64(uint32_t value)
+			static inline uint64_t Ref_U32ToU64(uint32_t value)
 			{
 				// (v << 32) | v = v * 4294967297ULL.
 				return (uint64_t)value * 4294967297ULL;
 			}
 
-			static uint32_t Ref_U8ToU32(uint8_t value)
+			static inline uint32_t Ref_U8ToU32(uint8_t value)
 			{
 				return Ref_U16ToU32(Ref_U8ToU16(value));
 			}
 
-			static uint64_t Ref_U8ToU64(uint8_t value)
+			static inline uint64_t Ref_U8ToU64(uint8_t value)
 			{
 				return Ref_U32ToU64(Ref_U8ToU32(value));
 			}
 
-			static uint64_t Ref_U16ToU64(uint16_t value)
+			static inline uint64_t Ref_U16ToU64(uint16_t value)
 			{
 				return Ref_U32ToU64(Ref_U16ToU32(value));
 			}
 
 			// Exhaustively test all 8-bit input values for functions that take uint8_t as input.
-			static bool Test_Exhaustive_U8()
+			static inline bool Test_Exhaustive_U8()
 			{
 				Serial.println(F("Starting exhaustive tests for 8-bit input conversions..."));
 				uint32_t errorCount = 0;
@@ -145,7 +145,7 @@ namespace IntegerSignal
 			}
 
 			// Exhaustively test all 16-bit input values for functions that take uint16_t.
-			static bool Test_Exhaustive_U16()
+			static inline bool Test_Exhaustive_U16()
 			{
 				Serial.println(F("Starting exhaustive tests for 16-bit input conversions..."));
 				uint32_t errorCount = 0;
@@ -209,7 +209,7 @@ namespace IntegerSignal
 			// Basic Fixed-Value Tests (Using the Super Accurate References)
 			/////////////////////////////////////////////////////////////////////////////
 
-			static bool Test_U64ToU32()
+			static inline bool Test_U64ToU32()
 			{
 				Serial.println(F("Testing U64ToU32..."));
 				uint32_t errorCount = 0;
@@ -241,7 +241,7 @@ namespace IntegerSignal
 				return errorCount == 0;
 			}
 
-			static bool Test_U32ToU16()
+			static inline bool Test_U32ToU16()
 			{
 				Serial.println(F("Testing U32ToU16..."));
 				uint32_t errorCount = 0;
@@ -266,7 +266,7 @@ namespace IntegerSignal
 				return errorCount == 0;
 			}
 
-			static bool Test_U16ToU8()
+			static inline bool Test_U16ToU8()
 			{
 				Serial.println(F("Testing U16ToU8..."));
 				uint32_t errorCount = 0;
@@ -291,7 +291,7 @@ namespace IntegerSignal
 				return errorCount == 0;
 			}
 
-			static bool Test_U64ToU16()
+			static inline bool Test_U64ToU16()
 			{
 				Serial.println(F("Testing U64ToU16..."));
 				uint32_t errorCount = 0;
@@ -323,7 +323,7 @@ namespace IntegerSignal
 				return errorCount == 0;
 			}
 
-			static bool Test_U64ToU8()
+			static inline bool Test_U64ToU8()
 			{
 				Serial.println(F("Testing U64ToU8..."));
 				uint32_t errorCount = 0;
@@ -355,7 +355,7 @@ namespace IntegerSignal
 				return errorCount == 0;
 			}
 
-			static bool Test_U32ToU8()
+			static inline bool Test_U32ToU8()
 			{
 				Serial.println(F("Testing U32ToU8..."));
 				uint32_t errorCount = 0;
@@ -380,7 +380,7 @@ namespace IntegerSignal
 				return errorCount == 0;
 			}
 
-			static bool Test_U8ToU16()
+			static inline bool Test_U8ToU16()
 			{
 				Serial.println(F("Testing U8ToU16..."));
 				uint32_t errorCount = 0;
@@ -404,7 +404,7 @@ namespace IntegerSignal
 				return errorCount == 0;
 			}
 
-			static bool Test_U16ToU32()
+			static inline bool Test_U16ToU32()
 			{
 				Serial.println(F("Testing U16ToU32..."));
 				uint32_t errorCount = 0;
@@ -435,7 +435,7 @@ namespace IntegerSignal
 			// Sample test for U32ToU64 conversion.
 			// Domain: 32-bit input values from 0 to 0xFFFFFFFF.
 			template<uint32_t MaxIterations>
-			static bool Test_U32ToU64_Sample()
+			static inline bool Test_U32ToU64_Sample()
 			{
 				Serial.println(F("Starting sampled U32ToU64 tests..."));
 
@@ -480,7 +480,7 @@ namespace IntegerSignal
 			// Sample test for U16ToU64 conversion.
 			// Domain: 16-bit input values from 0 to 0xFFFF.
 			template<uint32_t MaxIterations>
-			static bool Test_U16ToU64_Sample()
+			static inline bool Test_U16ToU64_Sample()
 			{
 				Serial.println(F("Starting sampled U16ToU64 tests..."));
 
@@ -525,7 +525,7 @@ namespace IntegerSignal
 			// Convenience Run Functions
 			/////////////////////////////////////////////////////////////////////////////
 			template<uint32_t MaxIterations_U32ToU64 = 1000000, uint32_t MaxIterations_U16ToU64 = 10000>
-			static bool RunTests()
+			static inline bool RunTests()
 			{
 				bool pass = true;
 
@@ -551,7 +551,7 @@ namespace IntegerSignal
 			}
 
 			// Run only exhaustive tests.
-			static bool RunExhaustive()
+			static inline bool RunExhaustive()
 			{
 				bool pass = true;
 				pass &= Test_Exhaustive_U8();

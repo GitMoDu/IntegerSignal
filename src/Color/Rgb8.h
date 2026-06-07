@@ -68,7 +68,7 @@ namespace IntegerSignal
 		/// </summary>
 		/// <param name="color">Packed color to modify.</param>
 		/// <param name="alpha">Alpha value [0..255].</param>
-		static void SetAlpha(color_t& color, const component_t alpha)
+		inline void SetAlpha(color_t& color, const component_t alpha)
 		{
 			color = (color & ~(uint32_t(COMPONENT_MAX) << 24)) | (uint32_t(alpha) << 24);
 		}
@@ -78,7 +78,7 @@ namespace IntegerSignal
 		/// </summary>
 		/// <param name="color">Packed color to modify.</param>
 		/// <param name="red">Red value [0..255].</param>
-		static void SetRed(color_t& color, const component_t red)
+		inline void SetRed(color_t& color, const component_t red)
 		{
 			color = (color & ~(uint32_t(COMPONENT_MAX) << 16)) | (uint32_t(red) << 16);
 		}
@@ -88,7 +88,7 @@ namespace IntegerSignal
 		/// </summary>
 		/// <param name="color">Packed color to modify.</param>
 		/// <param name="green">Green value [0..255].</param>
-		static void SetGreen(color_t& color, const component_t green)
+		inline void SetGreen(color_t& color, const component_t green)
 		{
 			color = (color & ~(uint32_t(COMPONENT_MAX) << 8)) | (uint32_t(green) << 8);
 		}
@@ -98,7 +98,7 @@ namespace IntegerSignal
 		/// </summary>
 		/// <param name="color">Packed color to modify.</param>
 		/// <param name="blue">Blue value [0..255].</param>
-		static void SetBlue(color_t& color, const component_t blue)
+		inline void SetBlue(color_t& color, const component_t blue)
 		{
 			color = (color & ~COMPONENT_MAX) | blue;
 		}
@@ -152,7 +152,7 @@ namespace IntegerSignal
 		/// ufraction16_t in [0, UFraction16::FRACTION_1X]. 0 returns 'from', unit returns 'to'.
 		/// </param>
 		/// <returns>Interpolated color.</returns>
-		static color_t ColorInterpolateLinear(const color_t& from, const color_t& to, const ufraction16_t fraction)
+		inline color_t ColorInterpolateLinear(const color_t& from, const color_t& to, const ufraction16_t fraction)
 		{
 			const ufraction16_t inverse = UFraction16::FRACTION_1X - fraction;
 
@@ -173,7 +173,7 @@ namespace IntegerSignal
 		/// ufraction16_t in [0, UFraction16::FRACTION_1X]. 0 returns 'from', unit returns 'to'.
 		/// </param>
 		/// <returns>Interpolated color.</returns>
-		static color_t ColorInterpolate(const color_t& from, const color_t& to, const ufraction16_t fraction)
+		static inline color_t ColorInterpolate(const color_t& from, const color_t& to, const ufraction16_t fraction)
 		{
 			const ufraction16_t inverse = UFraction16::FRACTION_1X - fraction;
 
@@ -209,7 +209,7 @@ namespace IntegerSignal
 		/// <param name="saturation">Saturation in [0, UFraction16::FRACTION_1X].</param>
 		/// <param name="value">Value (brightness) in [0, UFraction16::FRACTION_1X].</param>
 		/// <returns>Packed RGB8 color (alpha = 255).</returns>
-		static color_t ColorHsvFraction(const ufraction16_t hue, const ufraction16_t saturation, const ufraction16_t value)
+		inline color_t ColorHsvFraction(const ufraction16_t hue, const ufraction16_t saturation, const ufraction16_t value)
 		{
 			return Hsv::TemplateHsvFraction<color_t, component_t, COMPONENT_MAX>(hue, saturation, value,
 				[](const component_t red, const component_t green, const component_t blue)
@@ -227,7 +227,7 @@ namespace IntegerSignal
 		/// <param name="saturation">Saturation [0..255].</param>
 		/// <param name="value">Value (brightness) [0..255].</param>
 		/// <returns>Packed RGB8 color (alpha = 255).</returns>
-		static color_t ColorHsv(const Trigonometry::angle_t hue, const uint8_t saturation, const uint8_t value)
+		inline color_t ColorHsv(const Trigonometry::angle_t hue, const uint8_t saturation, const uint8_t value)
 		{
 			// Map inputs to ufraction16_t scalars.
 			const ufraction16_t hue16 = UFraction16::GetScalar<uint16_t>(hue, Trigonometry::ANGLE_RANGE);
