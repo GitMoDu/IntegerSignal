@@ -236,55 +236,6 @@ namespace IntegerSignal
 					}
 
 					template<typename T>
-					inline uint16_t GetFactor16(const T numerator, const T denominator)
-					{
-#if defined(INTEGER_SIGNAL_DISABLE_ACCELERATION)
-						return Constexpr::GetFactor<uint16_t>(numerator, denominator);
-#else
-						if (numerator < 0)
-							return TemplateFormat<uint16_t>::SCALE_MIN;
-
-						if (denominator <= 0)
-							return TemplateFormat<uint16_t>::SCALE_UNIT;
-
-						if (numerator > denominator)
-							return TemplateFormat<uint16_t>::SCALE_UNIT;
-
-						if (!FitsIn<uint16_t>(numerator) || !FitsIn<uint16_t>(denominator))
-							return Constexpr::GetFactor<uint16_t>(numerator, denominator);
-
-						const uint16_t numerator16 = static_cast<uint16_t>(numerator);
-						const uint16_t denominator16 = static_cast<uint16_t>(denominator);
-
-						if (denominator16 == 0u || numerator16 > denominator16)
-							return TemplateFormat<uint16_t>::SCALE_UNIT;
-
-						if (numerator16 == denominator16)
-							return TemplateFormat<uint16_t>::SCALE_UNIT;
-
-#if (INTPTR_MAX == INT32_MAX)
-						return static_cast<uint16_t>(Runtime::GetFactor32<uint32_t>(static_cast<uint32_t>(numerator16), static_cast<uint32_t>(denominator16)) >> 8);
-#else
-
-						uint16_t factor = 0;
-						uint32_t remainder = numerator16;
-
-						for (uint16_t bit = TemplateFormat<uint16_t>::SCALE_UNIT >> 1; bit != 0; bit >>= 1)
-						{
-							remainder <<= 1;
-							if (remainder >= denominator16)
-							{
-								remainder -= denominator16;
-								factor |= bit;
-							}
-						}
-
-						return factor;
-#endif
-#endif
-					}
-
-					template<typename T>
 					inline uint32_t GetFactor32(const T numerator, const T denominator)
 					{
 #if defined(INTEGER_SIGNAL_DISABLE_ACCELERATION)
@@ -328,6 +279,57 @@ namespace IntegerSignal
 					{
 						return Constexpr::Scale<factor_t>(factorValue, value);
 					}
+
+					template<typename T>
+					inline uint16_t GetFactor16(const T numerator, const T denominator)
+					{
+#if defined(INTEGER_SIGNAL_DISABLE_ACCELERATION)
+						return Constexpr::GetFactor<uint16_t>(numerator, denominator);
+#else
+						if (numerator < 0)
+							return TemplateFormat<uint16_t>::SCALE_MIN;
+
+						if (denominator <= 0)
+							return TemplateFormat<uint16_t>::SCALE_UNIT;
+
+						if (numerator > denominator)
+							return TemplateFormat<uint16_t>::SCALE_UNIT;
+
+						if (!FitsIn<uint16_t>(numerator) || !FitsIn<uint16_t>(denominator))
+							return Constexpr::GetFactor<uint16_t>(numerator, denominator);
+
+						const uint16_t numerator16 = static_cast<uint16_t>(numerator);
+						const uint16_t denominator16 = static_cast<uint16_t>(denominator);
+
+						if (denominator16 == 0u || numerator16 > denominator16)
+							return TemplateFormat<uint16_t>::SCALE_UNIT;
+
+						if (numerator16 == denominator16)
+							return TemplateFormat<uint16_t>::SCALE_UNIT;
+
+#if (INTPTR_MAX == INT32_MAX)
+						return static_cast<uint16_t>(GetFactor32<uint32_t>(static_cast<uint32_t>(numerator16), static_cast<uint32_t>(denominator16)) >> 8);
+#else
+
+						uint16_t factor = 0;
+						uint32_t remainder = numerator16;
+
+						for (uint16_t bit = TemplateFormat<uint16_t>::SCALE_UNIT >> 1; bit != 0; bit >>= 1)
+						{
+							remainder <<= 1;
+							if (remainder >= denominator16)
+							{
+								remainder -= denominator16;
+								factor |= bit;
+							}
+						}
+
+						return factor;
+#endif
+#endif
+					}
+
+					
 				}
 
 				/// <summary>
