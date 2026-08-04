@@ -139,7 +139,7 @@ namespace IntegerSignal
 		/// <param name="to">End color.</param>
 		/// <param name="fraction">ufraction16_t in [0, UFraction16::FRACTION_1X].</param>
 		/// <returns>Interpolated fractional color.</returns>
-		static inline color_t ColorInterpolate(const color_t& from, const color_t& to, const ufraction16_t fraction)
+		inline color_t ColorInterpolate(const color_t& from, const color_t& to, const ufraction16_t fraction)
 		{
 			const ufraction16_t inverse = UFraction16::FRACTION_1X - fraction;
 
