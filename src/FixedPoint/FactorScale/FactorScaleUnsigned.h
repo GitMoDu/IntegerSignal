@@ -78,11 +78,10 @@ namespace IntegerSignal
 				/// <typeparam name="T">The type of the numerator and denominator values.</typeparam>
 				/// <param name="numerator">The numerator value used in the scaling calculation.</param>
 				/// <param name="denominator">The denominator value used in the scaling calculation.</param>
-				/// <returns>Returns a factor_t value representing the computed scaling factor. 
-				/// If the numerator is negative, returns SCALE_MIN. 
+				/// <returns>Returns a factor_t value representing the computed scaling factor.
+				/// If the numerator is negative, returns SCALE_MIN.
 				/// If the denominator is zero or negative, returns SCALE_UNIT.
-				/// If the numerator is greater than the denominator, returns SCALE_UNIT. 
-				/// Otherwise, returns factor.</returns>
+				/// The result is saturated at SCALE_MAX.</returns>
 				template<typename T>
 				static constexpr factor_t GetFactor(const T numerator, const T denominator)
 				{
@@ -107,17 +106,18 @@ namespace IntegerSignal
 				/// <param name="numerator">The numerator value for the scaling calculation.</param>
 				/// <param name="denominator">The denominator value for the scaling calculation.</param>
 				/// <param name="">Unused parameter of type TypeTraits::TypeDispatch::TrueType, used for tag dispatching.</param>
-				/// <returns>The computed scaling factor as a value of type factor_t. 
-				/// Returns SCALE_UNIT if the denominator is zero or the numerator is greater than the denominator; 
-				/// otherwise, returns scale factor.</returns>
+				/// <returns>The computed scaling factor as a value of type factor_t.
+				/// Returns SCALE_UNIT if the denominator is zero and saturates at SCALE_MAX.</returns>
 				template<typename T>
 				static constexpr factor_t TemplateGetFactor(const T numerator, const T denominator, TypeTraits::TypeDispatch::TrueType)
 				{
 					using larger_t = typename larger_type<T, factor_t>::type;
 					using intermediate_t = typename next_uint_type<larger_t>::type;
 
-					return denominator == 0 ? SCALE_UNIT : numerator > denominator ? SCALE_UNIT :
-						static_cast<factor_t>((static_cast<intermediate_t>(numerator) << GetBitShifts(SCALE_UNIT)) / denominator);
+					return denominator == 0 ? SCALE_UNIT :
+						static_cast<factor_t>(LimitValue<intermediate_t>(
+							(static_cast<intermediate_t>(numerator) << GetBitShifts(SCALE_UNIT)) / denominator,
+							0, static_cast<intermediate_t>(SCALE_MAX)));
 				}
 
 				/// <summary>
@@ -127,19 +127,20 @@ namespace IntegerSignal
 				/// <param name="numerator">The value to be scaled.</param>
 				/// <param name="denominator">The value by which to scale the numerator.</param>
 				/// <param name="">Unused parameter of type TypeTraits::TypeDispatch::FalseType, used for overload resolution.</param>
-				/// <returns>A factor_t value representing the computed scaling factor. 
-				/// Returns SCALE_MIN if the numerator is negative, 
-				/// SCALE_UNIT if the denominator is zero or negative, 
-				/// SCALE_UNIT if the numerator is greater than the denominator; 
-				/// otherwise returns scale factor</returns>
+					/// <returns>A factor_t value representing the computed scaling factor.
+					/// Returns SCALE_MIN if the numerator is negative,
+					/// SCALE_UNIT if the denominator is zero or negative,
+					/// and saturates at SCALE_MAX.</returns>
 				template<typename T>
 				static constexpr factor_t TemplateGetFactor(const T numerator, const T denominator, TypeTraits::TypeDispatch::FalseType)
 				{
 					using larger_t = typename larger_type<T, factor_t>::type;
 					using intermediate_t = typename next_int_type<larger_t>::type;
 
-					return numerator < 0 ? SCALE_MIN : denominator <= 0 ? SCALE_UNIT : numerator > denominator ? SCALE_UNIT :
-						static_cast<factor_t>((static_cast<intermediate_t>(numerator) << GetBitShifts(SCALE_UNIT)) / denominator);
+					return numerator < 0 ? SCALE_MIN : denominator <= 0 ? SCALE_UNIT :
+						static_cast<factor_t>(LimitValue<intermediate_t>(
+							(static_cast<intermediate_t>(numerator) << GetBitShifts(SCALE_UNIT)) / denominator,
+							0, static_cast<intermediate_t>(SCALE_MAX)));
 				}
 
 				template<typename T>
@@ -194,24 +195,20 @@ namespace IntegerSignal
 				{
 					inline uint8_t GetFactor8(const uint8_t numerator, const uint8_t denominator)
 					{
-						if (denominator == 0 || numerator > denominator)
+						if (denominator == 0)
 						{
 							return TemplateFormat<uint8_t>::SCALE_UNIT;
 						}
 
 						const uint16_t scaledNumerator = static_cast<uint16_t>(numerator) * TemplateFormat<uint8_t>::SCALE_UNIT;
-						const uint16_t reciprocal = denominator == 0 ? 0 : static_cast<uint16_t>(TemplateFormat<uint16_t>::SCALE_MAX / denominator);
-						uint8_t estimatedFactor = static_cast<uint8_t>((static_cast<uint32_t>(scaledNumerator) * static_cast<uint32_t>(reciprocal)) >> 16);
+						uint32_t estimatedFactor = (static_cast<uint32_t>(scaledNumerator) *
+							static_cast<uint32_t>(TemplateFormat<uint16_t>::SCALE_MAX / denominator)) >> 16;
 
-						// Reciprocal calculator returns floor((2^16 - 1) / d), so the initial quotient estimate can only be exact or low.
-						// With scaledNumerator <= 255 * 16 = 4080, the underestimate is bounded to at most one quotient step.
-						// A single fixed correction compares the estimated applied factor against the original scaled numerator.
-						if (static_cast<uint16_t>(estimatedFactor + 1) * denominator <= scaledNumerator)
-						{
+						if ((estimatedFactor + 1) * denominator <= scaledNumerator)
 							estimatedFactor++;
-						}
 
-						return estimatedFactor;
+						return static_cast<uint8_t>(LimitValue<uint16_t>(
+							static_cast<uint16_t>(estimatedFactor), 0, TemplateFormat<uint8_t>::SCALE_MAX));
 					}
 
 					template<typename T>
@@ -222,7 +219,6 @@ namespace IntegerSignal
 #else
 						return numerator < 0 ? TemplateFormat<uint8_t>::SCALE_MIN
 							: denominator <= 0 ? TemplateFormat<uint8_t>::SCALE_UNIT
-							: numerator > denominator ? TemplateFormat<uint8_t>::SCALE_UNIT
 							: !FitsIn<uint8_t>(numerator) ? Constexpr::GetFactor<uint8_t>(numerator, denominator)
 							: !FitsIn<uint8_t>(denominator) ? Constexpr::GetFactor<uint8_t>(numerator, denominator)
 							: GetFactor8(static_cast<uint8_t>(numerator), static_cast<uint8_t>(denominator));
@@ -241,17 +237,10 @@ namespace IntegerSignal
 #if defined(INTEGER_SIGNAL_DISABLE_ACCELERATION)
 						return Constexpr::GetFactor<uint32_t>(numerator, denominator);
 #else
-						static constexpr uint8_t FactorBits = IntegerSignal::GetBitShifts(TemplateFormat<uint32_t>::SCALE_UNIT);
-						static constexpr uint8_t FactorLoBits = sizeof(uint16_t) * 8;
-						static constexpr uint8_t FactorHiBits = FactorBits - FactorLoBits;
-
 						if (numerator < 0)
 							return TemplateFormat<uint32_t>::SCALE_MIN;
 
 						if (denominator <= 0)
-							return TemplateFormat<uint32_t>::SCALE_UNIT;
-
-						if (numerator > denominator)
 							return TemplateFormat<uint32_t>::SCALE_UNIT;
 
 						if (!FitsIn<uint32_t>(numerator) || !FitsIn<uint32_t>(denominator))
@@ -260,17 +249,17 @@ namespace IntegerSignal
 						const uint32_t numerator32 = static_cast<uint32_t>(numerator);
 						const uint32_t denominator32 = static_cast<uint32_t>(denominator);
 
-						if (denominator32 == 0u || numerator32 > denominator32)
+						if (denominator32 == 0u)
 							return TemplateFormat<uint32_t>::SCALE_UNIT;
 
-						if (denominator32 > UINT16_MAX)
-							return Constexpr::GetFactor<uint32_t>(numerator32, denominator32);
+						const uint64_t factorHi = static_cast<uint64_t>(numerator32) / denominator32;
+						if (factorHi > UINT16_MAX)
+							return TemplateFormat<uint32_t>::SCALE_MAX;
 
-						const uint32_t factorHi = (numerator32 << FactorHiBits) / denominator32;
-						const uint32_t remainder = (numerator32 << FactorHiBits) - (factorHi * denominator32);
-						const uint32_t factorLo = (remainder << FactorLoBits) / denominator32;
+						const uint32_t remainder = numerator32 - static_cast<uint32_t>(static_cast<uint64_t>(factorHi) * denominator32);
+						const uint64_t factorLo = (static_cast<uint64_t>(remainder) << 16) / denominator32;
 
-						return (factorHi << FactorLoBits) | factorLo;
+						return static_cast<uint32_t>((factorHi << 16) | factorLo);
 #endif
 					}
 
@@ -292,27 +281,32 @@ namespace IntegerSignal
 						if (denominator <= 0)
 							return TemplateFormat<uint16_t>::SCALE_UNIT;
 
-						if (numerator > denominator)
-							return TemplateFormat<uint16_t>::SCALE_UNIT;
-
 						if (!FitsIn<uint16_t>(numerator) || !FitsIn<uint16_t>(denominator))
 							return Constexpr::GetFactor<uint16_t>(numerator, denominator);
 
 						const uint16_t numerator16 = static_cast<uint16_t>(numerator);
 						const uint16_t denominator16 = static_cast<uint16_t>(denominator);
 
-						if (denominator16 == 0u || numerator16 > denominator16)
+						if (denominator16 == 0u)
 							return TemplateFormat<uint16_t>::SCALE_UNIT;
 
-						if (numerator16 == denominator16)
-							return TemplateFormat<uint16_t>::SCALE_UNIT;
+						uint16_t integerFactor = 0;
+						uint32_t remainder = 0;
 
-#if (INTPTR_MAX == INT32_MAX)
-						return static_cast<uint16_t>(GetFactor32<uint32_t>(static_cast<uint32_t>(numerator16), static_cast<uint32_t>(denominator16)) >> 8);
-#else
+						for (uint16_t bit = 1u << 15; bit != 0; bit >>= 1)
+						{
+							remainder = (remainder << 1) | ((numerator16 & bit) != 0 ? 1u : 0u);
+							if (remainder >= denominator16)
+							{
+								remainder -= denominator16;
+								integerFactor = static_cast<uint16_t>(integerFactor | bit);
+							}
+						}
 
-						uint16_t factor = 0;
-						uint32_t remainder = numerator16;
+						if (integerFactor > (TemplateFormat<uint16_t>::SCALE_MAX / TemplateFormat<uint16_t>::SCALE_UNIT))
+							return TemplateFormat<uint16_t>::SCALE_MAX;
+
+						uint16_t factor = static_cast<uint16_t>(integerFactor * TemplateFormat<uint16_t>::SCALE_UNIT);
 
 						for (uint16_t bit = TemplateFormat<uint16_t>::SCALE_UNIT >> 1; bit != 0; bit >>= 1)
 						{
@@ -320,12 +314,11 @@ namespace IntegerSignal
 							if (remainder >= denominator16)
 							{
 								remainder -= denominator16;
-								factor |= bit;
+								factor = static_cast<uint16_t>(factor | bit);
 							}
 						}
 
 						return factor;
-#endif
 #endif
 					}
 

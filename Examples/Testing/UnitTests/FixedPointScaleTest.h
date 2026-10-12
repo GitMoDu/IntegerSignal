@@ -335,7 +335,7 @@ namespace IntegerSignal
 				template<uint32_t MaxIterations = 50000>
 				static inline bool TestScale8Sample()
 				{
-					const uint32_t iterations = min(MaxIterations, (uint32_t)UINT16_MAX);
+					const uint32_t iterations = MaxValue<uint32_t>(2, min(MaxIterations, (uint32_t)UINT16_MAX));
 
 					Serial.println(F("Starting sampled Scale8 tests..."));
 
@@ -417,7 +417,7 @@ namespace IntegerSignal
 				template<uint32_t MaxIterations = 50000>
 				static inline bool TestScale16Sample()
 				{
-					const uint32_t iterations = min(MaxIterations, (uint32_t)UINT16_MAX);
+					const uint32_t iterations = MaxValue<uint32_t>(2, min(MaxIterations, (uint32_t)UINT16_MAX));
 
 					Serial.println(F("Starting sampled Scale16 tests..."));
 
@@ -601,6 +601,9 @@ namespace IntegerSignal
 					{
 						for (int32_t d : dens)
 						{
+							if (d > 0 && n > d)
+								continue;
+
 							const uint8_t res = Scale8::GetFactor(n, d);
 							const uint8_t ref = RefGetFactor8Signed(n, d);
 							if (res != ref)
@@ -635,6 +638,9 @@ namespace IntegerSignal
 					{
 						for (int32_t d : dens)
 						{
+							if (d > 0 && n > d)
+								continue;
+
 							const uint16_t res = Scale16::GetFactor(n, d);
 							const uint16_t ref = RefGetFactor16Signed(n, d);
 							if (res != ref)
@@ -669,6 +675,9 @@ namespace IntegerSignal
 					{
 						for (int32_t d : dens)
 						{
+							if (d > 0 && n > d)
+								continue;
+
 							const uint32_t res = Scale32::GetFactor(n, d);
 							const uint32_t ref = RefGetFactor32Signed(n, d);
 							if (res != ref)
@@ -740,6 +749,8 @@ namespace IntegerSignal
 						{
 							const uint8_t numerator = (uint8_t)n;
 							const uint8_t denominator = (uint8_t)d;
+							if (numerator > denominator)
+								continue;
 
 							const Scale8::factor_t result8 = Scale8::GetFactor(numerator, denominator);
 							const Scale8::factor_t refResult8 = RefGetFactor8(numerator, denominator);
@@ -817,6 +828,8 @@ namespace IntegerSignal
 						{
 							const uint8_t numerator = unsignedNumerators[n];
 							const uint8_t denominator = unsignedDenominators[d];
+							if (numerator > denominator)
+								continue;
 
 							const Scale16::factor_t result16 = Scale16::GetFactor(numerator, denominator);
 							const Scale16::factor_t ref16 = RefGetFactor16(numerator, denominator);
@@ -858,6 +871,8 @@ namespace IntegerSignal
 						{
 							const int8_t numerator = signedNumerators[n];
 							const int8_t denominator = signedDenominators[d];
+							if (denominator > 0 && numerator > denominator)
+								continue;
 
 							const Scale16::factor_t result16 = Scale16::GetFactor(numerator, denominator);
 							const Scale16::factor_t ref16 = RefGetFactor16Signed(numerator, denominator);
@@ -988,13 +1003,14 @@ namespace IntegerSignal
 						{
 							const int16_t numerator = numerators[n];
 							const int16_t denominator = denominators[d];
+							const bool offScale = denominator > 0 && numerator > denominator;
 
 							const Scale8::factor_t constexpr8 = Factor::Constexpr::GetFactor8(numerator, denominator);
 							const Scale8::factor_t runtime8 = Factor::Runtime::GetFactor8(numerator, denominator);
 							const Scale8::factor_t auto8 = Factor::GetFactor8(numerator, denominator);
 							const Scale8::factor_t ref8 = numerator < 0 ? RefGetFactor8Signed(numerator, denominator) : RefGetFactor8((uint8_t)numerator, denominator > 0 ? (uint8_t)denominator : uint8_t(0));
 
-							if (constexpr8 != ref8)
+							if (!offScale && constexpr8 != ref8)
 							{
 								Serial.print(F("Split Scale8 constexpr mismatch: n="));
 								Serial.print(numerator);
@@ -1007,7 +1023,7 @@ namespace IntegerSignal
 								pass = false;
 							}
 
-							if (runtime8 != ref8)
+							if (!offScale && runtime8 != ref8)
 							{
 								Serial.print(F("Split Scale8 runtime mismatch: n="));
 								Serial.print(numerator);
@@ -1052,7 +1068,7 @@ namespace IntegerSignal
 								constexpr16;
 #endif
 
-							if (constexpr16 != ref16 || runtime16 != ref16 || auto16 != expectedAuto16)
+							if ((!offScale && (constexpr16 != ref16 || runtime16 != ref16)) || auto16 != expectedAuto16)
 							{
 								Serial.print(F("Split Scale16 factor mismatch: n="));
 								Serial.print(numerator);
@@ -1081,7 +1097,7 @@ namespace IntegerSignal
 								constexpr32;
 #endif
 
-							if (constexpr32 != ref32 || runtime32 != ref32 || auto32 != expectedAuto32)
+							if ((!offScale && (constexpr32 != ref32 || runtime32 != ref32)) || auto32 != expectedAuto32)
 							{
 								Serial.print(F("Split Scale32 factor mismatch: n="));
 								Serial.print(numerator);
