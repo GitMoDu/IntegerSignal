@@ -14,7 +14,10 @@ namespace IntegerSignal
 		template<typename value_t>
 		struct ICurve
 		{
-			virtual value_t Get(const value_t input) const { return input; }
+			ICurve() {}
+			virtual ~ICurve() = default;
+
+			virtual value_t Get(const value_t input) const = 0;
 		};
 
 		namespace Template
