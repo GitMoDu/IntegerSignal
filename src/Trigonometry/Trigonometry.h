@@ -46,6 +46,12 @@ namespace IntegerSignal
 		static constexpr angle_t ANGLE_45 = GetAngle(45);
 		static constexpr angle_t ANGLE_180 = GetAngle(180);
 		static constexpr angle_t ANGLE_270 = GetAngle(270);
+
+		static constexpr angle_t ANGLE_HALF_CIRCLE = ANGLE_180;
+
+		static constexpr angle_t ANGLE_QUARTER_CIRCLE = ANGLE_90;
+
+		static constexpr angle_t ANGLE_EIGHTH_CIRCLE = ANGLE_45;
 	}
 }
 
