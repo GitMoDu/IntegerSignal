@@ -60,6 +60,10 @@ void setup()
 
 	Serial.println(F("Tangent"));
 	BenchmarkTangent<>();
+	Serial.println();*/
+
+	Serial.println(F("Color Conversions (HSV/RGB)"));
+	BenchmarkColors();
 	Serial.println();
 
 	Serial.println(F("Filters"));

@@ -2,12 +2,187 @@
 #define _INTEGER_SIGNAL_COLOR_HSV_h
 
 #include "../FixedPoint/ScalarFraction.h"
+#include "../Trigonometry/Trigonometry.h"
 
 namespace IntegerSignal
 {
 	namespace Hsv
 	{
 		using namespace FixedPoint::ScalarFraction;
+
+		/// <summary>
+		/// HSV color with hue in the modular angle domain and saturation/value in component_t scale.
+		/// </summary>
+		template<typename component_t>
+		struct hsv_t
+		{
+			Trigonometry::angle_t hue;
+			component_t saturation;
+			component_t value;
+		};
+
+		using hsv_fraction_t = hsv_t<ufraction16_t>;
+
+		template<typename component_t>
+		struct rgb_statistics_t
+		{
+			component_t maximum;
+			component_t delta;
+		};
+
+		template<typename component_t>
+		inline rgb_statistics_t<component_t> GetRgbStatistics(
+			const component_t red, const component_t green, const component_t blue)
+		{
+			const component_t maximum = red > green ? (red > blue ? red : blue) : (green > blue ? green : blue);
+			const component_t minimum = red < green ? (red < blue ? red : blue) : (green < blue ? green : blue);
+			return { maximum, maximum - minimum };
+		}
+
+		template<typename component_t>
+		inline Trigonometry::angle_t GetHue(const component_t red, const component_t green,
+			const component_t blue, const component_t maximum, const component_t delta)
+		{
+			if (delta == 0)
+			{
+				return 0;
+			}
+
+			uint32_t hueSector;
+			uint16_t sectorRemainder;
+			if (maximum == red)
+			{
+				if (green < blue)
+				{
+					hueSector = 5;
+					sectorRemainder = uint16_t(delta - (blue - green));
+				}
+				else if (green - blue == delta)
+				{
+					hueSector = 1;
+					sectorRemainder = 0;
+				}
+				else
+				{
+					hueSector = 0;
+					sectorRemainder = uint16_t(green - blue);
+				}
+			}
+			else if (maximum == green)
+			{
+				if (blue >= red)
+				{
+					if (blue == maximum)
+					{
+						hueSector = 3;
+						sectorRemainder = 0;
+					}
+					else
+					{
+						hueSector = 2;
+						sectorRemainder = uint16_t(blue - red);
+					}
+				}
+				else
+				{
+					hueSector = 1;
+					sectorRemainder = uint16_t(delta - (red - blue));
+				}
+			}
+			else
+			{
+				if (red >= green)
+				{
+					hueSector = 4;
+					sectorRemainder = uint16_t(red - green);
+				}
+				else
+				{
+					hueSector = 3;
+					sectorRemainder = uint16_t(delta - (green - red));
+				}
+			}
+
+			const ufraction16_t sectorFraction = UFraction16::GetScalar<uint16_t>(
+				sectorRemainder, uint16_t(delta));
+			const uint32_t hueBase = (hueSector * uint32_t(Trigonometry::ANGLE_RANGE)) / 6;
+			const uint16_t hueOffset = Fraction(sectorFraction, uint16_t(Trigonometry::ANGLE_RANGE / 6));
+			return Trigonometry::angle_t(hueBase + hueOffset);
+		}
+
+		/// <summary>
+		/// Convert RGB components to HSV using integer arithmetic.
+		/// Achromatic colors use hue zero. The input component maximum defines the RGB range,
+		/// and hsvMaximum defines the output saturation/value range.
+		/// </summary>
+		template<typename hsv_component_t, typename rgb_component_t>
+		inline hsv_t<hsv_component_t> FromRgb(const rgb_component_t red, const rgb_component_t green,
+			const rgb_component_t blue, const uint32_t componentMaximum, const uint32_t hsvMaximum)
+		{
+			using wide_t = typename TypeTraits::TypeNext::next_uint_type<rgb_component_t>::type;
+			const rgb_statistics_t<rgb_component_t> statistics = GetRgbStatistics(red, green, blue);
+
+			const hsv_component_t value = hsv_component_t(
+				(wide_t(statistics.maximum) * wide_t(hsvMaximum)) / componentMaximum);
+			const hsv_component_t saturation = statistics.maximum == 0
+				? hsv_component_t(0)
+				: hsv_component_t((wide_t(statistics.delta) * wide_t(hsvMaximum)) / statistics.maximum);
+
+			const Trigonometry::angle_t hue = GetHue(red, green, blue, statistics.maximum, statistics.delta);
+			return { hue, saturation, value };
+		}
+
+		template<typename rgb_component_t>
+		inline hsv_fraction_t FromRgbFraction(const rgb_component_t red, const rgb_component_t green,
+			const rgb_component_t blue, const uint32_t componentMaximum)
+		{
+			const rgb_statistics_t<rgb_component_t> statistics = GetRgbStatistics(red, green, blue);
+			const ufraction16_t value = UFraction16::GetScalar<uint16_t>(
+				uint16_t(statistics.maximum), uint16_t(componentMaximum));
+			const ufraction16_t saturation = statistics.maximum == 0
+				? ufraction16_t(0)
+				: UFraction16::GetScalar<uint16_t>(uint16_t(statistics.delta), uint16_t(statistics.maximum));
+			const Trigonometry::angle_t hue = GetHue(red, green, blue, statistics.maximum, statistics.delta);
+			return { hue, saturation, value };
+		}
+
+		/// <summary>
+		/// Convert native 8-bit HSV components to an RGB color without UQ0.15 normalization.
+		/// </summary>
+		template<typename color_t,
+			typename component_t,
+			component_t COMPONENT_MAX,
+			uint8_t COMPONENT_BITS,
+			uint32_t HSV_MAX,
+			typename ColorFunc>
+		inline color_t TemplateHsvNative(const Trigonometry::angle_t hue,
+			const uint16_t saturation, const uint16_t value, ColorFunc&& colorFunc)
+		{
+			const component_t valueComponent = component_t(
+				(uint32_t(value) * COMPONENT_MAX) / HSV_MAX);
+			if (saturation == 0)
+			{
+				return colorFunc(valueComponent, valueComponent, valueComponent);
+			}
+
+			const uint32_t huePosition = uint32_t(hue) * 6UL;
+			const uint8_t hueSector = uint8_t(huePosition >> 16);
+			const uint16_t hueFraction = uint16_t(huePosition) >> (16 - COMPONENT_BITS);
+			const uint32_t chroma = (uint32_t(valueComponent) * saturation) / HSV_MAX;
+			const uint32_t minimum = uint32_t(valueComponent) - chroma;
+			const uint32_t ascending = (chroma * hueFraction) >> COMPONENT_BITS;
+			const uint32_t descending = chroma - ascending;
+
+			switch (hueSector)
+			{
+			case 0: return colorFunc(valueComponent, component_t(minimum + ascending), component_t(minimum));
+			case 1: return colorFunc(component_t(minimum + descending), valueComponent, component_t(minimum));
+			case 2: return colorFunc(component_t(minimum), valueComponent, component_t(minimum + ascending));
+			case 3: return colorFunc(component_t(minimum), component_t(minimum + descending), valueComponent);
+			case 4: return colorFunc(component_t(minimum + ascending), component_t(minimum), valueComponent);
+			default: return colorFunc(valueComponent, component_t(minimum), component_t(minimum + descending));
+			}
+		}
 
 		/// <summary>
 		/// Convert HSV to a color using Q-format fractional scalars.

@@ -161,6 +161,17 @@ namespace IntegerSignal
 		}
 
 		/// <summary>
+		/// Convert a fractional RGB color to HSV.
+		/// Hue is returned as a modular angle; saturation and value use UQ0.15.
+		/// </summary>
+		/// <param name="color">Fractional RGB color.</param>
+		/// <returns>HSV components with hue in the angle domain and saturation/value in UQ0.15.</returns>
+		inline Hsv::hsv_t<component_t> ToHsv(const color_t& color)
+		{
+			return Hsv::FromRgbFraction(color.red, color.green, color.blue, COMPONENT_MAX);
+		}
+
+		/// <summary>
 		/// Convert HSV (UQ0.15) to a fractional RGB color.
 		/// Hue, saturation, and value are ufraction16_t in [0, UFraction16::FRACTION_1X].
 		/// Hue wraps modulo unit and is internally mapped to 6 equal segments.
@@ -181,7 +192,7 @@ namespace IntegerSignal
 		/// <summary>
 		/// Convert HSV to a fractional RGB color where hue is an angle_t (modular full-rotation index).
 		/// Saturation and value are fractional components in [0, COMPONENT_MAX].
-		/// Inputs are mapped as needed and delegated to ColorHsvFraction.
+		/// Uses native UQ0.15 saturation and value arithmetic.
 		/// </summary>
 		/// <param name="hue">Modular angle in [0, Trigonometry::ANGLE_RANGE].</param>
 		/// <param name="saturation">Saturation in [0, COMPONENT_MAX].</param>
@@ -189,9 +200,12 @@ namespace IntegerSignal
 		/// <returns>Fractional RGB color.</returns>
 		inline color_t ColorHsv(const Trigonometry::angle_t hue, const component_t saturation, const component_t value)
 		{
-			return ColorHsvFraction(
-				UFraction16::GetScalar(uint16_t(hue), uint16_t(Trigonometry::ANGLE_RANGE)),
-				saturation, value);
+			return Hsv::TemplateHsvNative<color_t, component_t, COMPONENT_MAX, 15,
+				UFraction16::FRACTION_1X>(hue, saturation, value,
+				[](const component_t red, const component_t green, const component_t blue)
+				{
+					return Color(red, green, blue);
+				});
 		}
 
 		/// <summary>Fractional RGB constant for black (0,0,0).</summary>

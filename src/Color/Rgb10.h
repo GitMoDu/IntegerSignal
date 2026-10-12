@@ -303,6 +303,27 @@ namespace IntegerSignal
 		}
 
 		/// <summary>
+		/// Convert a packed ARGB10 color to HSV. The alpha component is ignored.
+		/// Hue is returned as a modular angle; saturation and value use the 8-bit HSV scale.
+		/// </summary>
+		/// <param name="color">Packed ARGB10 color.</param>
+		/// <returns>HSV components with hue in the angle domain and saturation/value in [0..255].</returns>
+		inline Hsv::hsv_t<uint8_t> ToHsv(const color_t color)
+		{
+			return Hsv::FromRgb<uint8_t>(Red(color), Green(color), Blue(color), COMPONENT_MAX, UINT8_MAX);
+		}
+
+		/// <summary>
+		/// Convert a packed ARGB10 color to HSV with UQ0.15 saturation/value. The alpha component is ignored.
+		/// </summary>
+		/// <param name="color">Packed ARGB10 color.</param>
+		/// <returns>HSV components with hue in the angle domain and saturation/value in UQ0.15.</returns>
+		inline Hsv::hsv_fraction_t ToHsvFraction(const color_t color)
+		{
+			return Hsv::FromRgbFraction(Red(color), Green(color), Blue(color), COMPONENT_MAX);
+		}
+
+		/// <summary>
 		/// Convert HSV (UQ0.15) to ARGB10 (alpha = ALPHA_MAX).
 		/// Hue, saturation, and value are ufraction16_t in [0, UFraction16::FRACTION_1X].
 		/// Hue wraps modulo unit and is internally mapped to 6 equal segments.
@@ -323,7 +344,7 @@ namespace IntegerSignal
 		/// <summary>
 		/// Convert HSV to ARGB10 where hue is an angle_t (modular full-rotation index)
 		/// and saturation/value are 8-bit components [0..255].
-		/// Inputs are mapped to ufraction16_t via UFraction16::GetScalar, then delegated to ColorHsvFraction.
+		/// Uses native 8-bit HSV inputs and 10-bit output arithmetic.
 		/// </summary>
 		/// <param name="hue">Modular angle in [0, Trigonometry::ANGLE_RANGE].</param>
 		/// <param name="saturation">Saturation [0..255].</param>
@@ -331,12 +352,11 @@ namespace IntegerSignal
 		/// <returns>Packed ARGB10 color.</returns>
 		inline color_t ColorHsv(const Trigonometry::angle_t hue, const uint8_t saturation, const uint8_t value)
 		{
-			// Map inputs to ufraction16_t scalars.
-			const ufraction16_t hue16 = UFraction16::GetScalar<uint16_t>(hue, Trigonometry::ANGLE_RANGE);
-			const ufraction16_t sat16 = UFraction16::GetScalar(saturation, uint8_t(UINT8_MAX));
-			const ufraction16_t val16 = UFraction16::GetScalar(value, uint8_t(UINT8_MAX));
-
-			return ColorHsvFraction(hue16, sat16, val16);
+			return Hsv::TemplateHsvNative<color_t, component_t, COMPONENT_MAX, 10, UINT8_MAX>(hue, saturation, value,
+				[](const component_t red, const component_t green, const component_t blue)
+				{
+					return Color(red, green, blue);
+				});
 		}
 
 		/// <summary>ARGB10 constant for black.</summary>
