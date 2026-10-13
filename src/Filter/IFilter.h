@@ -53,7 +53,12 @@ namespace IntegerSignal
 				Input = value;
 			}
 
-			virtual void Clear(const value_t value = 0)
+			virtual void Clear()
+			{
+				Clear(value_t{});
+			}
+
+			virtual void Clear(const value_t value)
 			{
 				Input = value;
 			}
