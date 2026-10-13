@@ -36,7 +36,7 @@ namespace IntegerSignal
 		{
 			const component_t maximum = red > green ? (red > blue ? red : blue) : (green > blue ? green : blue);
 			const component_t minimum = red < green ? (red < blue ? red : blue) : (green < blue ? green : blue);
-			return { maximum, maximum - minimum };
+			return { maximum, component_t(maximum - minimum) };
 		}
 
 		template<typename component_t>
