@@ -7,10 +7,9 @@
 #define EXTENDED_UNIT_TESTS
 
 #include <Arduino.h>
-#include <IntegerSignal.h>
+#include <IntegerSignalTesting.h> // Replaces IntegerSignal.h with testing features enabled. Must be included before any other IntegerSignal headers.
 #include <IntegerTrigonometry16.h>
 #include <IntegerTrigonometry.h>
-#include <IntegerSignalTesting.h>
 
 #include "TypeTraitsTest.h"
 #include "OperationTest.h"

@@ -326,18 +326,12 @@ namespace IntegerSignal
 				}
 
 				/// <summary>
-				/// Policy layer for selecting between constexpr and runtime implementations based on platform and input category.
+				/// Selects between constexpr and runtime implementations based on platform and evaluation tag.
 				/// </summary>
 				namespace Policy
 				{
 					template<typename T>
-					inline uint8_t GetFactor8(const T numerator, const T denominator, TypeTraits::TypeDispatch::FalseType)
-					{
-						return Constexpr::GetFactor<uint8_t>(numerator, denominator);
-					}
-
-					template<typename T>
-					inline uint8_t GetFactor8(const T numerator, const T denominator, TypeTraits::TypeDispatch::TrueType)
+					inline uint8_t GetFactor8(const T numerator, const T denominator, TypeTraits::TypeEvaluation::Dispatch::RuntimeTag)
 					{
 #if defined(__AVR__) || (INTPTR_MAX == INT32_MAX)
 						return Runtime::GetFactor8(numerator, denominator);
@@ -346,26 +340,26 @@ namespace IntegerSignal
 #endif
 					}
 
+					template<typename T>
+					constexpr uint8_t GetFactor8(const T numerator, const T denominator, TypeTraits::TypeEvaluation::Dispatch::CompileTimeTag)
+					{
+						return Constexpr::GetFactor<uint8_t>(numerator, denominator);
+					}
+
 					template<typename factor_t, typename T>
-					inline factor_t GetFactor(const T numerator, const T denominator, TypeTraits::TypeDispatch::FalseType)
+					inline factor_t GetFactor(const T numerator, const T denominator, TypeTraits::TypeEvaluation::Dispatch::RuntimeTag)
 					{
 						return Constexpr::GetFactor<factor_t>(numerator, denominator);
 					}
 
 					template<typename factor_t, typename T>
-					inline factor_t GetFactor(const T numerator, const T denominator, TypeTraits::TypeDispatch::TrueType)
+					inline factor_t GetFactor(const T numerator, const T denominator, TypeTraits::TypeEvaluation::Dispatch::CompileTimeTag)
 					{
 						return Constexpr::GetFactor<factor_t>(numerator, denominator);
 					}
 
 					template<typename T>
-					inline uint16_t GetFactor16(const T numerator, const T denominator, TypeTraits::TypeDispatch::FalseType)
-					{
-						return Constexpr::GetFactor<uint16_t>(numerator, denominator);
-					}
-
-					template<typename T>
-					inline uint16_t GetFactor16(const T numerator, const T denominator, TypeTraits::TypeDispatch::TrueType)
+					inline uint16_t GetFactor16(const T numerator, const T denominator, TypeTraits::TypeEvaluation::Dispatch::RuntimeTag)
 					{
 #if defined(__AVR__)
 						return Runtime::GetFactor16(numerator, denominator);
@@ -375,19 +369,25 @@ namespace IntegerSignal
 					}
 
 					template<typename T>
-					inline uint32_t GetFactor32(const T numerator, const T denominator, TypeTraits::TypeDispatch::FalseType)
+					constexpr uint16_t GetFactor16(const T numerator, const T denominator, TypeTraits::TypeEvaluation::Dispatch::CompileTimeTag)
 					{
-						return Constexpr::GetFactor<uint32_t>(numerator, denominator);
+						return Constexpr::GetFactor<uint16_t>(numerator, denominator);
 					}
 
 					template<typename T>
-					inline uint32_t GetFactor32(const T numerator, const T denominator, TypeTraits::TypeDispatch::TrueType)
+					inline uint32_t GetFactor32(const T numerator, const T denominator, TypeTraits::TypeEvaluation::Dispatch::RuntimeTag)
 					{
 #if (INTPTR_MAX == INT32_MAX)
 						return Runtime::GetFactor32(numerator, denominator);
 #else
 						return Constexpr::GetFactor<uint32_t>(numerator, denominator);
 #endif
+					}
+
+					template<typename T>
+					constexpr uint32_t GetFactor32(const T numerator, const T denominator, TypeTraits::TypeEvaluation::Dispatch::CompileTimeTag)
+					{
+						return Constexpr::GetFactor<uint32_t>(numerator, denominator);
 					}
 
 					template<typename factor_t, typename T>

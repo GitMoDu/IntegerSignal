@@ -123,7 +123,7 @@ namespace IntegerSignal
 			struct disable_if<true, T> {};
 		}
 
-		namespace Evaluation
+		namespace TypeEvaluation
 		{
 			using ConstantEvaluatedType = TypeDispatch::TrueType;
 			using RuntimeEvaluatedType = TypeDispatch::FalseType;
@@ -178,6 +178,48 @@ namespace IntegerSignal
 			static constexpr typename evaluation_tag<IsConstantEvaluated()>::type GetEvaluationTag()
 			{
 				return typename evaluation_tag<IsConstantEvaluated()>::type();
+			}
+
+			/// <summary>
+			/// Provides explicit tags for compile-time and runtime dispatch under TypeEvaluation::Dispatch.
+			/// </summary>
+			namespace Dispatch
+			{
+				struct CompileTimeTag {};
+				struct RuntimeTag {};
+
+				static constexpr CompileTimeTag GetCompileTimeTag()
+				{
+					return CompileTimeTag();
+				}
+
+#if defined(INTEGER_SIGNAL_EVALUATION_DISPATCH_TEST)
+				/// <summary>
+				/// Test-only instrumentation for runtime tag requests.
+				/// </summary>
+				namespace Test
+				{
+					static volatile uint16_t RuntimeTagRequests = 0;
+
+					static inline void ResetRuntimeTagRequestCount()
+					{
+						RuntimeTagRequests = 0;
+					}
+
+					static inline uint16_t GetRuntimeTagRequestCount()
+					{
+						return RuntimeTagRequests;
+					}
+				}
+#endif
+
+				static inline RuntimeTag GetRuntimeTag()
+				{
+#if defined(INTEGER_SIGNAL_EVALUATION_DISPATCH_TEST)
+					++Test::RuntimeTagRequests;
+#endif
+					return RuntimeTag();
+				}
 			}
 		}
 

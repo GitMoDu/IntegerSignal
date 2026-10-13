@@ -166,19 +166,22 @@ namespace IntegerSignal
 					template<typename T>
 					static constexpr scale8_t GetFactor8(const T numerator, const T denominator)
 					{
-						return FactorScaleUnsigned::Implementation::Constexpr::GetFactor<scale8_t>(numerator, denominator);
+						return FactorScaleUnsigned::Implementation::Policy::GetFactor8(
+							numerator, denominator, TypeTraits::TypeEvaluation::Dispatch::GetCompileTimeTag());
 					}
 
 					template<typename T>
 					static constexpr scale16_t GetFactor16(const T numerator, const T denominator)
 					{
-						return FactorScaleUnsigned::Implementation::Constexpr::GetFactor<scale16_t>(numerator, denominator);
+						return FactorScaleUnsigned::Implementation::Policy::GetFactor16(
+							numerator, denominator, TypeTraits::TypeEvaluation::Dispatch::GetCompileTimeTag());
 					}
 
 					template<typename T>
 					static constexpr scale32_t GetFactor32(const T numerator, const T denominator)
 					{
-						return FactorScaleUnsigned::Implementation::Constexpr::GetFactor<scale32_t>(numerator, denominator);
+						return FactorScaleUnsigned::Implementation::Policy::GetFactor32(
+							numerator, denominator, TypeTraits::TypeEvaluation::Dispatch::GetCompileTimeTag());
 					}
 				}
 
@@ -204,21 +207,24 @@ namespace IntegerSignal
 				}
 
 				template<typename T>
-				static constexpr scale8_t GetFactor8(const T numerator, const T denominator)
+				static inline scale8_t GetFactor8(const T numerator, const T denominator)
 				{
-					return FactorScaleUnsigned::Implementation::Policy::GetFactor8(numerator, denominator, TypeTraits::Evaluation::GetEvaluationTag());
+					return FactorScaleUnsigned::Implementation::Policy::GetFactor8(
+						numerator, denominator, TypeTraits::TypeEvaluation::Dispatch::GetRuntimeTag());
 				}
 
 				template<typename T>
-				static constexpr scale16_t GetFactor16(const T numerator, const T denominator)
+				static inline scale16_t GetFactor16(const T numerator, const T denominator)
 				{
-					return FactorScaleUnsigned::Implementation::Policy::GetFactor16(numerator, denominator, TypeTraits::Evaluation::GetEvaluationTag());
+					return FactorScaleUnsigned::Implementation::Policy::GetFactor16(
+						numerator, denominator, TypeTraits::TypeEvaluation::Dispatch::GetRuntimeTag());
 				}
 
 				template<typename T>
-				static constexpr scale32_t GetFactor32(const T numerator, const T denominator)
+				static inline scale32_t GetFactor32(const T numerator, const T denominator)
 				{
-					return FactorScaleUnsigned::Implementation::Policy::GetFactor32(numerator, denominator, TypeTraits::Evaluation::GetEvaluationTag());
+					return FactorScaleUnsigned::Implementation::Policy::GetFactor32(
+						numerator, denominator, TypeTraits::TypeEvaluation::Dispatch::GetRuntimeTag());
 				}
 			}
 

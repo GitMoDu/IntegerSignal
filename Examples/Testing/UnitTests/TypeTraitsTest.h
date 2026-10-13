@@ -35,6 +35,19 @@ namespace IntegerSignal
 				enum { value = sizeof(Match<T>(nullptr)) == sizeof(uint8_t) };
 			};
 
+			struct EvaluationDispatchProbe
+			{
+				static constexpr uint8_t Select(TypeTraits::TypeEvaluation::Dispatch::CompileTimeTag)
+				{
+					return 1;
+				}
+
+				static constexpr uint8_t Select(TypeTraits::TypeEvaluation::Dispatch::RuntimeTag)
+				{
+					return 2;
+				}
+			};
+
 			// Reference functions for type_limits
 			static inline bool RefTypeLimits()
 			{
@@ -172,15 +185,29 @@ namespace IntegerSignal
 
 			static inline bool RefEvaluation()
 			{
-				static_assert(TypeTraits::TypeDispatch::is_same<typename TypeTraits::Evaluation::evaluation_tag<true>::type, TypeTraits::Evaluation::ConstantEvaluatedType>::value, "evaluation_tag<true>");
-				static_assert(TypeTraits::TypeDispatch::is_same<typename TypeTraits::Evaluation::evaluation_tag<false>::type, TypeTraits::Evaluation::RuntimeEvaluatedType>::value, "evaluation_tag<false>");
-				static_assert(TypeTraits::TypeDispatch::is_same<decltype(TypeTraits::Evaluation::GetEvaluationTag()), typename TypeTraits::Evaluation::evaluation_tag<TypeTraits::Evaluation::IsConstantEvaluated()>::type>::value, "GetEvaluationTag return type");
+				static_assert(TypeTraits::TypeDispatch::is_same<typename TypeTraits::TypeEvaluation::evaluation_tag<true>::type, TypeTraits::TypeEvaluation::ConstantEvaluatedType>::value, "evaluation_tag<true>");
+				static_assert(TypeTraits::TypeDispatch::is_same<typename TypeTraits::TypeEvaluation::evaluation_tag<false>::type, TypeTraits::TypeEvaluation::RuntimeEvaluatedType>::value, "evaluation_tag<false>");
+				static_assert(TypeTraits::TypeDispatch::is_same<decltype(TypeTraits::TypeEvaluation::GetEvaluationTag()), typename TypeTraits::TypeEvaluation::evaluation_tag<TypeTraits::TypeEvaluation::IsConstantEvaluated()>::type>::value, "GetEvaluationTag return type");
 
 				bool pass = true;
-				pass &= TypeTraits::TypeDispatch::is_same<typename TypeTraits::Evaluation::evaluation_tag<true>::type, TypeTraits::Evaluation::ConstantEvaluatedType>::value;
-				pass &= TypeTraits::TypeDispatch::is_same<typename TypeTraits::Evaluation::evaluation_tag<false>::type, TypeTraits::Evaluation::RuntimeEvaluatedType>::value;
-				pass &= TypeTraits::TypeDispatch::is_same<decltype(TypeTraits::Evaluation::GetEvaluationTag()), typename TypeTraits::Evaluation::evaluation_tag<TypeTraits::Evaluation::IsConstantEvaluated()>::type>::value;
+				pass &= TypeTraits::TypeDispatch::is_same<typename TypeTraits::TypeEvaluation::evaluation_tag<true>::type, TypeTraits::TypeEvaluation::ConstantEvaluatedType>::value;
+				pass &= TypeTraits::TypeDispatch::is_same<typename TypeTraits::TypeEvaluation::evaluation_tag<false>::type, TypeTraits::TypeEvaluation::RuntimeEvaluatedType>::value;
+				pass &= TypeTraits::TypeDispatch::is_same<decltype(TypeTraits::TypeEvaluation::GetEvaluationTag()), typename TypeTraits::TypeEvaluation::evaluation_tag<TypeTraits::TypeEvaluation::IsConstantEvaluated()>::type>::value;
 				return pass;
+			}
+
+			static inline bool RefEvaluationDispatch()
+			{
+				static_assert(EvaluationDispatchProbe::Select(TypeTraits::TypeEvaluation::Dispatch::GetCompileTimeTag()) == 1,
+					"compile-time tag dispatch");
+
+#if defined(INTEGER_SIGNAL_EVALUATION_DISPATCH_TEST)
+				TypeTraits::TypeEvaluation::Dispatch::Test::ResetRuntimeTagRequestCount();
+				const uint8_t runtimeSelection = EvaluationDispatchProbe::Select(TypeTraits::TypeEvaluation::Dispatch::GetRuntimeTag());
+				return runtimeSelection == 2 && TypeTraits::TypeEvaluation::Dispatch::Test::GetRuntimeTagRequestCount() == 1;
+#else
+				return EvaluationDispatchProbe::Select(TypeTraits::TypeEvaluation::Dispatch::GetRuntimeTag()) == 2;
+#endif
 			}
 
 			// Reference functions for is_unsigned and is_signed
@@ -311,6 +338,7 @@ namespace IntegerSignal
 				pass &= RefTypeConditional();
 				pass &= RefTypeEnableIf();
 				pass &= RefEvaluation();
+				pass &= RefEvaluationDispatch();
 				pass &= RefSignTraits();
 				pass &= RefFitsIn();
 				pass &= RefSignTransforms();

@@ -154,6 +154,13 @@ namespace IntegerSignal
 					return (Scale32::factor_t)(((int64_t)numerator * (int64_t)Scale32::SCALE_1X) / (int64_t)denominator);
 				}
 
+				static_assert(Factor::Constexpr::GetFactor8<uint8_t>(1, 2) == Scale8::SCALE_1X / 2,
+					"Constexpr Scale8 GetFactor must remain constexpr-capable.");
+				static_assert(Factor::Constexpr::GetFactor16<uint8_t>(1, 2) == Scale16::SCALE_1X / 2,
+					"Constexpr Scale16 GetFactor must remain constexpr-capable.");
+				static_assert(Factor::Constexpr::GetFactor32<uint8_t>(1, 2) == Scale32::SCALE_1X / 2,
+					"Constexpr Scale32 GetFactor must remain constexpr-capable.");
+
 				// Exhaustive test for Scale8::factor_t with uint8_t values
 				static inline bool TestScale8Exhaustive8()
 				{
@@ -988,9 +995,9 @@ namespace IntegerSignal
 					return pass;
 				}
 
-				static inline bool TestSplitFactorScaleApiConsistency()
+				static inline bool TestFactorScaleApiConsistency()
 				{
-					Serial.println(F("Starting split FactorScale API consistency tests..."));
+					Serial.println(F("Starting FactorScale API consistency tests..."));
 
 					bool pass = true;
 					const int16_t numerators[] = { -1, 0, 1, 3, 7, 15, 31, 63, 127, 255 };
@@ -1004,15 +1011,23 @@ namespace IntegerSignal
 							const int16_t numerator = numerators[n];
 							const int16_t denominator = denominators[d];
 							const bool offScale = denominator > 0 && numerator > denominator;
+							volatile int16_t runtimeNumerator = numerator;
+							volatile int16_t runtimeDenominator = denominator;
 
 							const Scale8::factor_t constexpr8 = Factor::Constexpr::GetFactor8(numerator, denominator);
 							const Scale8::factor_t runtime8 = Factor::Runtime::GetFactor8(numerator, denominator);
-							const Scale8::factor_t auto8 = Factor::GetFactor8(numerator, denominator);
+							const Scale8::factor_t auto8 = Factor::GetFactor8<int16_t>(runtimeNumerator, runtimeDenominator);
+							const Scale16::factor_t constexpr16 = Factor::Constexpr::GetFactor16(numerator, denominator);
+							const Scale16::factor_t runtime16 = Factor::Runtime::GetFactor16(numerator, denominator);
+							const Scale16::factor_t auto16 = Factor::GetFactor16<int16_t>(runtimeNumerator, runtimeDenominator);
+							const Scale32::factor_t constexpr32 = Factor::Constexpr::GetFactor32(numerator, denominator);
+							const Scale32::factor_t runtime32 = Factor::Runtime::GetFactor32(numerator, denominator);
+							const Scale32::factor_t auto32 = Factor::GetFactor32<int16_t>(runtimeNumerator, runtimeDenominator);
 							const Scale8::factor_t ref8 = numerator < 0 ? RefGetFactor8Signed(numerator, denominator) : RefGetFactor8((uint8_t)numerator, denominator > 0 ? (uint8_t)denominator : uint8_t(0));
 
 							if (!offScale && constexpr8 != ref8)
 							{
-								Serial.print(F("Split Scale8 constexpr mismatch: n="));
+								Serial.print(F("Scale8 constexpr mismatch: n="));
 								Serial.print(numerator);
 								Serial.print(F(" d="));
 								Serial.print(denominator);
@@ -1025,7 +1040,7 @@ namespace IntegerSignal
 
 							if (!offScale && runtime8 != ref8)
 							{
-								Serial.print(F("Split Scale8 runtime mismatch: n="));
+								Serial.print(F("Scale8 runtime mismatch: n="));
 								Serial.print(numerator);
 								Serial.print(F(" d="));
 								Serial.print(denominator);
@@ -1045,7 +1060,7 @@ namespace IntegerSignal
 
 							if (auto8 != expectedAuto8)
 							{
-								Serial.print(F("Split Scale8 auto mismatch: n="));
+								Serial.print(F("Scale8 automatic API mismatch: n="));
 								Serial.print(numerator);
 								Serial.print(F(" d="));
 								Serial.print(denominator);
@@ -1056,9 +1071,6 @@ namespace IntegerSignal
 								pass = false;
 							}
 
-							const Scale16::factor_t constexpr16 = Factor::Constexpr::GetFactor16(numerator, denominator);
-							const Scale16::factor_t runtime16 = Factor::Runtime::GetFactor16(numerator, denominator);
-							const Scale16::factor_t auto16 = Factor::GetFactor16(numerator, denominator);
 							const Scale16::factor_t ref16 = RefGetFactor16Signed(numerator, denominator);
 
 							const Scale16::factor_t expectedAuto16 =
@@ -1070,7 +1082,7 @@ namespace IntegerSignal
 
 							if ((!offScale && (constexpr16 != ref16 || runtime16 != ref16)) || auto16 != expectedAuto16)
 							{
-								Serial.print(F("Split Scale16 factor mismatch: n="));
+								Serial.print(F("Scale16 factor mismatch: n="));
 								Serial.print(numerator);
 								Serial.print(F(" d="));
 								Serial.print(denominator);
@@ -1085,9 +1097,6 @@ namespace IntegerSignal
 								pass = false;
 							}
 
-							const Scale32::factor_t constexpr32 = Factor::Constexpr::GetFactor32(numerator, denominator);
-							const Scale32::factor_t runtime32 = Factor::Runtime::GetFactor32(numerator, denominator);
-							const Scale32::factor_t auto32 = Factor::GetFactor32(numerator, denominator);
 							const Scale32::factor_t ref32 = RefGetFactor32Signed(numerator, denominator);
 
 							const Scale32::factor_t expectedAuto32 =
@@ -1099,7 +1108,7 @@ namespace IntegerSignal
 
 							if ((!offScale && (constexpr32 != ref32 || runtime32 != ref32)) || auto32 != expectedAuto32)
 							{
-								Serial.print(F("Split Scale32 factor mismatch: n="));
+								Serial.print(F("Scale32 factor mismatch: n="));
 								Serial.print(numerator);
 								Serial.print(F(" d="));
 								Serial.print(denominator);
@@ -1131,7 +1140,7 @@ namespace IntegerSignal
 
 						if (constexprScale8 != refScale8 || runtimeScale8 != refScale8 || autoScale8 != constexprScale8)
 						{
-							Serial.print(F("Split Scale8 apply mismatch: value="));
+							Serial.print(F("Scale8 apply mismatch: value="));
 							Serial.print(value);
 							Serial.print(F(" constexpr="));
 							Serial.print(constexprScale8);
@@ -1151,7 +1160,7 @@ namespace IntegerSignal
 
 						if (constexprScale16 != refScale16 || runtimeScale16 != refScale16 || autoScale16 != constexprScale16)
 						{
-							Serial.print(F("Split Scale16 apply mismatch: value="));
+							Serial.print(F("Scale16 apply mismatch: value="));
 							Serial.print(value);
 							Serial.print(F(" constexpr="));
 							Serial.print(constexprScale16);
@@ -1172,7 +1181,7 @@ namespace IntegerSignal
 
 						if (constexprScale32 != refScale32 || runtimeScale32 != refScale32 || autoScale32 != constexprScale32)
 						{
-							Serial.print(F("Split Scale32 apply mismatch: value="));
+							Serial.print(F("Scale32 apply mismatch: value="));
 							Serial.print(value32);
 							Serial.print(F(" constexpr="));
 							Serial.print(constexprScale32);
@@ -1188,11 +1197,11 @@ namespace IntegerSignal
 
 					if (pass)
 					{
-						Serial.println(F("Split FactorScale API consistency tests PASSED."));
+						Serial.println(F("FactorScale API consistency tests PASSED."));
 					}
 					else
 					{
-						Serial.println(F("Split FactorScale API consistency tests FAILED."));
+						Serial.println(F("FactorScale API consistency tests FAILED."));
 					}
 
 					return pass;
@@ -1203,7 +1212,7 @@ namespace IntegerSignal
 				{
 					bool pass = true;
 
-					pass &= TestSplitFactorScaleApiConsistency();
+					pass &= TestFactorScaleApiConsistency();
 					pass &= TestGetFactorExhaustive8();
 					pass &= TestGetFactorWideIntermediateRegression();
 					pass &= TestGetFactorRuntimeUnsignedRegression();
