@@ -10,6 +10,7 @@
 #include "ScalarFraction.h"
 #include "FactorScale.h"
 #include "Trigonometry.h"
+#include "Colors.h"
 
 using namespace IntegerSignal;
 
