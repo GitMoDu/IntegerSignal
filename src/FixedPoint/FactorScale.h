@@ -221,10 +221,13 @@ namespace IntegerSignal
 				}
 
 				template<typename T>
-				static inline scale32_t GetFactor32(const T numerator, const T denominator)
+				inline constexpr scale32_t GetFactor32(const T numerator, const T denominator)
 				{
-					return FactorScaleUnsigned::Implementation::Policy::GetFactor32(
-						numerator, denominator, TypeTraits::TypeEvaluation::Dispatch::GetRuntimeTag());
+					return TypeTraits::TypeEvaluation::IsConstantEvaluated()
+						? FactorScaleUnsigned::Implementation::Policy::GetFactor32(
+							numerator, denominator, TypeTraits::TypeEvaluation::Dispatch::GetCompileTimeTag())
+						: FactorScaleUnsigned::Implementation::Policy::GetFactor32(
+							numerator, denominator, TypeTraits::TypeEvaluation::Dispatch::GetRuntimeTag());
 				}
 			}
 
