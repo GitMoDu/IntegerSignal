@@ -82,6 +82,29 @@ namespace IntegerSignal
 			struct is_same<T, T> { enum { value = true }; using type = TrueType; };
 		}
 
+		namespace TypeProperties
+		{
+			/// <summary>
+			/// Type trait to detect whether a type is trivially copyable without depending on the standard library.
+			/// is_supported is false when the compiler does not expose the required intrinsic.
+			/// </summary>
+#if defined(__has_builtin)
+#if __has_builtin(__is_trivially_copyable)
+			template<typename T>
+			struct is_trivially_copyable { enum { value = __is_trivially_copyable(T), is_supported = true }; };
+#else
+			template<typename T>
+			struct is_trivially_copyable { enum { value = false, is_supported = false }; };
+#endif
+#elif defined(_MSC_VER) || defined(__GNUC__)
+			template<typename T>
+			struct is_trivially_copyable { enum { value = __is_trivially_copyable(T), is_supported = true }; };
+#else
+			template<typename T>
+			struct is_trivially_copyable { enum { value = false, is_supported = false }; };
+#endif
+		}
+
 		/// <summary>
 		/// Provides type traits for a conditional type selector.
 		/// </summary>
