@@ -19,6 +19,7 @@
 #include "Color/Rgb8.h"
 #include "Color/Rgb10.h"
 #include "Color/RgbFraction16.h"
+#include "Color/Oklch.h"
 
 #include "Curve/ICurve.h"
 #include "Curve/Signed.h"

@@ -4,6 +4,7 @@
 #include "../FixedPoint/ScalarFraction.h"
 #include "../Trigonometry/Trigonometry.h"
 #include "Hsv.h"
+#include "Oklch.h"
 
 namespace IntegerSignal
 {
@@ -11,7 +12,7 @@ namespace IntegerSignal
 	/// Utilities for RGB colors whose components are unsigned Q-format fractions (UQ0.15).
 	/// High precision and dynamic range for accurate color representation.
 	/// Uses a power-of-two unit (UFraction16::FRACTION_1X) enabling fast shift-based math.
-	/// Provides construction, component access/mutation, interpolation, and HSV conversion.
+	/// Provides construction, component access/mutation, interpolation, and HSV/Oklch conversion.
 	/// </summary>
 	namespace RgbFraction16
 	{
@@ -21,11 +22,6 @@ namespace IntegerSignal
 		/// Fractional component storage type (UQ0.15).
 		/// </summary>
 		using component_t = ufraction16_t;
-
-		/// <summary>
-		/// Maximum component value (unit in UQ0.15).
-		/// </summary>
-		static constexpr component_t COMPONENT_MAX = UFraction16::FRACTION_1X;
 
 		/// <summary>
 		/// RGB color with fractional components.
@@ -43,6 +39,11 @@ namespace IntegerSignal
 			/// <summary>Get blue component.</summary>
 			component_t Blue() const { return blue; }
 		};
+
+		/// <summary>
+		/// Maximum component value (unit in UQ0.15).
+		/// </summary>
+		static constexpr component_t COMPONENT_MAX = UFraction16::FRACTION_1X;
 
 		/// <summary>
 		/// Construct a color from fractional RGB components.
@@ -169,6 +170,34 @@ namespace IntegerSignal
 		inline Hsv::hsv_t<component_t> ToHsv(const color_t& color)
 		{
 			return Hsv::FromRgbFraction(color.red, color.green, color.blue, COMPONENT_MAX);
+		}
+
+		/// <summary>
+		/// Convert a linear-light fractional RGB color to Oklch.
+		/// </summary>
+		/// <param name="color">Linear-light RGB color with UQ0.15 components.</param>
+		/// <returns>Oklch color.</returns>
+		inline Oklch::oklch_t ToOklch(const color_t& color)
+		{
+			return Oklch::FromLinearRgb(color.red, color.green, color.blue);
+		}
+
+		/// <summary>
+		/// Convert Oklch to a linear-light fractional RGB color.
+		/// Out-of-gamut components are clamped to [0, 1].
+		/// </summary>
+		/// <param name="lightness">Oklch lightness in UQ0.15.</param>
+		/// <param name="chroma">Oklch chroma in UQ0.15; values may exceed one unit.</param>
+		/// <param name="hue">Oklch hue in the modular angle domain.</param>
+		/// <returns>Linear-light RGB color with UQ0.15 components.</returns>
+		inline color_t ColorOklch(const ufraction16_t lightness, const ufraction16_t chroma,
+			const Trigonometry::angle_t hue)
+		{
+			return Oklch::TemplateOklch<color_t, component_t, COMPONENT_MAX>(lightness, chroma, hue,
+				[](const component_t red, const component_t green, const component_t blue)
+				{
+					return Color(red, green, blue);
+				});
 		}
 
 		/// <summary>

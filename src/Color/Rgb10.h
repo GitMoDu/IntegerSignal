@@ -4,14 +4,15 @@
 #include "../FixedPoint/ScalarFraction.h"
 #include "../Trigonometry/Trigonometry.h"
 #include "Hsv.h"
+#include "Oklch.h"
 
 namespace IntegerSignal
 {
 	/// <summary>
 	/// Utilities for 10-bit (A)RGB colors packed into a 32-bit integer.
 	/// Layout (from LSB to MSB): [R:10][G:10][B:10][A:2] => 0bAA BBBBBBBBBB GGGGGGGGGG RRRRRRRRRR.
-	/// Provides construction, component access/mutation, interpolation, and HSV conversion.
-	/// Interpolation and HSV conversion use Q-format fractional scalars (UQ0.15) from ScalarFraction
+	/// Provides construction, component access/mutation, interpolation, and HSV/Oklch conversion.
+	/// Interpolation and color-space conversion use Q-format fractional scalars (UQ0.15) from ScalarFraction
 	/// to enable fast shift-based math.
 	/// </summary>
 	namespace Rgb10
@@ -311,6 +312,33 @@ namespace IntegerSignal
 		inline Hsv::hsv_t<uint8_t> ToHsv(const color_t color)
 		{
 			return Hsv::FromRgb<uint8_t>(Red(color), Green(color), Blue(color), COMPONENT_MAX, UINT8_MAX);
+		}
+
+		/// <summary>
+		/// Convert a packed linear-light ARGB10 color to Oklch. The alpha component is ignored.
+		/// </summary>
+		/// <param name="color">Packed ARGB10 color in linear-light RGB.</param>
+		/// <returns>Oklch color.</returns>
+		inline Oklch::oklch_t ToOklch(const color_t color)
+		{
+			return Oklch::FromRgb<component_t, COMPONENT_MAX>(Red(color), Green(color), Blue(color));
+		}
+
+		/// <summary>
+		/// Convert Oklch to packed linear-light ARGB10 (alpha = ALPHA_MAX). Out-of-gamut components are clamped.
+		/// </summary>
+		/// <param name="lightness">Oklch lightness in UQ0.15.</param>
+		/// <param name="chroma">Oklch chroma in UQ0.15; values may exceed one unit.</param>
+		/// <param name="hue">Oklch hue in the modular angle domain.</param>
+		/// <returns>Packed opaque ARGB10 color in linear-light RGB.</returns>
+		inline color_t ColorOklch(const ufraction16_t lightness, const ufraction16_t chroma,
+			const Trigonometry::angle_t hue)
+		{
+			return Oklch::TemplateOklch<color_t, component_t, COMPONENT_MAX>(lightness, chroma, hue,
+				[](const component_t red, const component_t green, const component_t blue)
+				{
+					return Color(red, green, blue);
+				});
 		}
 
 		/// <summary>

@@ -120,6 +120,59 @@ namespace IntegerSignal
 				return pass;
 			}
 
+			static inline bool TestOklchNativeMatchesFractional()
+			{
+				bool pass = true;
+				for (uint16_t i = 0; i < 16; ++i)
+				{
+					const Rgb8::component_t red8 = uint8_t(i * 17);
+					const Rgb8::component_t green8 = uint8_t(i * 73);
+					const Rgb8::component_t blue8 = uint8_t(i * 151);
+					const Oklch::oklch_t native8 = Oklch::FromRgb<Rgb8::component_t, Rgb8::COMPONENT_MAX>(red8, green8, blue8);
+					const Oklch::oklch_t fractional8 = Oklch::FromLinearRgb(
+						UFraction16::GetScalar<Rgb8::component_t>(red8, Rgb8::COMPONENT_MAX),
+						UFraction16::GetScalar<Rgb8::component_t>(green8, Rgb8::COMPONENT_MAX),
+						UFraction16::GetScalar<Rgb8::component_t>(blue8, Rgb8::COMPONENT_MAX));
+
+					const Rgb10::component_t red10 = uint16_t((i * 61) & Rgb10::COMPONENT_MAX);
+					const Rgb10::component_t green10 = uint16_t((i * 127) & Rgb10::COMPONENT_MAX);
+					const Rgb10::component_t blue10 = uint16_t((i * 251) & Rgb10::COMPONENT_MAX);
+					const Oklch::oklch_t native10 = Oklch::FromRgb<Rgb10::component_t, Rgb10::COMPONENT_MAX>(red10, green10, blue10);
+					const Oklch::oklch_t fractional10 = Oklch::FromLinearRgb(
+						UFraction16::GetScalar<Rgb10::component_t>(red10, Rgb10::COMPONENT_MAX),
+						UFraction16::GetScalar<Rgb10::component_t>(green10, Rgb10::COMPONENT_MAX),
+						UFraction16::GetScalar<Rgb10::component_t>(blue10, Rgb10::COMPONENT_MAX));
+
+					pass &= ExpectNearU16(native8.lightness, fractional8.lightness, 2, F("Oklch native/fractional RGB8 lightness"));
+					pass &= ExpectNearU16(native8.chroma, fractional8.chroma, 2, F("Oklch native/fractional RGB8 chroma"));
+					pass &= ExpectNearU16(native8.hue, fractional8.hue, 4, F("Oklch native/fractional RGB8 hue"));
+					pass &= ExpectNearU16(native10.lightness, fractional10.lightness, 2, F("Oklch native/fractional RGB10 lightness"));
+					pass &= ExpectNearU16(native10.chroma, fractional10.chroma, 2, F("Oklch native/fractional RGB10 chroma"));
+					pass &= ExpectNearU16(native10.hue, fractional10.hue, 4, F("Oklch native/fractional RGB10 hue"));
+
+					const ufraction16_t lightness = ufraction16_t(i * 2048);
+					const ufraction16_t chroma = ufraction16_t(i * 1024);
+					const Trigonometry::angle_t hue = Trigonometry::angle_t(i * 4096);
+					const Rgb8::color_t nativeOutput8 = Rgb8::ColorOklch(lightness, chroma, hue);
+					const Rgb10::color_t nativeOutput10 = Rgb10::ColorOklch(lightness, chroma, hue);
+					const RgbFraction16::color_t fractionalOutput = RgbFraction16::ColorOklch(lightness, chroma, hue);
+					pass &= ExpectNearU16(Rgb8::Red(nativeOutput8), Fraction(fractionalOutput.red, Rgb8::COMPONENT_MAX),
+						1, F("Oklch native/fractional RGB8 red output"));
+					pass &= ExpectNearU16(Rgb8::Green(nativeOutput8), Fraction(fractionalOutput.green, Rgb8::COMPONENT_MAX),
+						1, F("Oklch native/fractional RGB8 green output"));
+					pass &= ExpectNearU16(Rgb8::Blue(nativeOutput8), Fraction(fractionalOutput.blue, Rgb8::COMPONENT_MAX),
+						1, F("Oklch native/fractional RGB8 blue output"));
+					pass &= ExpectNearU16(Rgb10::Red(nativeOutput10), Fraction(fractionalOutput.red, Rgb10::COMPONENT_MAX),
+						1, F("Oklch native/fractional RGB10 red output"));
+					pass &= ExpectNearU16(Rgb10::Green(nativeOutput10), Fraction(fractionalOutput.green, Rgb10::COMPONENT_MAX),
+						1, F("Oklch native/fractional RGB10 green output"));
+					pass &= ExpectNearU16(Rgb10::Blue(nativeOutput10), Fraction(fractionalOutput.blue, Rgb10::COMPONENT_MAX),
+						1, F("Oklch native/fractional RGB10 blue output"));
+				}
+
+				return pass;
+			}
+
 			static inline bool TestRgbToHsvSampledRoundTripError()
 			{
 				const ufraction16_t unit = UFraction16::FRACTION_1X;
@@ -240,6 +293,56 @@ namespace IntegerSignal
 				bool pass = true;
 				pass &= ExpectNearU16(maximumReferenceError, 0, 8, F("RGBFraction16 key-color reference error"));
 				pass &= ExpectNearU16(maximumRoundTripError, 0, 16, F("RGBFraction16 key-color round-trip error"));
+				return pass;
+			}
+
+			static inline bool TestOklchLinearRgbRoundTrip()
+			{
+				const ufraction16_t unit = UFraction16::FRACTION_1X;
+				const RgbFraction16::color_t colors[] = {
+					RgbFraction16::BLACK,
+					RgbFraction16::WHITE,
+					RgbFraction16::RED,
+					RgbFraction16::GREEN,
+					RgbFraction16::BLUE,
+					RgbFraction16::Color(unit / 3, unit / 2, unit)
+				};
+				bool pass = true;
+
+				for (uint8_t i = 0; i < sizeof(colors) / sizeof(colors[0]); ++i)
+				{
+					const Oklch::oklch_t oklch = RgbFraction16::ToOklch(colors[i]);
+					const RgbFraction16::color_t output = RgbFraction16::ColorOklch(
+						oklch.lightness, oklch.chroma, oklch.hue);
+					pass &= ExpectNearU16(output.red, colors[i].red, 32, F("Oklch linear RGB red round trip"));
+					pass &= ExpectNearU16(output.green, colors[i].green, 32, F("Oklch linear RGB green round trip"));
+					pass &= ExpectNearU16(output.blue, colors[i].blue, 32, F("Oklch linear RGB blue round trip"));
+				}
+
+				const Oklch::oklch_t white = RgbFraction16::ToOklch(RgbFraction16::WHITE);
+				pass &= ExpectNearU16(white.lightness, unit, 2, F("Oklch white lightness"));
+				pass &= ExpectNearU16(white.chroma, 0, 2, F("Oklch white chroma"));
+
+				return pass;
+			}
+
+			static inline bool TestOklchIntegerRgbRoundTrip()
+			{
+				const Rgb8::color_t input8 = Rgb8::Color(64, 128, 200);
+				const Oklch::oklch_t oklch8 = Rgb8::ToOklch(input8);
+				const Rgb8::color_t output8 = Rgb8::ColorOklch(oklch8.lightness, oklch8.chroma, oklch8.hue);
+				const Rgb10::color_t input10 = Rgb10::Color(200, 500, 900);
+				const Oklch::oklch_t oklch10 = Rgb10::ToOklch(input10);
+				const Rgb10::color_t output10 = Rgb10::ColorOklch(oklch10.lightness, oklch10.chroma, oklch10.hue);
+				bool pass = true;
+
+				pass &= ExpectNearU16(Rgb8::Red(output8), Rgb8::Red(input8), 2, F("Oklch RGB8 red round trip"));
+				pass &= ExpectNearU16(Rgb8::Green(output8), Rgb8::Green(input8), 2, F("Oklch RGB8 green round trip"));
+				pass &= ExpectNearU16(Rgb8::Blue(output8), Rgb8::Blue(input8), 2, F("Oklch RGB8 blue round trip"));
+				pass &= ExpectNearU16(Rgb10::Red(output10), Rgb10::Red(input10), 4, F("Oklch RGB10 red round trip"));
+				pass &= ExpectNearU16(Rgb10::Green(output10), Rgb10::Green(input10), 4, F("Oklch RGB10 green round trip"));
+				pass &= ExpectNearU16(Rgb10::Blue(output10), Rgb10::Blue(input10), 4, F("Oklch RGB10 blue round trip"));
+
 				return pass;
 			}
 
@@ -388,7 +491,7 @@ namespace IntegerSignal
 				for (uint8_t sector = 0; sector < 6; ++sector)
 				{
 					const uint16_t sectorHue = uint16_t(
-					(uint32_t(sector) * (uint32_t(Trigonometry::ANGLE_RANGE) + 1) + 5) / 6);
+						(uint32_t(sector) * (uint32_t(Trigonometry::ANGLE_RANGE) + 1) + 5) / 6);
 					for (uint8_t offset = 0; offset < 2; ++offset)
 					{
 						const Trigonometry::angle_t hue = Trigonometry::angle_t(sectorHue - offset);
@@ -481,6 +584,13 @@ namespace IntegerSignal
 				pass &= TestRgb10Packing();
 				pass &= TestRgbFraction16Color8();
 				pass &= TestRgbFraction16KeyColors();
+				Serial.println(F("Starting Oklch tests..."));
+				bool oklchPass = true;
+				oklchPass &= TestOklchLinearRgbRoundTrip();
+				oklchPass &= TestOklchIntegerRgbRoundTrip();
+				oklchPass &= TestOklchNativeMatchesFractional();
+				Serial.println(oklchPass ? F("Oklch tests PASSED.") : F("Oklch tests FAILED."));
+				pass &= oklchPass;
 				pass &= TestHsvGrayRegression();
 				pass &= TestHsvNativeMatchesFractional();
 				pass &= TestHsvPrimaryRegression();
