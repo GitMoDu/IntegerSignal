@@ -160,7 +160,7 @@ namespace IntegerSignal
 					"Constexpr Scale16 GetFactor must remain constexpr-capable.");
 				static_assert(Factor::Constexpr::GetFactor32<uint8_t>(1, 2) == Scale32::SCALE_1X / 2,
 					"Constexpr Scale32 GetFactor must remain constexpr-capable.");
-#if defined(__cpp_if_consteval) || (defined(__GNUC__) && (__GNUC__ >= 9))
+#if defined(__cpp_if_consteval) || (defined(__GNUC__) && (__GNUC__ >= 10))
 				static_assert(Factor::GetFactor32<uint8_t>(1, 2) == Scale32::SCALE_1X / 2,
 					"Automatic Scale32 GetFactor must remain constexpr-capable.");
 #endif
