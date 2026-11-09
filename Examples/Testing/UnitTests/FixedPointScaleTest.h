@@ -198,6 +198,285 @@ namespace IntegerSignal
 					return (Scale32::factor_t)(((int64_t)numerator * (int64_t)Scale32::SCALE_1X) / (int64_t)denominator);
 				}
 
+				template<typename T, typename factor_t>
+				static inline T RefSignedFactorScale(const T value, const factor_t factor, const uint8_t shifts)
+				{
+					const int64_t product = static_cast<int64_t>(value) * static_cast<int64_t>(factor);
+					const int64_t unit = static_cast<int64_t>(1) << shifts;
+					const int64_t scaled = product >= 0 ? product / unit : -((-product + unit - 1) / unit);
+					return static_cast<T>(LimitValue<int64_t>(scaled,
+						static_cast<int64_t>(TypeTraits::TypeLimits::type_limits<T>::Min()),
+						static_cast<int64_t>(TypeTraits::TypeLimits::type_limits<T>::Max())));
+				}
+
+				template<typename T, typename factor_t>
+				static inline factor_t RefGetFactorSigned(const T numerator, const T denominator,
+					const factor_t scaleUnit, const factor_t minFactor, const factor_t maxFactor)
+				{
+					if (denominator == 0)
+						return scaleUnit;
+
+					const int64_t factor = (static_cast<int64_t>(numerator) * scaleUnit) / static_cast<int64_t>(denominator);
+					return static_cast<factor_t>(LimitValue<int64_t>(factor, minFactor, maxFactor));
+				}
+
+				template<typename T, typename factor_t>
+				static inline bool CheckSignedFactorScaleSamples(const T* values, const size_t valueCount,
+					const factor_t* factors, const size_t factorCount, const uint8_t shifts)
+				{
+					bool pass = true;
+					for (size_t valueIndex = 0; valueIndex < valueCount; ++valueIndex)
+					{
+						for (size_t factorIndex = 0; factorIndex < factorCount; ++factorIndex)
+						{
+							const T value = values[valueIndex];
+							const factor_t factor = factors[factorIndex];
+							const T reference = RefSignedFactorScale(value, factor, shifts);
+							const T constexprResult = ScaleAliases::Constexpr::Scale(factor, value);
+							const T runtimeResult = ScaleAliases::Runtime::Scale(factor, value);
+							const T automaticResult = ScaleAliases::Scale(factor, value);
+							if (constexprResult != reference || runtimeResult != reference || automaticResult != reference)
+							{
+								Serial.print(F("Signed FactorScale mismatch: value="));
+								Serial.print(value);
+								Serial.print(F(" factor="));
+								Serial.print(factor);
+								Serial.print(F(" constexpr="));
+								Serial.print(constexprResult);
+								Serial.print(F(" runtime="));
+								Serial.print(runtimeResult);
+								Serial.print(F(" auto="));
+								Serial.print(automaticResult);
+								Serial.print(F(" ref="));
+								Serial.println(reference);
+								pass = false;
+							}
+						}
+					}
+					return pass;
+				}
+
+				template<typename T>
+				static inline bool CheckSignedGetFactorSample(const T numerator, const T denominator)
+				{
+					bool pass = true;
+
+					const factorscale8_t reference8 = RefGetFactorSigned(numerator, denominator,
+						FactorScale8::SCALE_UNIT, FactorScale8::SCALE_MIN, FactorScale8::SCALE_MAX);
+					const factorscale8_t constexpr8 = Factor::Constexpr::GetFactorS8<T>(numerator, denominator);
+					const factorscale8_t runtime8 = Factor::Runtime::GetFactorS8<T>(numerator, denominator);
+					const factorscale8_t automatic8 = Factor::GetFactorS8<T>(numerator, denominator);
+
+					const factorscale16_t reference16 = RefGetFactorSigned(numerator, denominator,
+						FactorScale16::SCALE_UNIT, FactorScale16::SCALE_MIN, FactorScale16::SCALE_MAX);
+					const factorscale16_t constexpr16 = Factor::Constexpr::GetFactorS16<T>(numerator, denominator);
+					const factorscale16_t runtime16 = Factor::Runtime::GetFactorS16<T>(numerator, denominator);
+					const factorscale16_t automatic16 = Factor::GetFactorS16<T>(numerator, denominator);
+
+					const factorscale32_t reference32 = RefGetFactorSigned(numerator, denominator,
+						FactorScale32::SCALE_UNIT, FactorScale32::SCALE_MIN, FactorScale32::SCALE_MAX);
+					const factorscale32_t constexpr32 = Factor::Constexpr::GetFactorS32<T>(numerator, denominator);
+					const factorscale32_t runtime32 = Factor::Runtime::GetFactorS32<T>(numerator, denominator);
+					const factorscale32_t automatic32 = Factor::GetFactorS32<T>(numerator, denominator);
+
+					if (constexpr8 != reference8 || runtime8 != reference8 || automatic8 != reference8
+						|| constexpr16 != reference16 || runtime16 != reference16 || automatic16 != reference16
+						|| constexpr32 != reference32 || runtime32 != reference32 || automatic32 != reference32)
+					{
+						Serial.print(F("Signed GetFactor API mismatch: numerator="));
+						Serial.print(numerator);
+						Serial.print(F(" denominator="));
+						Serial.println(denominator);
+						pass = false;
+					}
+					return pass;
+				}
+
+				static inline bool TestSignedFactorScaleSampleMatrix()
+				{
+					const int8_t signedValues8[] = { INT8_MIN, -65, -1, 0, 1, 63, INT8_MAX };
+					const uint8_t unsignedValues8[] = { 0, 1, 127, UINT8_MAX };
+					const int16_t signedValues16[] = { INT16_MIN, -16384, -1, 0, 1, 16383, INT16_MAX };
+					const uint16_t unsignedValues16[] = { 0, 1, 32767, UINT16_MAX };
+					const int32_t signedValues32[] = { INT32_MIN, INT32_MIN / 2, -1, 0, 1, INT32_MAX / 2, INT32_MAX };
+					const uint32_t unsignedValues32[] = { 0, 1, UINT32_MAX / 2, UINT32_MAX };
+
+					const factorscale8_t factors8[] = { FactorScale8::SCALE_MIN, -FactorScale8::SCALE_UNIT,
+						factorscale8_t(-FactorScale8::SCALE_UNIT / 2), factorscale8_t(-1), factorscale8_t(0), factorscale8_t(1),
+						factorscale8_t(FactorScale8::SCALE_UNIT / 2), FactorScale8::SCALE_UNIT, FactorScale8::SCALE_MAX };
+					const factorscale16_t factors16[] = { FactorScale16::SCALE_MIN, -FactorScale16::SCALE_UNIT,
+						factorscale16_t(-FactorScale16::SCALE_UNIT / 2), factorscale16_t(-1), factorscale16_t(0), factorscale16_t(1),
+						factorscale16_t(FactorScale16::SCALE_UNIT / 2), FactorScale16::SCALE_UNIT, FactorScale16::SCALE_MAX };
+					const factorscale32_t factors32[] = { FactorScale32::SCALE_MIN, -FactorScale32::SCALE_UNIT,
+						factorscale32_t(-FactorScale32::SCALE_UNIT / 2), factorscale32_t(-1), factorscale32_t(0), factorscale32_t(1),
+						factorscale32_t(FactorScale32::SCALE_UNIT / 2), FactorScale32::SCALE_UNIT, FactorScale32::SCALE_MAX };
+
+					bool pass = true;
+					pass &= CheckSignedFactorScaleSamples(signedValues8, 7, factors8, 9, 4);
+					pass &= CheckSignedFactorScaleSamples(unsignedValues8, 4, factors8, 9, 4);
+					pass &= CheckSignedFactorScaleSamples(signedValues16, 7, factors8, 9, 4);
+					pass &= CheckSignedFactorScaleSamples(unsignedValues16, 4, factors8, 9, 4);
+					pass &= CheckSignedFactorScaleSamples(signedValues32, 7, factors8, 9, 4);
+					pass &= CheckSignedFactorScaleSamples(unsignedValues32, 4, factors8, 9, 4);
+
+					pass &= CheckSignedFactorScaleSamples(signedValues8, 7, factors16, 9, 8);
+					pass &= CheckSignedFactorScaleSamples(unsignedValues8, 4, factors16, 9, 8);
+					pass &= CheckSignedFactorScaleSamples(signedValues16, 7, factors16, 9, 8);
+					pass &= CheckSignedFactorScaleSamples(unsignedValues16, 4, factors16, 9, 8);
+					pass &= CheckSignedFactorScaleSamples(signedValues32, 7, factors16, 9, 8);
+					pass &= CheckSignedFactorScaleSamples(unsignedValues32, 4, factors16, 9, 8);
+
+					pass &= CheckSignedFactorScaleSamples(signedValues8, 7, factors32, 9, 16);
+					pass &= CheckSignedFactorScaleSamples(unsignedValues8, 4, factors32, 9, 16);
+					pass &= CheckSignedFactorScaleSamples(signedValues16, 7, factors32, 9, 16);
+					pass &= CheckSignedFactorScaleSamples(unsignedValues16, 4, factors32, 9, 16);
+					pass &= CheckSignedFactorScaleSamples(signedValues32, 7, factors32, 9, 16);
+					pass &= CheckSignedFactorScaleSamples(unsignedValues32, 4, factors32, 9, 16);
+
+					if (pass)
+					{
+						Serial.println(F("Signed FactorScale sample matrix tests PASSED."));
+					}
+					else
+					{
+						Serial.println(F("Signed FactorScale sample matrix tests FAILED."));
+					}
+					return pass;
+				}
+
+				static inline bool TestSignedFactorScale8Exhaustive()
+				{
+					uint32_t errorCount = 0;
+					for (int16_t value = INT8_MIN; value <= INT8_MAX; ++value)
+					{
+						for (int16_t factorValue = INT8_MIN; factorValue <= INT8_MAX; ++factorValue)
+						{
+							const int8_t typedValue = static_cast<int8_t>(value);
+							const factorscale8_t factor = static_cast<factorscale8_t>(factorValue);
+							if (ScaleAliases::Scale(factor, typedValue) != RefSignedFactorScale(typedValue, factor, 4))
+								errorCount++;
+						}
+					}
+					if (errorCount == 0)
+						Serial.println(F("Signed FactorScale8 exhaustive tests PASSED."));
+					else
+					{
+						Serial.print(F("Signed FactorScale8 exhaustive tests FAILED. Errors: "));
+						Serial.println(errorCount);
+					}
+					return errorCount == 0;
+				}
+
+				static inline bool TestSignedGetFactor8Exhaustive()
+				{
+					uint32_t errorCount = 0;
+					for (int16_t numeratorValue = INT8_MIN; numeratorValue <= INT8_MAX; ++numeratorValue)
+					{
+						for (int16_t denominatorValue = INT8_MIN; denominatorValue <= INT8_MAX; ++denominatorValue)
+						{
+							const int8_t numerator = static_cast<int8_t>(numeratorValue);
+							const int8_t denominator = static_cast<int8_t>(denominatorValue);
+							const factorscale8_t result = Factor::GetFactorS8<int8_t>(numerator, denominator);
+							const factorscale8_t reference = RefGetFactorSigned(numerator, denominator,
+								FactorScale8::SCALE_UNIT, FactorScale8::SCALE_MIN, FactorScale8::SCALE_MAX);
+							if (result != reference)
+								errorCount++;
+						}
+					}
+					if (errorCount == 0)
+						Serial.println(F("Signed GetFactor8 exhaustive tests PASSED."));
+					else
+					{
+						Serial.print(F("Signed GetFactor8 exhaustive tests FAILED. Errors: "));
+						Serial.println(errorCount);
+					}
+					return errorCount == 0;
+				}
+
+				static inline bool TestSignedGetFactorWideInputRegression()
+				{
+					const int32_t signedNumerators[] = { INT32_MIN, -1000, -1, 0, 1, 1000, INT32_MAX };
+					const int32_t signedDenominators[] = { INT32_MIN, -1, 0, 1, 2, INT32_MAX };
+					const uint32_t unsignedNumerators[] = { 0, 1, UINT32_MAX / 2, UINT32_MAX };
+					const uint32_t unsignedDenominators[] = { 0, 1, 2, UINT32_MAX / 2, UINT32_MAX };
+					bool pass = true;
+
+					for (size_t n = 0; n < sizeof(signedNumerators) / sizeof(signedNumerators[0]); ++n)
+					{
+						for (size_t d = 0; d < sizeof(signedDenominators) / sizeof(signedDenominators[0]); ++d)
+						{
+							pass &= CheckSignedGetFactorSample(signedNumerators[n], signedDenominators[d]);
+						}
+					}
+
+					for (size_t n = 0; n < sizeof(unsignedNumerators) / sizeof(unsignedNumerators[0]); ++n)
+					{
+						for (size_t d = 0; d < sizeof(unsignedDenominators) / sizeof(unsignedDenominators[0]); ++d)
+						{
+							pass &= CheckSignedGetFactorSample(unsignedNumerators[n], unsignedDenominators[d]);
+						}
+					}
+
+					if (pass)
+					{
+						Serial.println(F("Signed GetFactor wide-input regression tests PASSED."));
+					}
+					else
+					{
+						Serial.println(F("Signed GetFactor wide-input regression tests FAILED."));
+					}
+					return pass;
+				}
+
+				static inline bool TestSignedFactorScale16Exhaustive8()
+				{
+					uint32_t errorCount = 0;
+					for (int16_t value = INT8_MIN; value <= INT8_MAX; ++value)
+					{
+						for (int32_t factorValue = INT16_MIN; factorValue <= INT16_MAX; ++factorValue)
+						{
+							const int8_t typedValue = static_cast<int8_t>(value);
+							const factorscale16_t factor = static_cast<factorscale16_t>(factorValue);
+							if (ScaleAliases::Scale(factor, typedValue) != RefSignedFactorScale(typedValue, factor, 8))
+								errorCount++;
+						}
+					}
+					if (errorCount == 0)
+						Serial.println(F("Signed FactorScale16 exhaustive tests PASSED."));
+					else
+					{
+						Serial.print(F("Signed FactorScale16 exhaustive tests FAILED. Errors: "));
+						Serial.println(errorCount);
+					}
+					return errorCount == 0;
+				}
+
+				static inline bool TestSignedGetFactor16Exhaustive8()
+				{
+					uint32_t errorCount = 0;
+					for (int16_t numeratorValue = INT8_MIN; numeratorValue <= INT8_MAX; ++numeratorValue)
+					{
+						for (int16_t denominatorValue = INT8_MIN; denominatorValue <= INT8_MAX; ++denominatorValue)
+						{
+							const int8_t numerator = static_cast<int8_t>(numeratorValue);
+							const int8_t denominator = static_cast<int8_t>(denominatorValue);
+							const factorscale16_t result = Factor::GetFactorS16<int8_t>(numerator, denominator);
+							const factorscale16_t reference = RefGetFactorSigned(numerator, denominator,
+								FactorScale16::SCALE_UNIT, FactorScale16::SCALE_MIN, FactorScale16::SCALE_MAX);
+							if (result != reference)
+								errorCount++;
+						}
+					}
+					if (errorCount == 0)
+						Serial.println(F("Signed GetFactor16 exhaustive tests PASSED."));
+					else
+					{
+						Serial.print(F("Signed GetFactor16 exhaustive tests FAILED. Errors: "));
+						Serial.println(errorCount);
+					}
+					return errorCount == 0;
+				}
+
 				static_assert(Factor::Constexpr::GetFactor8<uint8_t>(1, 2) == Scale8::SCALE_1X / 2,
 					"Constexpr Scale8 GetFactor must remain constexpr-capable.");
 				static_assert(Factor::Constexpr::GetFactor16<uint8_t>(1, 2) == Scale16::SCALE_1X / 2,
@@ -1287,6 +1566,18 @@ namespace IntegerSignal
 						Serial.println(F("FixedPoint::Scale tests FAILED."));
 					}
 
+					return pass;
+				}
+
+				static inline bool RunExhaustive()
+				{
+					bool pass = true;
+					pass &= TestSignedFactorScaleSampleMatrix();
+					pass &= TestSignedFactorScale8Exhaustive();
+					pass &= TestSignedGetFactor8Exhaustive();
+					pass &= TestSignedGetFactorWideInputRegression();
+					pass &= TestSignedFactorScale16Exhaustive8();
+					pass &= TestSignedGetFactor16Exhaustive8();
 					return pass;
 				}
 			}
