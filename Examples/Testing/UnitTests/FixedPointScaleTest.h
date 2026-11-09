@@ -11,6 +11,50 @@ namespace IntegerSignal
 		{
 			namespace Test
 			{
+				static_assert(Factor::Constexpr::GetFactorU8<uint8_t>(1, 2) == UFactorScale8::SCALE_1X / 2,
+					"GetFactorU8 must preserve unsigned scale semantics.");
+				static_assert(Factor::Constexpr::GetFactorS8<int32_t>(-1, 2) == -8,
+					"GetFactorS8 must represent negative half scale.");
+				static_assert(Factor::Constexpr::GetFactorS16<int32_t>(-1, 2) == -128,
+					"GetFactorS16 must represent negative half scale.");
+				static_assert(Factor::Constexpr::GetFactorS32<int32_t>(-1, 2) == -32768,
+					"GetFactorS32 must represent negative half scale.");
+				static_assert(ScaleAliases::Constexpr::Scale(FACTORSCALE8_NEGATIVE_1X, int8_t(100)) == int8_t(-100),
+					"Signed FactorScale must apply negative factors.");
+				static_assert(ScaleAliases::Constexpr::Scale(FACTORSCALE16_NEGATIVE_1X, int16_t(-123)) == int16_t(123),
+					"Signed FactorScale16 must apply negative factors.");
+				static_assert(ScaleAliases::Constexpr::Scale(FACTORSCALE32_1X, int32_t(-12345)) == int32_t(-12345),
+					"Signed FactorScale32 unit factor must preserve values.");
+
+				static inline bool TestSignedUnsignedVariants()
+				{
+					bool pass = true;
+					pass &= Factor::GetFactorU8<uint8_t>(1, 2) == UFACTOR_SCALE8_1X / 2;
+					pass &= Factor::GetFactorU16<uint16_t>(1, 2) == UFACTOR_SCALE16_1X / 2;
+					pass &= Factor::GetFactorU32<uint32_t>(1, 2) == UFACTOR_SCALE32_1X / 2;
+
+					pass &= Factor::GetFactorS8<int32_t>(-1, 2) == factorscale8_t(-8);
+					pass &= Factor::GetFactorS16<int32_t>(-1, 2) == factorscale16_t(-128);
+					pass &= Factor::GetFactorS32<int32_t>(-1, 2) == factorscale32_t(-32768);
+					pass &= Factor::GetFactorS8<int32_t>(1, -2) == factorscale8_t(-8);
+					pass &= Factor::GetFactorS8<int32_t>(-8, 1) == FactorScale8::SCALE_MIN;
+
+					pass &= ScaleAliases::Scale(factorscale8_t(0), int8_t(100)) == int8_t(0);
+					pass &= ScaleAliases::Scale(FACTORSCALE8_NEGATIVE_1X, int8_t(-100)) == int8_t(100);
+					pass &= ScaleAliases::Scale(FACTORSCALE16_NEGATIVE_1X, uint16_t(100)) == uint16_t(0);
+					pass &= ScaleAliases::Scale(FACTORSCALE32_1X, int32_t(-12345)) == int32_t(-12345);
+
+					if (pass)
+					{
+						Serial.println(F("Signed and unsigned FactorScale API tests PASSED."));
+					}
+					else
+					{
+						Serial.println(F("Signed and unsigned FactorScale API tests FAILED."));
+					}
+					return pass;
+				}
+
 				// Reference function for Scale8 (unsigned)
 				static inline uint8_t RefScale8(const uint8_t value, const Scale8::factor_t factor)
 				{
@@ -1216,6 +1260,7 @@ namespace IntegerSignal
 				{
 					bool pass = true;
 
+					pass &= TestSignedUnsignedVariants();
 					pass &= TestFactorScaleApiConsistency();
 					pass &= TestGetFactorExhaustive8();
 					pass &= TestGetFactorWideIntermediateRegression();
