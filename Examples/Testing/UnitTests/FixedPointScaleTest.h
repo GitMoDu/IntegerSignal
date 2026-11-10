@@ -13,6 +13,23 @@ namespace IntegerSignal
 			{
 				static_assert(Factor::Constexpr::GetFactorU8<uint8_t>(1, 2) == UFactorScale8::SCALE_1X / 2,
 					"GetFactorU8 must preserve unsigned scale semantics.");
+				static_assert(Factor::Constexpr::GetFactorU16<uint16_t>(1, 2) == UFactorScale16::SCALE_1X / 2,
+					"GetFactorU16 must preserve unsigned scale semantics.");
+				static_assert(Factor::Constexpr::GetFactorU32<uint32_t>(1, 2) == UFactorScale32::SCALE_1X / 2,
+					"GetFactorU32 must preserve unsigned scale semantics.");
+				static_assert(Factor::GetFactorS8<int32_t>(-1, 2) == -8,
+					"Automatic GetFactorS8 must be constexpr-capable.");
+				static_assert(Factor::GetFactorS16<int32_t>(-1, 2) == -128,
+					"Automatic GetFactorS16 must be constexpr-capable.");
+				static_assert(Factor::GetFactorS32<int32_t>(-1, 2) == -32768,
+					"Automatic GetFactorS32 must be constexpr-capable.");
+
+				static_assert(Factor::GetFactorU8<uint8_t>(1, 2) == UFactorScale8::SCALE_1X / 2,
+					"Automatic GetFactorU8 must be constexpr-capable.");
+				static_assert(Factor::GetFactorU16<uint16_t>(1, 2) == UFactorScale16::SCALE_1X / 2,
+					"Automatic GetFactorU16 must be constexpr-capable.");
+				static_assert(Factor::GetFactorU32<uint32_t>(1, 2) == UFactorScale32::SCALE_1X / 2,
+					"Automatic GetFactorU32 must be constexpr-capable.");
 				static_assert(Factor::Constexpr::GetFactorS8<int32_t>(-1, 2) == -8,
 					"GetFactorS8 must represent negative half scale.");
 				static_assert(Factor::Constexpr::GetFactorS16<int32_t>(-1, 2) == -128,
@@ -483,10 +500,12 @@ namespace IntegerSignal
 					"Constexpr Scale16 GetFactor must remain constexpr-capable.");
 				static_assert(Factor::Constexpr::GetFactor32<uint8_t>(1, 2) == Scale32::SCALE_1X / 2,
 					"Constexpr Scale32 GetFactor must remain constexpr-capable.");
-#if defined(__cpp_if_consteval) || (defined(__GNUC__) && (__GNUC__ >= 10))
+				static_assert(Factor::GetFactor8<uint8_t>(1, 2) == Scale8::SCALE_1X / 2,
+					"Automatic Scale8 GetFactor must remain constexpr-capable.");
+				static_assert(Factor::GetFactor16<uint8_t>(1, 2) == Scale16::SCALE_1X / 2,
+					"Automatic Scale16 GetFactor must remain constexpr-capable.");
 				static_assert(Factor::GetFactor32<uint8_t>(1, 2) == Scale32::SCALE_1X / 2,
 					"Automatic Scale32 GetFactor must remain constexpr-capable.");
-#endif
 
 				// Exhaustive test for Scale8::factor_t with uint8_t values
 				static inline bool TestScale8Exhaustive8()
