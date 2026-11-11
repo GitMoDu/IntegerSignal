@@ -5,19 +5,16 @@
 
 namespace IntegerSignal
 {
-#if defined(__arm__) && !defined(INTEGER_SIGNAL_DISABLE_ACCELERATION)
+#if (defined(__arm__) || (defined(__riscv) && defined(__riscv_div))) && !defined(INTEGER_SIGNAL_DISABLE_ACCELERATION)
 	/// <summary>
 	/// Square root of uint32_t value.
 	/// Based on article: https://en.wikipedia.org/wiki/Methods_of_computing_square_roots
 	/// Which involves Newton's method which gives the following iterative formula:
 	/// 
 	/// X(n + 1) = (X(n) + S / X(n)) / 2
-	/// Thanks to ARM CLZ instruction(which counts how many bits in a number are
-	/// zeros starting from the most significant one) we can very successfully
-	/// choose the starting value, so just three iterations are enough to achieve
-	/// maximum possible error of off by 1. The algorithm uses division, but fortunately
-	/// it is fast enough here, so square root computation takes only about 50 - 55
-	/// cycles with maximum compiler optimization.
+	/// A count-leading-zeros builtin lets us choose a good starting value, so just
+	/// three iterations are enough to achieve a maximum error of one. RISC-V targets
+	/// without Zbb may lower the builtin to a compiler helper.
 	/// Added final check to correct off by one errors.
 	/// </summary>
 	/// <param name="value">[0 ; UINT32_MAX]</param>
@@ -85,6 +82,29 @@ namespace IntegerSignal
 	/// <returns>[0 ; UINT32_MAX].</returns>
 	inline uint32_t SquareRoot64(const uint64_t value)
 	{
+#if defined(__riscv) && (__riscv_xlen == 32)
+		uint64_t op = value;
+		uint64_t result = 0;
+		uint64_t bit = 1ULL << 62;
+
+		while (bit > op)
+			bit >>= 2;
+
+		while (bit != 0)
+		{
+			if (op >= result + bit)
+			{
+				op -= result + bit;
+				result = (result >> 1) + bit;
+			}
+			else
+			{
+				result >>= 1;
+			}
+			bit >>= 2;
+		}
+		return (uint32_t)result;
+#else
 		if (value == 0)
 		{
 			return 0;
@@ -114,6 +134,7 @@ namespace IntegerSignal
 
 			return (uint32_t)root;
 		}
+#endif
 	}
 #elif (defined(__i386__) || defined(__x86_64__) || defined(_M_IX86) || defined(_M_X64)) && !defined(INTEGER_SIGNAL_DISABLE_ACCELERATION)
 	/// <summary>
