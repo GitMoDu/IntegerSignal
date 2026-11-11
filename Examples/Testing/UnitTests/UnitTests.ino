@@ -98,6 +98,7 @@ void setup()
 
 		pass &= IntegerSignal::BitScale::Test::RunExhaustive();
 		pass &= IntegerSignal::SquareRoot::Test::RunExhaustive();
+		pass &= IntegerSignal::FixedPoint::FactorScale::Test::RunExhaustive();
 		pass &= IntegerSignal::FixedPoint::ScalarFraction::Test::RunExhaustive();
 
 		if (pass)
@@ -134,22 +135,42 @@ void loop()
 void PrintPlaform()
 {
 #if defined(ARDUINO_ARCH_AVR)
-	Serial.println(F("AVR"));
+	Serial.print(F("AVR"));
 #elif defined(ARDUINO_ARCH_STM32F1) || defined(ARDUINO_ARCH_STM32)
-	Serial.println(F("STM32 F1"));
+	Serial.print(F("STM32 F1"));
 #elif defined(ARDUINO_ARCH_STM32F4)
-	Serial.println(F("STM32 F4"));
+	Serial.print(F("STM32 F4"));
 #elif defined(ARDUINO_ARCH_RP2040)
 #if defined(PICO_RP2350)
-	Serial.println(F("RP2350"));
+	Serial.print(F("RP2350"));
 #else
-	Serial.println(F("RP2040"));
+	Serial.print(F("RP2040"));
 #endif
 #elif defined(ARDUINO_ARCH_NRF52)
-	Serial.println(F("NRF52840"));
+	Serial.print(F("NRF52840"));
 #elif defined(ARDUINO_ARCH_ESP32)
-	Serial.println(F("ESP32"));
+	Serial.print(F("ESP32"));
 #endif
+
+	Serial.print(F(" ("));
+#if defined(__AVR__)
+	Serial.print(F("AVR"));
+#elif defined(ARDUINO_ARCH_ESP32)
+#if defined(__riscv)
+	Serial.print(F("RISC-V"));
+#elif defined(__XTENSA__)
+	Serial.print(F("Xtensa"));
+#else
+	Serial.print(F("generic"));
+#endif
+#elif defined(__riscv)
+	Serial.print(F("RISC-V"));
+#elif defined(__aarch64__) || defined(__arm__) || defined(__thumb__) || defined(__ARM_ARCH)
+	Serial.print(F("ARM"));
+#else
+	Serial.print(F("generic"));
+#endif
+	Serial.println(F(")"));
 }
 
 
